@@ -13,6 +13,7 @@
   ],
   "author": "Uditha Atukorala <ua@nuked.zone>",
   "license": "ISC",
+  "repository": "nukedzn/node-informix",
   "dependencies": {
     "bindings": "^1.2.1",
     "nan": "^2.1.0"
