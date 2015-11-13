@@ -1,0 +1,17 @@
+# .gitignore
+#
+
+# node / npm
+node_modules
+npm-debug.log
+
+# istanbul
+coverage
+
+# jsdoc generated docs
+docs
+
+# temporary files
+*.swp
+*~
+
