@@ -1,5 +1,6 @@
 
 #include "connect.h"
+#include "../esqlc.h"
 
 
 namespace ifx {
@@ -16,7 +17,7 @@ namespace ifx {
 
 	void Connect::Execute() {
 		// TODO:
-		// EXEC SQL connect to :db as :id
+		esqlc_connect( "test@ol_informix1210", _id.c_str() );
 	}
 
 
