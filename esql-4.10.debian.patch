@@ -1,0 +1,11 @@
+--- esql.orig	2015-03-04 11:34:05.000000000 +0000
++++ esql	2015-11-15 11:06:13.252739323 +0000
+@@ -408,7 +408,7 @@ do
+                 THRLIB="$TLIB "
+                 if [ "x$THLIB" != "x" -a "x$THLIB_SUB" != "x" ]
+                 then
+-                    if [ ! -f /usr/lib64/lib$THLIB_SUB.so ]
++                    if [ ! -f /usr/lib/x86_64-linux-gnu/lib$THLIB_SUB.so ]
+                     then
+                         infxmsg -33413
+                         exit 1
