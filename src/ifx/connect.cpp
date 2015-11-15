@@ -1,26 +1,26 @@
 
-#include "connection.h"
+#include "connect.h"
 
 
 namespace ifx {
 
-	Connection::Connection( std::string id, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _id( id ) {
+	Connect::Connect( std::string id, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _id( id ) {
 		// constructor
 	}
 
 
-	Connection::~Connection() {
+	Connect::~Connect() {
 		// destructor
 	}
 
 
-	void Connection::Execute() {
+	void Connect::Execute() {
 		// TODO:
 		// EXEC SQL connect to :db as :id
 	}
 
 
-	void Connection::HandleOKCallback() {
+	void Connect::HandleOKCallback() {
 
 		// stack-allocated handle scope
 		Nan::HandleScope scope;
