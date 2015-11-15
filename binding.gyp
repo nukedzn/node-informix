@@ -38,7 +38,7 @@
 				'libraries' : [
 					'-L<!(echo ${INFORMIXDIR}/lib)',
 					'-L<!(echo ${INFORMIXDIR}/lib/esql)',
-					'<!@(esql -libs)'
+					'<!@(THREADLIB=POSIX esql -thread -libs)'
 				]
 			}
 		}
