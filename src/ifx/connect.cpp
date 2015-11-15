@@ -1,4 +1,6 @@
 
+#include <sstream>
+
 #include "connect.h"
 #include "../esqlc.h"
 
@@ -16,8 +18,10 @@ namespace ifx {
 
 
 	void Connect::Execute() {
-		// TODO:
-		esqlc_connect( "test@ol_informix1210", _id.c_str() );
+		int32_t code = esqlc::connect( "test@ol_informix1210", _id.c_str() );
+		if ( code < 0 ) {
+			SetErrorMessage( esqlc::errmsg( code ).c_str() );
+		}
 	}
 
 

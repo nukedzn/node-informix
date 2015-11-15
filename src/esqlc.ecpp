@@ -1,4 +1,5 @@
 
+#include <cstdio>
 #include "esqlc.h"
 
 
@@ -16,6 +17,26 @@ namespace esqlc {
 
 		EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
 		return SQLCODE;
+
+	};
+
+
+	std::string errmsg( int32_t code ) {
+
+		char buffer[512];
+		int n, r, msg_len;
+
+		n = snprintf( buffer, 64, "[%d] ", code );
+		r = rgetlmsg( code, ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), &msg_len );
+
+		if ( r == 0 ) {
+			// rgetlmsg() returns a \n as well which we don't want
+			buffer[n + (msg_len - 1)] = '\0';
+		} else {
+			snprintf( ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), "(Failed to get error message, rgetlmsg() returned with %d)", r );
+		}
+
+		return std::string( buffer );
 
 	};
 
