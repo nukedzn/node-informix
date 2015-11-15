@@ -7,7 +7,7 @@
 
 namespace ifx {
 
-	Connect::Connect( std::string id, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _id( id ) {
+	Connect::Connect( const connection_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
 		// constructor
 	}
 
@@ -18,7 +18,7 @@ namespace ifx {
 
 
 	void Connect::Execute() {
-		int32_t code = esqlc::connect( "test@ol_informix1210", _id.c_str() );
+		int32_t code = esqlc::connect( _conn.db.c_str(), _conn.id.c_str() );
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
@@ -32,7 +32,7 @@ namespace ifx {
 
 		v8::Local< v8::Value > argv[] = {
 			Nan::Null(),
-			Nan::New< v8::String >( _id ).ToLocalChecked()
+			Nan::New< v8::String >( _conn.id ).ToLocalChecked()
 		};
 
 		callback->Call( 2, argv );

@@ -7,10 +7,16 @@
 
 namespace ifx {
 
+	struct connection_t {
+		std::string id;
+		std::string db;
+	};
+
+
 	class Connect : public Nan::AsyncWorker {
 	public:
 
-		Connect( std::string id, Nan::Callback * cb );
+		Connect( const connection_t &conn, Nan::Callback * cb );
 		virtual ~Connect();
 
 		void Execute();
@@ -23,7 +29,7 @@ namespace ifx {
 
 	private:
 
-		std::string _id;
+		connection_t _conn;
 
 	};
 
