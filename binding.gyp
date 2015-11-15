@@ -31,6 +31,9 @@
 					}
 				} ]
 			],
+			'defines' : [
+				'IFX_THREAD'
+			],
 			'include_dirs' : [
 				'<!(node -e "require(\'nan\')")',
 				'<!(echo ${INFORMIXDIR}/incl/esql)',
