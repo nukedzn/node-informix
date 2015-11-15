@@ -1,0 +1,23 @@
+
+#include "esqlc.h"
+
+
+namespace esqlc {
+
+	int32_t connect( const char * db, const char * id ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_db = db;
+		const char * esql_id = id;
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
+		return SQLCODE;
+
+	};
+
+}
+

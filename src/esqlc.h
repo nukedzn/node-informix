@@ -2,16 +2,15 @@
 #ifndef ESQLC_H
 #define ESQLC_H
 
+#include <cstdint>
+#include <string>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-void esqlc_connect( const char * db, const char * id );
+namespace esqlc {
 
-#ifdef __cplusplus
+	int32_t connect( const char * db, const char * id );
+
 }
-#endif
 
 #endif /* !ESQLC_H */
 

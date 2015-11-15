@@ -6,10 +6,10 @@
 			'actions' : [ {
 				'action_name' : 'esql-preprocess',
 				'inputs' : [
-					'src/esqlc.ec'
+					'src/esqlc.ecpp'
 				],
 				'outputs' : [
-					'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.c'
+					'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp'
 				],
 				'action' : [ 'bash', './gyp/preprocessor.sh', '<(SHARED_INTERMEDIATE_DIR)/src' ]
 			} ]
@@ -20,11 +20,13 @@
 			'sources' : [
 				'src/module.cpp',
 				'src/ifx/connect.cpp',
-				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.c',
+				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [
 				[ 'OS=="mac"', {
 					'xcode_settings': {
+						'OTHER_CPLUSPLUSFLAGS' : [ '-stdlib=libc++' ],
+						'OTHER_LDFLAGS': [ '-stdlib=libc++' ],
 						'MACOSX_DEPLOYMENT_TARGET': '10.7'
 					}
 				} ]
