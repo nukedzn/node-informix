@@ -6,10 +6,13 @@
 
 void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
-	Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+	Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
 
-	Nan::Utf8String id( info[0] );
-	Nan::AsyncQueueWorker( new ifx::Connect( *id, cb ) );
+	Nan::Utf8String db( info[0] );
+	Nan::Utf8String id( info[1] );
+	const ifx::connection_t conn = { *id, *db };
+
+	Nan::AsyncQueueWorker( new ifx::Connect( conn, cb ) );
 
 	// return undefined
 	info.GetReturnValue().Set( Nan::Undefined() );
