@@ -1,0 +1,35 @@
+
+box: nukedzn/nfx
+
+build:
+  services:
+    - id: nukedzn/informix
+      tag: 12.10
+
+  steps:
+    - script:
+      name: setup sqlhosts
+      code: |
+        echo "ol_informix1210 onsoctcp ${INFORMIX_PORT_9088_TCP_ADDR} 9088" > ${INFORMIXDIR}/etc/sqlhosts
+
+    - script:
+      name: setup db
+      code: |
+        /bin/bash ${WERCKER_SOURCE_DIR}/test/support/setup-db.sh ${WERCKER_SOURCE_DIR}/test/support/test-db.sql
+
+    - script:
+      name: echo versions
+      code: |
+        echo "node: $(node --version)"
+        echo "npm: v$(npm --version)"
+
+    - script:
+      name: npm install
+      code:
+         npm install --unsafe-perm
+
+    - script:
+      name: npm test
+      code: |
+        INFORMIXSERVER=ol_informix1210 npm test
+

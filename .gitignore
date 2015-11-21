@@ -12,6 +12,12 @@ coverage
 # jsdoc generated docs
 docs
 
+# wercker
+_builds/
+_cache/
+_projects/
+_steps/
+
 # temporary files
 *.swp
 *~
