@@ -6,6 +6,9 @@ build
 node_modules
 npm-debug.log
 
+# packaging
+informix-*.tgz
+
 # istanbul
 coverage
 
