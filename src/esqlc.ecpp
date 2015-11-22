@@ -1,21 +1,34 @@
 
 #include <cstdio>
+#include <cstring>
+
 #include "esqlc.h"
 
 
 namespace esqlc {
 
-	int32_t connect( const char * db, const char * id ) {
+	int32_t connect( const char * id, const char * database, const char * username, const char * password ) {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_db = db;
+		const char * esql_db = database;
 		const char * esql_id = id;
+		const char * esql_user = username;
+		const char * esql_pass = password;
 
 		EXEC SQL END DECLARE SECTION;
 
 
-		EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
+		if ( username && strlen( username ) && password && strlen( password ) ) {
+			EXEC SQL connect to :esql_db as :esql_id USER :esql_user USING :esql_pass
+				WITH CONCURRENT TRANSACTION;
+		} else if ( username && strlen( username ) ) {
+			EXEC SQL connect to :esql_db as :esql_id USER :esql_user
+				WITH CONCURRENT TRANSACTION;
+		} else {
+			EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
+		}
+
 		return SQLCODE;
 
 	};
