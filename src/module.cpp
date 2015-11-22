@@ -6,14 +6,48 @@
 
 void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
+	// basic validation
+	if ( info.Length() != 2 ) {
+		return Nan::ThrowError( "Invalid number of arguments" );
+	}
 
-	v8::Local< v8::Object > obj = info[0].As< v8::Object >();
+	if (! info[0]->IsObject() ) {
+		return Nan::ThrowTypeError( "Connection parameters must be an object" );
+	}
+
+	if (! info[1]->IsFunction() ) {
+		return Nan::ThrowTypeError( "Callback must be a function" );
+	}
+
+
+	v8::Local< v8::Object > params = info[0].As< v8::Object >();
+
+	// validate mandatory connection params
+	if ( (! params->Has( Nan::New< v8::String >( "id" ).ToLocalChecked() ) )
+		|| (! params->Has( Nan::New< v8::String >( "database" ).ToLocalChecked() ) ) ) {
+		return Nan::ThrowTypeError( "Connection parameter 'id' and 'database' are mandatory" );
+	}
+
+
+	std::string username;
+	std::string password;
+	Nan::Utf8String id( params->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
+	Nan::Utf8String database( params->Get( Nan::New< v8::String >( "database" ).ToLocalChecked() ) );
 	Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
 
-	Nan::Utf8String database( obj->Get( Nan::New< v8::String >( "database" ).ToLocalChecked() ) );
-	Nan::Utf8String id( obj->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
-	const ifx::connection_t conn = { *id, *database };
+	if ( params->Has( Nan::New< v8::String >( "username" ).ToLocalChecked() ) ) {
+		Nan::Utf8String user( params->Get( Nan::New< v8::String >( "username" ).ToLocalChecked() ) );
+		username = std::string( *user );
+	}
 
+	if ( params->Has( Nan::New< v8::String >( "password" ).ToLocalChecked() ) ) {
+		Nan::Utf8String pass( params->Get( Nan::New< v8::String >( "password" ).ToLocalChecked() ) );
+		password = std::string( *pass );
+	}
+
+
+	// schedule async connection worker
+	const ifx::connection_t conn = { *id, *database, username, password };
 	Nan::AsyncQueueWorker( new ifx::Connect( conn, cb ) );
 
 	// return undefined

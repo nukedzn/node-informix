@@ -9,7 +9,9 @@ namespace ifx {
 
 	struct connection_t {
 		std::string id;
-		std::string db;
+		std::string database;
+		std::string username;
+		std::string password;
 	};
 
 

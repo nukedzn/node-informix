@@ -8,7 +8,7 @@
 
 namespace esqlc {
 
-	int32_t connect( const char * db, const char * id );
+	int32_t connect( const char * id, const char * database, const char * username = 0, const char * password = 0 );
 	std::string errmsg( int32_t code );
 
 }

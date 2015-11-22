@@ -18,7 +18,13 @@ namespace ifx {
 
 
 	void Connect::Execute() {
-		int32_t code = esqlc::connect( _conn.db.c_str(), _conn.id.c_str() );
+
+		int32_t code = esqlc::connect(
+				_conn.id.c_str(),
+				_conn.database.c_str(),
+				( _conn.username.length() ? _conn.username.c_str() : 0 ),
+				( _conn.password.length() ? _conn.password.c_str() : 0 ) );
+
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
