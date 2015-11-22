@@ -9,3 +9,9 @@ node-informix
 
 A node.js native client for IBM Informix.
 
+
+## Dependencies
+
+* [IBM Informix ESQL/C](http://www-03.ibm.com/software/products/en/esqlc) which
+can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/products/en/csdk)
+
