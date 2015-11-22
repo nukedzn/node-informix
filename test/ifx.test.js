@@ -15,7 +15,10 @@ describe( 'ifx', function () {
 		*         to connect to the database.
 		*/
 		it( 'should handle connection errors', function ( done ) {
-			ifx.connect( 'test', 'conn:id:1001', function ( err, conn ) {
+			ifx.connect( {
+				database : 'test',
+				id : 'conn:id:1001'
+			}, function ( err, conn ) {
 				expect( err ).to.be.an.instanceof( Error );
 				expect( err.message ).to.be.string( '[-951] Incorrect password or user %s is not known on the database server.' );
 				expect( conn ).to.be.undefined;

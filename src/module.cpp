@@ -6,11 +6,13 @@
 
 void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
-	Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
 
-	Nan::Utf8String db( info[0] );
-	Nan::Utf8String id( info[1] );
-	const ifx::connection_t conn = { *id, *db };
+	v8::Local< v8::Object > obj = info[0].As< v8::Object >();
+	Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+
+	Nan::Utf8String database( obj->Get( Nan::New< v8::String >( "database" ).ToLocalChecked() ) );
+	Nan::Utf8String id( obj->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
+	const ifx::connection_t conn = { *id, *database };
 
 	Nan::AsyncQueueWorker( new ifx::Connect( conn, cb ) );
 
