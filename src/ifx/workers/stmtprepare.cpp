@@ -5,7 +5,7 @@
 namespace ifx {
 namespace workers {
 
-	StmtPrepare::StmtPrepare( Nan::Callback * cb ) : Nan::AsyncWorker( cb ) {
+	StmtPrepare::StmtPrepare( esqlc::stmt_t * stmt, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _stmt( stmt ) {
 		// constructor
 	}
 

@@ -4,6 +4,8 @@
 
 #include <nan.h>
 
+#include "common.h"
+
 
 namespace ifx {
 
@@ -22,6 +24,8 @@ namespace ifx {
 		~Ifx();
 
 		static Nan::Persistent< v8::Function > constructor;
+
+		ifx::stmts_t _stmts;
 
 	};
 

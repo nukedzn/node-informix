@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string>
 #include <map>
+#include <sqlda.h>
 
 
 namespace esqlc {
@@ -13,8 +14,8 @@ namespace esqlc {
 	struct cursor_t;
 
 	struct stmt_t {
-		struct sqlda * sqlda;
 		std::string id;
+		ifx_sqlda_t * sqlda;
 
 		std::string stmt;
 		std::map< std::string, cursor_t * > cursors;

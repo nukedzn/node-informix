@@ -13,7 +13,7 @@ namespace workers {
 	class StmtPrepare : public Nan::AsyncWorker {
 	public:
 
-		StmtPrepare( Nan::Callback * cb );
+		StmtPrepare( esqlc::stmt_t * stmt, Nan::Callback * cb );
 		virtual ~StmtPrepare();
 
 		void Execute();
@@ -22,6 +22,11 @@ namespace workers {
 	protected:
 
 		void HandleOKCallback();
+
+
+	private:
+
+		esqlc::stmt_t * _stmt;
 
 	};
 

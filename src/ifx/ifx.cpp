@@ -1,6 +1,7 @@
 
 #include "ifx.h"
 #include "workers/connect.h"
+#include "workers/stmtprepare.h"
 
 
 namespace ifx {
@@ -110,6 +111,47 @@ namespace ifx {
 
 
 	void Ifx::prepare( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 3 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement ID must be a string" );
+		}
+
+		if (! info[1]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement must be a string" );
+		}
+
+		if (! info[2]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		// grab JS arguments
+		Nan::Utf8String utf8sid ( info[0] );
+		Nan::Utf8String utf8stmt ( info[1] );
+		Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
+
+		// check whether we already have a prepared statement with the same ID
+		esqlc::stmt_t * stmt = self->_stmts[ *utf8sid ];
+		if ( stmt ) {
+			return Nan::ThrowError( "A Statement is already prepared with the same ID" );
+		}
+
+		// prepare statement data structures
+		stmt = new esqlc::stmt_t();
+		stmt->id = *utf8sid;
+		stmt->stmt = *utf8stmt;
+
+		// schedule async worker
+		Nan::AsyncQueueWorker( new ifx::workers::StmtPrepare( stmt, cb ) );
+
 
 		// return undefined
 		info.GetReturnValue().Set( Nan::Undefined() );
