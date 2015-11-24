@@ -3,7 +3,8 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
-var ifx    = require( 'bindings' )( 'ifx' );
+var Ifx    = require( 'bindings' )( 'ifx' ).Ifx;
+var ifx    = new Ifx();
 
 
 describe( 'ifx', function () {
