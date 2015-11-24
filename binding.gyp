@@ -19,9 +19,9 @@
 			'dependencies' : [ 'esqlc' ],
 			'sources' : [
 				'src/module.cpp',
-				'src/ifx/connect.cpp',
 				'src/ifx/stmtprepare.cpp',
 				'src/ifx/stmtrun.cpp',
+				'src/ifx/workers/connect.cpp',
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [

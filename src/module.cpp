@@ -1,7 +1,7 @@
 
 #include <nan.h>
 
-#include "ifx/connect.h"
+#include "ifx/workers/connect.h"
 
 
 void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
@@ -48,7 +48,7 @@ void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
 	// schedule async connection worker
 	const ifx::connection_t conn = { *id, *database, username, password };
-	Nan::AsyncQueueWorker( new ifx::Connect( conn, cb ) );
+	Nan::AsyncQueueWorker( new ifx::workers::Connect( conn, cb ) );
 
 	// return undefined
 	info.GetReturnValue().Set( Nan::Undefined() );

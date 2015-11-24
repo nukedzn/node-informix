@@ -2,12 +2,13 @@
 #include <sstream>
 
 #include "connect.h"
-#include "../esqlc.h"
+#include "../../esqlc.h"
 
 
 namespace ifx {
+namespace workers {
 
-	Connect::Connect( const connection_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
+	Connect::Connect( const ifx::connection_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
 		// constructor
 	}
 
@@ -46,5 +47,6 @@ namespace ifx {
 
 	}
 
+} /* end of namespace workers */
 } /* end of namespace ifx */
 

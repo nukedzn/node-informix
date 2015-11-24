@@ -11,6 +11,13 @@
 namespace ifx {
 
 	std::map< std::string, esqlc::stmt_t * > stmts;
+	struct connection_t {
+		std::string id;
+		std::string database;
+		std::string username;
+		std::string password;
+	};
+
 
 } /* end of namespace ifx */
 
