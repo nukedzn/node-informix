@@ -21,6 +21,7 @@
 				'src/module.cpp',
 				'src/ifx/stmtprepare.cpp',
 				'src/ifx/stmtrun.cpp',
+				'src/ifx/ifx.cpp',
 				'src/ifx/workers/connect.cpp',
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
