@@ -35,8 +35,7 @@ namespace ifx {
 
 	};
 
-}
-
+} /* end of namespace ifx */
 
 #endif /* !IFX_CONNECT_H */
 

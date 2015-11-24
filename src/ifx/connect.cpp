@@ -45,5 +45,5 @@ namespace ifx {
 
 	}
 
-}
+} /* end of namespace ifx */
 
