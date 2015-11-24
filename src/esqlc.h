@@ -13,15 +13,15 @@ namespace esqlc {
 	struct cursor_t;
 
 	struct stmt_t {
-		const char id[37];
 		struct sqlda * sqlda;
+		std::string id;
 
 		std::string stmt;
 		std::map< std::string, cursor_t * > cursors;
 	};
 
 	struct cursor_t {
-		const char id[37];
+		std::string id;
 		stmt_t * stmt;
 	};
 

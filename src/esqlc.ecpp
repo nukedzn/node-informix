@@ -38,7 +38,7 @@ namespace esqlc {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_id   = stmt->id;
+		const char * esql_id   = stmt->id.c_str();
 		const char * esql_stmt = stmt->stmt.c_str();
 
 		EXEC SQL END DECLARE SECTION;
@@ -55,8 +55,8 @@ namespace esqlc {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_sid = stmt->id;
-		const char * esql_cid = cursor->id;
+		const char * esql_sid = stmt->id.c_str();
+		const char * esql_cid = cursor->id.c_str();
 
 		EXEC SQL END DECLARE SECTION;
 
@@ -82,7 +82,7 @@ namespace esqlc {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_sid = stmt->id;
+		const char * esql_sid = stmt->id.c_str();
 
 		EXEC SQL END DECLARE SECTION;
 
@@ -98,7 +98,7 @@ namespace esqlc {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_cid = cursor->id;
+		const char * esql_cid = cursor->id.c_str();
 
 		EXEC SQL END DECLARE SECTION;
 
