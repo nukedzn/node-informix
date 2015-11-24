@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include "connect.h"
-#include "../../esqlc.h"
 
 
 namespace ifx {
