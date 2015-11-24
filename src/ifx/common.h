@@ -17,6 +17,11 @@ namespace ifx {
 		std::string password;
 	};
 
+	struct statement_t {
+		std::string id;
+		std::string stmt;
+	};
+
 	typedef std::map< std::string, esqlc::stmt_t * > stmts_t;
 
 } /* end of namespace ifx */
