@@ -34,6 +34,67 @@ namespace esqlc {
 	};
 
 
+	int32_t prepare( stmt_t * stmt ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_id   = stmt->id;
+		const char * esql_stmt = stmt->stmt.c_str();
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL prepare :esql_id from :esql_stmt;
+
+		return SQLCODE;
+
+	}
+
+
+	int32_t run( stmt_t * stmt, cursor_t * cursor ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_sid = stmt->id;
+		const char * esql_cid = cursor->id;
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL declare :esql_cid cursor for :esql_sid;
+
+		// TODO:
+		//   * see demo3.ec from CSDK ESQL/C demos
+		//   * Maybe it is worth doind the describe within prepare()
+		// EXEC SQL describe :esql_sid into [dptr];
+		//
+		// EXEC SQL open :esql_cid using descriptor [dptr];
+
+		return SQLCODE;
+
+	}
+
+
+	int32_t close( stmt_t * stmt ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_sid = stmt->id;
+		const char * esql_cid = stmt->id;
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL close :esql_cid;
+
+		EXEC SQL free :esql_cid;
+		EXEC SQL free :esql_sid;
+
+		return SQLCODE;
+
+	}
+
+
 	std::string errmsg( int32_t code ) {
 
 		char buffer[512];

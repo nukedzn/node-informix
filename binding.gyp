@@ -20,6 +20,8 @@
 			'sources' : [
 				'src/module.cpp',
 				'src/ifx/connect.cpp',
+				'src/ifx/stmtprepare.cpp',
+				'src/ifx/stmtrun.cpp',
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [

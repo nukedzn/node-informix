@@ -56,8 +56,17 @@ void connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 }
 
 
+void prepare( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+	// return undefined
+	info.GetReturnValue().Set( Nan::Undefined() );
+
+}
+
+
 void init( v8::Local< v8::Object > exports ) {
 	exports->Set( Nan::New( "connect" ).ToLocalChecked(), Nan::New< v8::FunctionTemplate >( connect )->GetFunction() );
+	exports->Set( Nan::New( "prepare" ).ToLocalChecked(), Nan::New< v8::FunctionTemplate >( prepare )->GetFunction() );
 }
 
 NODE_MODULE( ifx, init )
