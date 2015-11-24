@@ -28,6 +28,7 @@ namespace ifx {
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
+
 	}
 
 

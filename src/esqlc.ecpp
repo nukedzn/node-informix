@@ -69,6 +69,9 @@ namespace esqlc {
 		// EXEC SQL describe :esql_sid into [dptr];
 		//
 		// EXEC SQL open :esql_cid using descriptor [dptr];
+		//
+		// Update *stmt and *cursor with references
+
 
 		return SQLCODE;
 
@@ -80,15 +83,30 @@ namespace esqlc {
 		EXEC SQL BEGIN DECLARE SECTION;
 
 		const char * esql_sid = stmt->id;
-		const char * esql_cid = stmt->id;
+
+		EXEC SQL END DECLARE SECTION;
+
+		// FIXME: close any open cursors
+		EXEC SQL free :esql_sid;
+
+		return SQLCODE;
+
+	}
+
+
+	int32_t close( cursor_t * cursor ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_cid = cursor->id;
 
 		EXEC SQL END DECLARE SECTION;
 
 
 		EXEC SQL close :esql_cid;
-
 		EXEC SQL free :esql_cid;
-		EXEC SQL free :esql_sid;
+
+		// FIXME: remove cursor from statement
 
 		return SQLCODE;
 
