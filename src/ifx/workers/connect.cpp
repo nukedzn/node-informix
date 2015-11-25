@@ -27,6 +27,9 @@ namespace workers {
 
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
+		} else {
+			// release the connection to make it available to other threads
+			esqlc::release( _conn.id.c_str() );
 		}
 
 	}

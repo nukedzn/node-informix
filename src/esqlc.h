@@ -16,6 +16,9 @@ namespace esqlc {
 	int32_t closeS( const char * sid );
 	int32_t closeC( const char * cid );
 
+	int32_t acquire( const char * conn );
+	int32_t release( const char * conn );
+
 	std::string errmsg( int32_t code );
 
 }

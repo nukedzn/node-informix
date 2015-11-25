@@ -17,11 +17,18 @@ namespace workers {
 
 	void StmtPrepare::Execute() {
 
+		int32_t code = 0;
+
+		code = esqlc::acquire( _stmt->conn.c_str() );
+		if ( code < 0 ) {
+			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
+		}
+
 		// FIXME: Better to not to access _stmt->sqlda directly here since we are
 		// out of the main event loop. Although it is unlikely we'll have two threads
 		// with the same statement ID coming here due to the uniqueue checks we have
 		// in the main event loop code.
-		int32_t code = esqlc::prepare(
+		code = esqlc::prepare(
 				_stmt->conn.c_str(),
 				_stmt->id.c_str(),
 				_stmt->stmt.c_str(),
@@ -31,6 +38,9 @@ namespace workers {
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
+
+		// release the connection
+		esqlc::release( _stmt->conn.c_str() );
 
 	}
 

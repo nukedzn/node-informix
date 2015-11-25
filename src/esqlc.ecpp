@@ -29,10 +29,6 @@ namespace esqlc {
 			EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
 		}
 
-		if ( SQLCODE == 0 ) {
-			EXEC SQL set connection :esql_id dormant;
-		}
-
 		return SQLCODE;
 
 	};
@@ -49,12 +45,13 @@ namespace esqlc {
 		EXEC SQL END DECLARE SECTION;
 
 
-		EXEC SQL set connection :esql_conn;
 		EXEC SQL prepare :esql_id from :esql_stmt;
-		EXEC SQL describe input  :esql_id into insqlda;
-		EXEC SQL describe output :esql_id into outsqlda;
 
-		EXEC SQL set connection :esql_conn dormant;
+		if ( SQLCODE == 0 ) {
+			EXEC SQL describe input  :esql_id into insqlda;
+			EXEC SQL describe output :esql_id into outsqlda;
+		}
+
 		return SQLCODE;
 
 	}
@@ -110,6 +107,38 @@ namespace esqlc {
 
 		EXEC SQL close :esql_cid;
 		EXEC SQL free :esql_cid;
+
+		return SQLCODE;
+
+	}
+
+
+	int32_t acquire( const char * conn ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_conn = conn;
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL set connection :esql_conn;
+
+		return SQLCODE;
+
+	}
+
+
+	int32_t release( const char * conn ) {
+
+		EXEC SQL BEGIN DECLARE SECTION;
+
+		const char * esql_conn = conn;
+
+		EXEC SQL END DECLARE SECTION;
+
+
+		EXEC SQL set connection :esql_conn dormant;
 
 		return SQLCODE;
 
