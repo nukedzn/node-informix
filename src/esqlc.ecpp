@@ -5,164 +5,160 @@
 #include "esqlc.h"
 
 
-namespace esqlc {
+int32_t esqlc::connect( const char * id, const char * database, const char * username, const char * password ) {
 
-	int32_t connect( const char * id, const char * database, const char * username, const char * password ) {
+	EXEC SQL BEGIN DECLARE SECTION;
 
-		EXEC SQL BEGIN DECLARE SECTION;
+	const char * esql_db = database;
+	const char * esql_id = id;
+	const char * esql_user = username;
+	const char * esql_pass = password;
 
-		const char * esql_db = database;
-		const char * esql_id = id;
-		const char * esql_user = username;
-		const char * esql_pass = password;
-
-		EXEC SQL END DECLARE SECTION;
+	EXEC SQL END DECLARE SECTION;
 
 
-		if ( username && strlen( username ) && password && strlen( password ) ) {
-			EXEC SQL connect to :esql_db as :esql_id USER :esql_user USING :esql_pass
-				WITH CONCURRENT TRANSACTION;
-		} else if ( username && strlen( username ) ) {
-			EXEC SQL connect to :esql_db as :esql_id USER :esql_user
-				WITH CONCURRENT TRANSACTION;
-		} else {
-			EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
-		}
-
-		return SQLCODE;
-
-	};
-
-
-	int32_t prepare( const char * conn, const char * id, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_conn = conn;
-		const char * esql_id   = id;
-		const char * esql_stmt = stmt;
-
-		EXEC SQL END DECLARE SECTION;
-
-
-		EXEC SQL prepare :esql_id from :esql_stmt;
-
-		if ( SQLCODE == 0 ) {
-			EXEC SQL describe input  :esql_id into insqlda;
-			EXEC SQL describe output :esql_id into outsqlda;
-		}
-
-		return SQLCODE;
-
+	if ( username && strlen( username ) && password && strlen( password ) ) {
+		EXEC SQL connect to :esql_db as :esql_id USER :esql_user USING :esql_pass
+			WITH CONCURRENT TRANSACTION;
+	} else if ( username && strlen( username ) ) {
+		EXEC SQL connect to :esql_db as :esql_id USER :esql_user
+			WITH CONCURRENT TRANSACTION;
+	} else {
+		EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
 	}
 
+	return SQLCODE;
 
-	int32_t run( const char * sid, const char * cid, ifx_sqlda_t * insqlda ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_sid = sid;
-		const char * esql_cid = cid;
-
-		EXEC SQL END DECLARE SECTION;
+};
 
 
-		EXEC SQL declare :esql_cid cursor for :esql_sid;
+int32_t esqlc::prepare( const char * conn, const char * id, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
 
-		if ( insqlda ) {
-			EXEC SQL open :esql_cid using descriptor insqlda;
-		} else {
-			EXEC SQL open :esql_cid;
-		}
+	EXEC SQL BEGIN DECLARE SECTION;
 
-		return SQLCODE;
+	const char * esql_conn = conn;
+	const char * esql_id   = id;
+	const char * esql_stmt = stmt;
 
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL prepare :esql_id from :esql_stmt;
+
+	if ( SQLCODE == 0 ) {
+		EXEC SQL describe input  :esql_id into insqlda;
+		EXEC SQL describe output :esql_id into outsqlda;
 	}
 
-
-	int32_t closeS( const char * sid ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_sid = sid;
-
-		EXEC SQL END DECLARE SECTION;
-
-
-		EXEC SQL free :esql_sid;
-
-		return SQLCODE;
-
-	}
-
-
-	int32_t closeC( const char * cid ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_cid = cid;
-
-		EXEC SQL END DECLARE SECTION;
-
-
-		EXEC SQL close :esql_cid;
-		EXEC SQL free :esql_cid;
-
-		return SQLCODE;
-
-	}
-
-
-	int32_t acquire( const char * conn ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_conn = conn;
-
-		EXEC SQL END DECLARE SECTION;
-
-
-		EXEC SQL set connection :esql_conn;
-
-		return SQLCODE;
-
-	}
-
-
-	int32_t release( const char * conn ) {
-
-		EXEC SQL BEGIN DECLARE SECTION;
-
-		const char * esql_conn = conn;
-
-		EXEC SQL END DECLARE SECTION;
-
-
-		EXEC SQL set connection :esql_conn dormant;
-
-		return SQLCODE;
-
-	}
-
-
-	std::string errmsg( int32_t code ) {
-
-		char buffer[512];
-		int n, r, msg_len;
-
-		n = snprintf( buffer, 64, "[%d] ", code );
-		r = rgetlmsg( code, ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), &msg_len );
-
-		if ( r == 0 ) {
-			// rgetlmsg() returns a \n as well which we don't want
-			buffer[n + (msg_len - 1)] = '\0';
-		} else {
-			snprintf( ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), "(Failed to get error message, rgetlmsg() returned with %d)", r );
-		}
-
-		return std::string( buffer );
-
-	};
+	return SQLCODE;
 
 }
+
+
+int32_t esqlc::run( const char * sid, const char * cid, ifx_sqlda_t * insqlda ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_sid = sid;
+	const char * esql_cid = cid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL declare :esql_cid cursor for :esql_sid;
+
+	if ( insqlda ) {
+		EXEC SQL open :esql_cid using descriptor insqlda;
+	} else {
+		EXEC SQL open :esql_cid;
+	}
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::closeS( const char * sid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_sid = sid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL free :esql_sid;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::closeC( const char * cid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_cid = cid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL close :esql_cid;
+	EXEC SQL free :esql_cid;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::acquire( const char * conn ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_conn = conn;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL set connection :esql_conn;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::release( const char * conn ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_conn = conn;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL set connection :esql_conn dormant;
+
+	return SQLCODE;
+
+}
+
+
+std::string esqlc::errmsg( int32_t code ) {
+
+	char buffer[512];
+	int n, r, msg_len;
+
+	n = snprintf( buffer, 64, "[%d] ", code );
+	r = rgetlmsg( code, ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), &msg_len );
+
+	if ( r == 0 ) {
+		// rgetlmsg() returns a \n as well which we don't want
+		buffer[n + (msg_len - 1)] = '\0';
+	} else {
+		snprintf( ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), "(Failed to get error message, rgetlmsg() returned with %d)", r );
+	}
+
+	return std::string( buffer );
+
+};
 
