@@ -115,9 +115,9 @@ describe( 'ifx', function () {
 
 			var sql = 'select tabname from systables where tabname like ?;';
 
-			ifx.prepare( conn, 'stmt:id:1001', sql, function ( err, sid ) {
+			ifx.prepare( conn, 'stmt_id_1001', sql, function ( err, sid ) {
 				expect( err ).to.be.null;
-				expect( sid ).to.be.string( 'stmt:id:1001' );
+				expect( sid ).to.be.string( 'stmt_id_1001' );
 				done();
 			} );
 
