@@ -4,12 +4,13 @@
 
 var expect = require( 'chai' ).expect;
 var Ifx    = require( 'bindings' )( 'ifx' ).Ifx;
-var ifx    = new Ifx();
 
 
 describe( 'ifx', function () {
 
 	context( 'when username and password is not specified', function () {
+
+		var ifx = new Ifx();
 
 		/**
 		*   Note: This test assumes the default user doesn't have permissions
@@ -31,6 +32,8 @@ describe( 'ifx', function () {
 
 
 	context( 'connect', function () {
+
+		var ifx = new Ifx();
 
 		it( 'should validate input arguments', function () {
 
@@ -86,6 +89,38 @@ describe( 'ifx', function () {
 				expect( conn ).to.be.string( 'conn:id:2001' );
 				done();
 			} );
+		} );
+
+	} );
+
+
+	context( 'prepare', function () {
+
+		var ifx  = new Ifx();
+		var conn = 'conn:id:3001';
+
+		before( function ( done ) {
+			ifx.connect( {
+				id : conn,
+				database : 'test',
+				username : 'informix',
+				password : 'informix'
+			}, function ( err, conn ) {
+				done( err );
+			} );
+		} );
+
+
+		it( 'should be able to prepare a statement', function ( done ) {
+
+			var sql = 'select tabname from systables where tabname like ?;';
+
+			ifx.prepare( conn, 'stmt:id:1001', sql, function ( err, sid ) {
+				expect( err ).to.be.null;
+				expect( sid ).to.be.string( 'stmt:id:1001' );
+				done();
+			} );
+
 		} );
 
 	} );

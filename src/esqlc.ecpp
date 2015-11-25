@@ -29,64 +29,69 @@ namespace esqlc {
 			EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
 		}
 
+		if ( SQLCODE == 0 ) {
+			EXEC SQL set connection :esql_id dormant;
+		}
+
 		return SQLCODE;
 
 	};
 
 
-	int32_t prepare( stmt_t * stmt ) {
+	int32_t prepare( const char * conn, const char * id, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_id   = stmt->id.c_str();
-		const char * esql_stmt = stmt->stmt.c_str();
+		const char * esql_conn = conn;
+		const char * esql_id   = id;
+		const char * esql_stmt = stmt;
 
 		EXEC SQL END DECLARE SECTION;
 
 
+		EXEC SQL set connection :esql_conn;
 		EXEC SQL prepare :esql_id from :esql_stmt;
+		EXEC SQL describe input  :esql_id into insqlda;
+		EXEC SQL describe output :esql_id into outsqlda;
 
+		EXEC SQL set connection :esql_conn dormant;
 		return SQLCODE;
 
 	}
 
 
-	int32_t run( stmt_t * stmt, cursor_t * cursor ) {
+	int32_t run( const char * sid, const char * cid, ifx_sqlda_t * insqlda ) {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_sid = stmt->id.c_str();
-		const char * esql_cid = cursor->id.c_str();
+		const char * esql_sid = sid;
+		const char * esql_cid = cid;
 
 		EXEC SQL END DECLARE SECTION;
 
 
 		EXEC SQL declare :esql_cid cursor for :esql_sid;
 
-		// TODO:
-		//   * see demo3.ec from CSDK ESQL/C demos
-		//   * Maybe it is worth doind the describe within prepare()
-		// EXEC SQL describe :esql_sid into [dptr];
-		//
-		// EXEC SQL open :esql_cid using descriptor [dptr];
-		//
-		// Update *stmt and *cursor with references
-
+		if ( insqlda ) {
+			EXEC SQL open :esql_cid using descriptor insqlda;
+		} else {
+			EXEC SQL open :esql_cid;
+		}
 
 		return SQLCODE;
 
 	}
 
 
-	int32_t close( stmt_t * stmt ) {
+	int32_t closeS( const char * sid ) {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_sid = stmt->id.c_str();
+		const char * esql_sid = sid;
 
 		EXEC SQL END DECLARE SECTION;
 
-		// FIXME: close any open cursors
+
 		EXEC SQL free :esql_sid;
 
 		return SQLCODE;
@@ -94,19 +99,17 @@ namespace esqlc {
 	}
 
 
-	int32_t close( cursor_t * cursor ) {
+	int32_t closeC( const char * cid ) {
 
 		EXEC SQL BEGIN DECLARE SECTION;
 
-		const char * esql_cid = cursor->id.c_str();
+		const char * esql_cid = cid;
 
 		EXEC SQL END DECLARE SECTION;
 
 
 		EXEC SQL close :esql_cid;
 		EXEC SQL free :esql_cid;
-
-		// FIXME: remove cursor from statement
 
 		return SQLCODE;
 

@@ -113,19 +113,23 @@ namespace ifx {
 	void Ifx::prepare( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
 		// basic validation
-		if ( info.Length() != 3 ) {
+		if ( info.Length() != 4 ) {
 			return Nan::ThrowError( "Invalid number of arguments" );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string" );
 		}
 
 		if (! info[1]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement ID must be a string" );
+		}
+
+		if (! info[2]->IsString() ) {
 			return Nan::ThrowTypeError( "Statement must be a string" );
 		}
 
-		if (! info[2]->IsFunction() ) {
+		if (! info[3]->IsFunction() ) {
 			return Nan::ThrowTypeError( "Callback must be a function" );
 		}
 
@@ -134,18 +138,20 @@ namespace ifx {
 		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
 
 		// grab JS arguments
-		Nan::Utf8String utf8sid ( info[0] );
-		Nan::Utf8String utf8stmt ( info[1] );
-		Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
+		Nan::Utf8String utf8conn ( info[0] );
+		Nan::Utf8String utf8sid ( info[1] );
+		Nan::Utf8String utf8stmt ( info[2] );
+		Nan::Callback * cb = new Nan::Callback( info[3].As< v8::Function >() );
 
 		// check whether we already have a prepared statement with the same ID
-		esqlc::stmt_t * stmt = self->_stmts[ *utf8sid ];
+		ifx::stmt_t * stmt = self->_stmts[ *utf8sid ];
 		if ( stmt ) {
 			return Nan::ThrowError( "A Statement is already prepared with the same ID" );
 		}
 
 		// prepare statement data structures
-		stmt = new esqlc::stmt_t();
+		stmt = new ifx::stmt_t();
+		stmt->conn = *utf8conn;
 		stmt->id = *utf8sid;
 		stmt->stmt = *utf8stmt;
 
