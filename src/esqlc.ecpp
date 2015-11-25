@@ -5,12 +5,12 @@
 #include "esqlc.h"
 
 
-int32_t esqlc::connect( const char * id, const char * database, const char * username, const char * password ) {
+int32_t esqlc::connect( const char * connid, const char * database, const char * username, const char * password ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
 	const char * esql_db = database;
-	const char * esql_id = id;
+	const char * esql_connid = connid;
 	const char * esql_user = username;
 	const char * esql_pass = password;
 
@@ -18,13 +18,13 @@ int32_t esqlc::connect( const char * id, const char * database, const char * use
 
 
 	if ( username && strlen( username ) && password && strlen( password ) ) {
-		EXEC SQL connect to :esql_db as :esql_id USER :esql_user USING :esql_pass
+		EXEC SQL connect to :esql_db as :esql_connid USER :esql_user USING :esql_pass
 			WITH CONCURRENT TRANSACTION;
 	} else if ( username && strlen( username ) ) {
-		EXEC SQL connect to :esql_db as :esql_id USER :esql_user
+		EXEC SQL connect to :esql_db as :esql_connid USER :esql_user
 			WITH CONCURRENT TRANSACTION;
 	} else {
-		EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
+		EXEC SQL connect to :esql_db as :esql_connid WITH CONCURRENT TRANSACTION;
 	}
 
 	return SQLCODE;
@@ -32,22 +32,21 @@ int32_t esqlc::connect( const char * id, const char * database, const char * use
 };
 
 
-int32_t esqlc::prepare( const char * conn, const char * id, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
+int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_conn = conn;
-	const char * esql_id   = id;
-	const char * esql_stmt = stmt;
+	const char * esql_stmtid = stmtid;
+	const char * esql_stmt   = stmt;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL prepare :esql_id from :esql_stmt;
+	EXEC SQL prepare :esql_stmtid from :esql_stmt;
 
 	if ( SQLCODE == 0 ) {
-		EXEC SQL describe input  :esql_id into insqlda;
-		EXEC SQL describe output :esql_id into outsqlda;
+		EXEC SQL describe input  :esql_stmtid into insqlda;
+		EXEC SQL describe output :esql_stmtid into outsqlda;
 	}
 
 	return SQLCODE;
@@ -55,22 +54,22 @@ int32_t esqlc::prepare( const char * conn, const char * id, const char * stmt, i
 }
 
 
-int32_t esqlc::run( const char * sid, const char * cid, ifx_sqlda_t * insqlda ) {
+int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_sid = sid;
-	const char * esql_cid = cid;
+	const char * esql_stmtid = stmtid;
+	const char * esql_curid  = curid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL declare :esql_cid cursor for :esql_sid;
+	EXEC SQL declare :esql_curid cursor for :esql_stmtid;
 
 	if ( insqlda ) {
-		EXEC SQL open :esql_cid using descriptor insqlda;
+		EXEC SQL open :esql_curid using descriptor insqlda;
 	} else {
-		EXEC SQL open :esql_cid;
+		EXEC SQL open :esql_curid;
 	}
 
 	return SQLCODE;
@@ -78,65 +77,65 @@ int32_t esqlc::run( const char * sid, const char * cid, ifx_sqlda_t * insqlda ) 
 }
 
 
-int32_t esqlc::closeS( const char * sid ) {
+int32_t esqlc::closeS( const char * stmtid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_sid = sid;
+	const char * esql_stmtid = stmtid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL free :esql_sid;
+	EXEC SQL free :esql_stmtid;
 
 	return SQLCODE;
 
 }
 
 
-int32_t esqlc::closeC( const char * cid ) {
+int32_t esqlc::closeC( const char * curid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_cid = cid;
+	const char * esql_curid = curid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL close :esql_cid;
-	EXEC SQL free :esql_cid;
+	EXEC SQL close :esql_curid;
+	EXEC SQL free :esql_curid;
 
 	return SQLCODE;
 
 }
 
 
-int32_t esqlc::acquire( const char * conn ) {
+int32_t esqlc::acquire( const char * connid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_conn = conn;
+	const char * esql_connid = connid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL set connection :esql_conn;
+	EXEC SQL set connection :esql_connid;
 
 	return SQLCODE;
 
 }
 
 
-int32_t esqlc::release( const char * conn ) {
+int32_t esqlc::release( const char * connid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_conn = conn;
+	const char * esql_connid = connid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL set connection :esql_conn dormant;
+	EXEC SQL set connection :esql_connid dormant;
 
 	return SQLCODE;
 

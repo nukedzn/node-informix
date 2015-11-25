@@ -13,7 +13,7 @@ namespace workers {
 	class Connect : public Nan::AsyncWorker {
 	public:
 
-		Connect( const ifx::connection_t &conn, Nan::Callback * cb );
+		Connect( const ifx::conn_t &conn, Nan::Callback * cb );
 		virtual ~Connect();
 
 		void Execute();
@@ -26,7 +26,7 @@ namespace workers {
 
 	private:
 
-		ifx::connection_t _conn;
+		ifx::conn_t _conn;
 
 	};
 

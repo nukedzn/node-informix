@@ -15,7 +15,7 @@ namespace ifx {
 	struct cursor_t;
 
 
-	struct connection_t {
+	struct conn_t {
 		std::string id;
 		std::string database;
 		std::string username;
@@ -24,7 +24,7 @@ namespace ifx {
 
 
 	struct stmt_t {
-		std::string conn;
+		std::string connid;
 		std::string id;
 		std::string stmt;
 		std::map< std::string, cursor_t * > cursors;

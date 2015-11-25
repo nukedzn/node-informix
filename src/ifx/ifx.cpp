@@ -101,7 +101,7 @@ namespace ifx {
 
 
 		// schedule async connection worker
-		const ifx::connection_t conn = { *id, *database, username, password };
+		const ifx::conn_t conn = { *id, *database, username, password };
 		Nan::AsyncQueueWorker( new ifx::workers::Connect( conn, cb ) );
 
 		// return undefined
@@ -151,7 +151,7 @@ namespace ifx {
 
 		// prepare statement data structures
 		stmt = new ifx::stmt_t();
-		stmt->conn = *utf8conn;
+		stmt->connid = *utf8conn;
 		stmt->id = *utf8sid;
 		stmt->stmt = *utf8stmt;
 

@@ -19,7 +19,7 @@ namespace workers {
 
 		int32_t code = 0;
 
-		code = esqlc::acquire( _stmt->conn.c_str() );
+		code = esqlc::acquire( _stmt->connid.c_str() );
 		if ( code < 0 ) {
 			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
@@ -29,7 +29,6 @@ namespace workers {
 		// with the same statement ID coming here due to the uniqueue checks we have
 		// in the main event loop code.
 		code = esqlc::prepare(
-				_stmt->conn.c_str(),
 				_stmt->id.c_str(),
 				_stmt->stmt.c_str(),
 				_stmt->insqlda,
@@ -40,7 +39,7 @@ namespace workers {
 		}
 
 		// release the connection
-		esqlc::release( _stmt->conn.c_str() );
+		esqlc::release( _stmt->connid.c_str() );
 
 	}
 

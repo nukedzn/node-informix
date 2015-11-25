@@ -7,7 +7,7 @@
 namespace ifx {
 namespace workers {
 
-	Connect::Connect( const ifx::connection_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
+	Connect::Connect( const ifx::conn_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
 		// constructor
 	}
 
