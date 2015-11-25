@@ -4,6 +4,8 @@
 
 #include <nan.h>
 
+#include "../common.h"
+
 
 namespace ifx {
 namespace workers {
@@ -11,13 +13,20 @@ namespace workers {
 	class StmtRun : public Nan::AsyncWorker {
 	public:
 
-		StmtRun( Nan::Callback * cb );
+		StmtRun( ifx::cursor_t * cursor, Nan::Callback * cb );
 		virtual ~StmtRun();
+
+		void Execute();
 
 
 	protected:
 
 		void HandleOKCallback();
+
+
+	private:
+
+		ifx::cursor_t * _cursor;
 
 	};
 
