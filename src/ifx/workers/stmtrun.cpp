@@ -1,5 +1,6 @@
 
 #include "stmtrun.h"
+#include "../../esqlc.h"
 
 
 namespace ifx {

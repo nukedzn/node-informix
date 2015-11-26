@@ -7,8 +7,6 @@
 #include <list>
 #include <sqlda.h>
 
-#include "../esqlc.h"
-
 
 namespace ifx {
 

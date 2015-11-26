@@ -1,5 +1,6 @@
 
 #include "stmtprepare.h"
+#include "../../esqlc.h"
 
 
 namespace ifx {

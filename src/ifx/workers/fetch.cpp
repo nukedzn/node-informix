@@ -1,5 +1,6 @@
 
 #include "fetch.h"
+#include "../../esqlc.h"
 
 
 namespace ifx {
