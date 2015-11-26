@@ -32,7 +32,7 @@ int32_t esqlc::connect( const char * connid, const char * database, const char *
 };
 
 
-int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * insqlda, ifx_sqlda_t * outsqlda ) {
+int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * &insqlda, ifx_sqlda_t * &outsqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
