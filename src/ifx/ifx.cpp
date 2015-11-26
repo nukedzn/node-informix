@@ -1,7 +1,10 @@
 
+#include <cstring>
+
 #include "ifx.h"
 #include "workers/connect.h"
 #include "workers/stmtprepare.h"
+#include "workers/stmtrun.h"
 
 
 namespace ifx {
@@ -33,6 +36,7 @@ namespace ifx {
 		// prototypes
 		Nan::SetPrototypeMethod( tpl, "connect", connect );
 		Nan::SetPrototypeMethod( tpl, "prepare", prepare );
+		Nan::SetPrototypeMethod( tpl, "run", run );
 
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
@@ -155,6 +159,9 @@ namespace ifx {
 		stmt->id = *utf8sid;
 		stmt->stmt = *utf8stmt;
 
+		// update internal reference
+		self->_stmts[ stmt->id ] = stmt;
+
 		// schedule async worker
 		Nan::AsyncQueueWorker( new ifx::workers::StmtPrepare( stmt, cb ) );
 
@@ -164,6 +171,116 @@ namespace ifx {
 
 	}
 
+
+	void Ifx::run( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() < 3 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement ID must be a string" );
+		}
+
+		if (! info[1]->IsString() ) {
+			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+		}
+
+		if (! info[info.Length() - 1]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+		if (! info[2]->IsFunction () ) {
+			if ( (! info[2]->IsString() ) && (! info[2]->IsArray() ) ) {
+				return Nan::ThrowTypeError( "Statement args must be a string or an array" );
+			}
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8stmtid( info[0] );
+		ifx::stmt_t * stmt = self->_stmts[ *utf8stmtid ];
+
+		if (! stmt ) {
+			return Nan::ThrowError( "Invalid statement ID" );
+		}
+
+
+		// SQL descriptor area
+		ifx::cursor_t * cursor = new ifx::cursor_t();
+		ifx_sqlda_t * insqlda = 0;
+
+		if ( info.Length() > 3 ) {
+
+			insqlda = new ifx_sqlda_t();
+			std::memset( insqlda, 0, sizeof( ifx_sqlda_t ) );
+
+			// FIXME: can we get away with only using CSTRINGTYPE data?
+
+			if ( info[2]->IsString() ) {
+
+				Nan::Utf8String utf8arg( info[2] );
+				size_t size = ( utf8arg.length() + 1 );
+				char * arg  = new char[ size ];
+
+				std::strncpy( arg, *utf8arg, size );
+				cursor->args.push_back( arg );
+
+				insqlda->sqld     = 1;
+				insqlda->sqlvar   = new ifx_sqlvar_t[1];
+				insqlda->desc_occ = 0;
+
+				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[1] ) );
+				insqlda->sqlvar[0].sqltype = 109;    // #define CSTRINGTYPE	109;
+				insqlda->sqlvar[0].sqllen  = size;
+				insqlda->sqlvar[0].sqldata = arg;
+
+			} else {
+
+				char * arg;
+				v8::Local< v8::Array > args = info[2].As< v8::Array >();
+
+				insqlda->sqld     = args->Length();
+				insqlda->sqlvar   = new ifx_sqlvar_t[ args->Length() ];
+				insqlda->desc_occ = 0;
+
+				for ( uint32_t i = 0; i < args->Length(); i++ ) {
+
+					Nan::Utf8String utf8arg( args->Get( Nan::New< v8::Integer >( i ) ) );
+					size_t size = ( utf8arg.length() + 1 );
+					arg = new char[ size ];
+
+					std::strncpy( arg, *utf8arg, size );
+					cursor->args.push_back( arg );
+
+					std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
+					insqlda->sqlvar[i].sqltype = 109;    // #define CSTRINGTYPE	109;
+					insqlda->sqlvar[i].sqllen  = size;
+					insqlda->sqlvar[i].sqldata = arg;
+
+				}
+
+			}
+		}
+
+
+		Nan::Utf8String utf8curid( info[1] );
+		cursor->id      = *utf8curid;
+		cursor->stmt    = stmt;
+		cursor->insqlda = insqlda;
+
+		// schedule async worker
+		Nan::Callback * cb = new Nan::Callback( info[info.Length() - 1].As< v8::Function >() );
+		Nan::AsyncQueueWorker( new ifx::workers::StmtRun( cursor, cb ) );
+
+
+		// return undefined
+		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
 
 } /* end of namespace ifx */
 

@@ -4,7 +4,7 @@
 
 #include <string>
 #include <map>
-#include <queue>
+#include <list>
 #include <sqlda.h>
 
 #include "../esqlc.h"
@@ -38,9 +38,10 @@ namespace ifx {
 
 	struct cursor_t {
 		std::string id;
-		std::queue< std::string > args;
+		std::list< char * > args;
 
 		stmt_t * stmt;
+		ifx_sqlda_t * insqlda;
 	};
 
 

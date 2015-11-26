@@ -125,5 +125,43 @@ describe( 'ifx', function () {
 
 	} );
 
+
+	context( 'run', function () {
+
+		var ifx    = new Ifx();
+		var connid = 'conn:id:4001';
+		var stmtid = 'statement_4001';
+		var curid  = 'cursor_4001';
+		var sql    = 'select tabname from systables where tabname like ?;';
+
+		before( function ( done ) {
+			ifx.connect( {
+				id : connid,
+				database : 'test',
+				username : 'informix',
+				password : 'informix'
+			}, function ( err, conn ) {
+
+				expect( err ).to.be.null;
+				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+					done( err );
+				} );
+
+			} );
+		} );
+
+
+		it( 'should be able to execute a prepared statement', function ( done ) {
+
+			ifx.run( stmtid, curid, 'sys%auth', function ( err, id ) {
+				expect( err ).to.be.null;
+				expect( id ).to.eql( curid );
+				done();
+			} );
+
+		} );
+
+	} );
+
 } );
 
