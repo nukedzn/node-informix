@@ -66,10 +66,12 @@ int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insql
 
 	EXEC SQL declare :esql_curid cursor for :esql_stmtid;
 
-	if ( insqlda ) {
-		EXEC SQL open :esql_curid using descriptor insqlda;
-	} else {
-		EXEC SQL open :esql_curid;
+	if ( SQLCODE == 0 ) {
+		if ( insqlda ) {
+			EXEC SQL open :esql_curid using descriptor insqlda;
+		} else {
+			EXEC SQL open :esql_curid;
+		}
 	}
 
 	return SQLCODE;
