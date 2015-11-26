@@ -5,6 +5,7 @@
 #include "workers/connect.h"
 #include "workers/stmtprepare.h"
 #include "workers/stmtrun.h"
+#include "workers/fetch.h"
 
 
 namespace ifx {
@@ -37,6 +38,7 @@ namespace ifx {
 		Nan::SetPrototypeMethod( tpl, "connect", connect );
 		Nan::SetPrototypeMethod( tpl, "prepare", prepare );
 		Nan::SetPrototypeMethod( tpl, "run", run );
+		Nan::SetPrototypeMethod( tpl, "fetch", fetch );
 
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
@@ -267,14 +269,64 @@ namespace ifx {
 		}
 
 
+		// prepare cursor data structures
 		Nan::Utf8String utf8curid( info[1] );
 		cursor->id      = *utf8curid;
 		cursor->stmt    = stmt;
 		cursor->insqlda = insqlda;
 
+		// update internal references
+		self->_cursors[ cursor->id ] = cursor;
+
 		// schedule async worker
 		Nan::Callback * cb = new Nan::Callback( info[info.Length() - 1].As< v8::Function >() );
 		Nan::AsyncQueueWorker( new ifx::workers::StmtRun( cursor, cb ) );
+
+
+		// return undefined
+		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::fetch( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 2 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+		}
+
+		if (! info[1]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8curid( info[0] );
+		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
+
+		if (! cursor ) {
+			return Nan::ThrowError( "Invalid cursor ID" );
+		}
+
+
+		if ( (! cursor->stmt->outsqlda ) && cursor->stmt->outsqlda ) {
+			cursor->outsqlda = new ifx_sqlda_t();
+			std::memcpy( cursor->outsqlda, cursor->stmt->outsqlda, sizeof( ifx_sqlda_t ) );
+
+			// TODO: allocate memory for return data structures (outsqlda)
+
+		}
+
+		// schedule async worker
+		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+		Nan::AsyncQueueWorker( new ifx::workers::Fetch( cursor, cb ) );
 
 
 		// return undefined

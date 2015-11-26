@@ -18,6 +18,7 @@ namespace ifx {
 		static void connect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void prepare( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void run( const Nan::FunctionCallbackInfo< v8::Value > &info );
+		static void fetch( const Nan::FunctionCallbackInfo< v8::Value > &info );
 
 
 	private:
@@ -27,7 +28,8 @@ namespace ifx {
 
 		static Nan::Persistent< v8::Function > constructor;
 
-		ifx::stmts_t _stmts;
+		ifx::stmts_t      _stmts;
+		ifx::cursors_t    _cursors;
 
 	};
 

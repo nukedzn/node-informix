@@ -79,6 +79,24 @@ int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insql
 }
 
 
+int32_t esqlc::fetch( const char * curid, ifx_sqlda_t * outsqlda ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_curid  = curid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL fetch :esql_curid using descriptor outsqlda;
+
+	// FIXME: check SQLSTATE?
+
+	return SQLCODE;
+
+}
+
+
 int32_t esqlc::closeS( const char * stmtid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;

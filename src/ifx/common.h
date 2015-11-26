@@ -14,6 +14,11 @@ namespace ifx {
 
 	// forward declarations
 	struct cursor_t;
+	struct stmt_t;
+
+
+	typedef std::map< std::string, stmt_t * > stmts_t;
+	typedef std::map< std::string, cursor_t * > cursors_t;
 
 
 	struct conn_t {
@@ -28,7 +33,7 @@ namespace ifx {
 		std::string connid;
 		std::string id;
 		std::string stmt;
-		std::map< std::string, cursor_t * > cursors;
+		cursors_t cursors;
 
 		ifx_sqlda_t * insqlda;
 		ifx_sqlda_t * outsqlda;
@@ -36,16 +41,17 @@ namespace ifx {
 		stmt_t() : insqlda( 0 ), outsqlda( 0 ) {};
 	};
 
+
 	struct cursor_t {
 		std::string id;
 		std::list< char * > args;
 
 		stmt_t * stmt;
 		ifx_sqlda_t * insqlda;
+		ifx_sqlda_t * outsqlda;
+
+		cursor_t() : stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {};
 	};
-
-
-	typedef std::map< std::string, stmt_t * > stmts_t;
 
 } /* end of namespace ifx */
 
