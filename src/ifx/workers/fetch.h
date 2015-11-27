@@ -27,6 +27,7 @@ namespace workers {
 	private:
 
 		ifx::cursor_t * _cursor;
+		char _sqlstate[6];
 
 	};
 

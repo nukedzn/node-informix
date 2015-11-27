@@ -1,5 +1,6 @@
 
 #include <cstring>
+#include <sqlhdr.h>
 
 #include "ifx.h"
 #include "workers/connect.h"
@@ -316,11 +317,39 @@ namespace ifx {
 		}
 
 
-		if ( (! cursor->stmt->outsqlda ) && cursor->stmt->outsqlda ) {
+		if ( (! cursor->outsqlda ) && cursor->stmt->outsqlda ) {
+
 			cursor->outsqlda = new ifx_sqlda_t();
 			std::memcpy( cursor->outsqlda, cursor->stmt->outsqlda, sizeof( ifx_sqlda_t ) );
 
-			// TODO: allocate memory for return data structures (outsqlda)
+			// calculate the size of the output data buffer we need
+			size_t size = 0;
+			ifx_sqlvar_t * sqlvar = cursor->outsqlda->sqlvar;
+			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
+
+				if ( sqlvar->sqltype == SQLCHAR ) {
+					sqlvar->sqllen += 1;
+				}
+
+				size = rtypalign( size, sqlvar->sqltype );
+				size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
+
+				sqlvar++;
+
+			}
+
+			// new output data buffer
+			cursor->data = new char[ size ];
+
+			// update sqlvar->sqldata refereces
+			sqlvar = cursor->outsqlda->sqlvar;
+			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
+				size = rtypalign( size, sqlvar->sqltype );
+				sqlvar->sqldata = ( cursor->data + size );
+
+				size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
+				sqlvar++;
+			}
 
 		}
 

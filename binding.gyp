@@ -34,7 +34,8 @@
 				} ]
 			],
 			'defines' : [
-				'IFX_THREAD'
+				'IFX_THREAD',
+				'_REENTRANT'
 			],
 			'include_dirs' : [
 				'<!(node -e "require(\'nan\')")',

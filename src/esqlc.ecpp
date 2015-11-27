@@ -90,8 +90,6 @@ int32_t esqlc::fetch( const char * curid, ifx_sqlda_t * outsqlda ) {
 
 	EXEC SQL fetch :esql_curid using descriptor outsqlda;
 
-	// FIXME: check SQLSTATE?
-
 	return SQLCODE;
 
 }
@@ -180,4 +178,9 @@ std::string esqlc::errmsg( int32_t code ) {
 	return std::string( buffer );
 
 };
+
+
+const char * esqlc::sqlstate() {
+	return SQLSTATE;
+}
 

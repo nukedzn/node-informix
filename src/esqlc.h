@@ -22,6 +22,7 @@ public:
 	static int32_t release( const char * connid );
 
 	static std::string errmsg( int32_t code );
+	static const char * sqlstate();
 
 };
 

@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include <sqlda.h>
+#include <sqltypes.h>
 
 
 namespace ifx {
@@ -43,12 +44,13 @@ namespace ifx {
 	struct cursor_t {
 		std::string id;
 		std::list< char * > args;
+		char * data;
 
 		stmt_t * stmt;
 		ifx_sqlda_t * insqlda;
 		ifx_sqlda_t * outsqlda;
 
-		cursor_t() : stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {};
+		cursor_t() : data( 0 ), stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {};
 	};
 
 } /* end of namespace ifx */
