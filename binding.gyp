@@ -19,7 +19,11 @@
 			'dependencies' : [ 'esqlc' ],
 			'sources' : [
 				'src/module.cpp',
-				'src/ifx/connect.cpp',
+				'src/ifx/ifx.cpp',
+				'src/ifx/workers/connect.cpp',
+				'src/ifx/workers/stmtprepare.cpp',
+				'src/ifx/workers/stmtrun.cpp',
+				'src/ifx/workers/fetch.cpp',
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [
@@ -30,7 +34,8 @@
 				} ]
 			],
 			'defines' : [
-				'IFX_THREAD'
+				'IFX_THREAD',
+				'_REENTRANT'
 			],
 			'include_dirs' : [
 				'<!(node -e "require(\'nan\')")',

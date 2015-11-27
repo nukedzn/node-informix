@@ -2,12 +2,13 @@
 #include <sstream>
 
 #include "connect.h"
-#include "../esqlc.h"
+#include "../../esqlc.h"
 
 
 namespace ifx {
+namespace workers {
 
-	Connect::Connect( const connection_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
+	Connect::Connect( const ifx::conn_t &conn, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _conn( conn ) {
 		// constructor
 	}
 
@@ -27,7 +28,11 @@ namespace ifx {
 
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
+		} else {
+			// release the connection to make it available to other threads
+			esqlc::release( _conn.id.c_str() );
 		}
+
 	}
 
 
@@ -45,5 +50,6 @@ namespace ifx {
 
 	}
 
-}
+} /* end of namespace workers */
+} /* end of namespace ifx */
 

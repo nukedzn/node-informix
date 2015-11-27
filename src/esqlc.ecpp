@@ -5,53 +5,182 @@
 #include "esqlc.h"
 
 
-namespace esqlc {
+int32_t esqlc::connect( const char * connid, const char * database, const char * username, const char * password ) {
 
-	int32_t connect( const char * id, const char * database, const char * username, const char * password ) {
+	EXEC SQL BEGIN DECLARE SECTION;
 
-		EXEC SQL BEGIN DECLARE SECTION;
+	const char * esql_db = database;
+	const char * esql_connid = connid;
+	const char * esql_user = username;
+	const char * esql_pass = password;
 
-		const char * esql_db = database;
-		const char * esql_id = id;
-		const char * esql_user = username;
-		const char * esql_pass = password;
-
-		EXEC SQL END DECLARE SECTION;
+	EXEC SQL END DECLARE SECTION;
 
 
-		if ( username && strlen( username ) && password && strlen( password ) ) {
-			EXEC SQL connect to :esql_db as :esql_id USER :esql_user USING :esql_pass
-				WITH CONCURRENT TRANSACTION;
-		} else if ( username && strlen( username ) ) {
-			EXEC SQL connect to :esql_db as :esql_id USER :esql_user
-				WITH CONCURRENT TRANSACTION;
+	if ( username && strlen( username ) && password && strlen( password ) ) {
+		EXEC SQL connect to :esql_db as :esql_connid USER :esql_user USING :esql_pass
+			WITH CONCURRENT TRANSACTION;
+	} else if ( username && strlen( username ) ) {
+		EXEC SQL connect to :esql_db as :esql_connid USER :esql_user
+			WITH CONCURRENT TRANSACTION;
+	} else {
+		EXEC SQL connect to :esql_db as :esql_connid WITH CONCURRENT TRANSACTION;
+	}
+
+	return SQLCODE;
+
+};
+
+
+int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * &insqlda, ifx_sqlda_t * &outsqlda ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_stmtid = stmtid;
+	const char * esql_stmt   = stmt;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL prepare :esql_stmtid from :esql_stmt;
+
+	if ( SQLCODE == 0 ) {
+		EXEC SQL describe input  :esql_stmtid into insqlda;
+		EXEC SQL describe output :esql_stmtid into outsqlda;
+	}
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_stmtid = stmtid;
+	const char * esql_curid  = curid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL declare :esql_curid cursor for :esql_stmtid;
+
+	if ( SQLCODE == 0 ) {
+		if ( insqlda ) {
+			EXEC SQL open :esql_curid using descriptor insqlda;
 		} else {
-			EXEC SQL connect to :esql_db as :esql_id WITH CONCURRENT TRANSACTION;
+			EXEC SQL open :esql_curid;
 		}
+	}
 
-		return SQLCODE;
+	return SQLCODE;
 
-	};
+}
 
 
-	std::string errmsg( int32_t code ) {
+int32_t esqlc::fetch( const char * curid, ifx_sqlda_t * outsqlda ) {
 
-		char buffer[512];
-		int n, r, msg_len;
+	EXEC SQL BEGIN DECLARE SECTION;
 
-		n = snprintf( buffer, 64, "[%d] ", code );
-		r = rgetlmsg( code, ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), &msg_len );
+	const char * esql_curid  = curid;
 
-		if ( r == 0 ) {
-			// rgetlmsg() returns a \n as well which we don't want
-			buffer[n + (msg_len - 1)] = '\0';
-		} else {
-			snprintf( ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), "(Failed to get error message, rgetlmsg() returned with %d)", r );
-		}
+	EXEC SQL END DECLARE SECTION;
 
-		return std::string( buffer );
 
-	};
+	EXEC SQL fetch :esql_curid using descriptor outsqlda;
 
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::closeS( const char * stmtid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_stmtid = stmtid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL free :esql_stmtid;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::closeC( const char * curid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_curid = curid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL close :esql_curid;
+	EXEC SQL free :esql_curid;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::acquire( const char * connid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_connid = connid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL set connection :esql_connid;
+
+	return SQLCODE;
+
+}
+
+
+int32_t esqlc::release( const char * connid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_connid = connid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL set connection :esql_connid dormant;
+
+	return SQLCODE;
+
+}
+
+
+std::string esqlc::errmsg( int32_t code ) {
+
+	char buffer[512];
+	int n, r, msg_len;
+
+	n = snprintf( buffer, 64, "[%d] ", code );
+	r = rgetlmsg( code, ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), &msg_len );
+
+	if ( r == 0 ) {
+		// rgetlmsg() returns a \n as well which we don't want
+		buffer[n + (msg_len - 1)] = '\0';
+	} else {
+		snprintf( ( buffer + n ), ( sizeof( buffer ) - ( n + 1 ) ), "(Failed to get error message, rgetlmsg() returned with %d)", r );
+	}
+
+	return std::string( buffer );
+
+};
+
+
+const char * esqlc::sqlstate() {
+	return SQLSTATE;
 }
 
