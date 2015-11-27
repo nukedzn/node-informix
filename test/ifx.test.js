@@ -163,5 +163,85 @@ describe( 'ifx', function () {
 
 	} );
 
+
+	context( 'fetch', function () {
+
+		var ifx    = new Ifx();
+		var sql    = 'select tabname from systables where tabname like ?;';
+
+		context( 'when there are results', function () {
+
+			var connid = 'conn:id:5001';
+			var stmtid = 'statement_5001';
+			var curid  = 'cursor_5001';
+
+			before( function ( done ) {
+				ifx.connect( {
+					id : connid,
+					database : 'test',
+					username : 'informix',
+					password : 'informix'
+				}, function ( err, conn ) {
+					expect( err ).to.be.null;
+
+					ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+						expect( err ).to.be.null;
+
+						ifx.run( stmtid, curid, 'sys%auth', function ( err, id ) {
+							done( err );
+						} );
+					} );
+				} );
+			} );
+
+			it( 'should return a results array', function ( done ) {
+				ifx.fetch( curid, function ( err, result ) {
+					expect( err ).to.be.null;
+					expect( result ).to.be.an.instanceof( Array );
+					expect( result ).to.have.length( 1 );
+					done();
+				} );
+			} );
+
+		} );
+
+
+		context( 'when there are no results', function () {
+
+			var connid = 'conn:id:5002';
+			var stmtid = 'statement_5002';
+			var curid  = 'cursor_5002';
+
+			before( function ( done ) {
+				ifx.connect( {
+					id : connid,
+					database : 'test',
+					username : 'informix',
+					password : 'informix'
+				}, function ( err, conn ) {
+					expect( err ).to.be.null;
+
+					ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+						expect( err ).to.be.null;
+
+						ifx.run( stmtid, curid, 'sys%authxxxxxx', function ( err, id ) {
+							done( err );
+						} );
+					} );
+				} );
+			} );
+
+			it( 'should return a null result', function ( done ) {
+				ifx.fetch( curid, function ( err, result ) {
+					expect( err ).to.be.null;
+					expect( result ).to.be.null;
+					done();
+				} );
+			} );
+
+		} );
+
+	} );
+
 } );
 
