@@ -342,6 +342,7 @@ namespace ifx {
 			cursor->data = new char[ size ];
 
 			// update sqlvar->sqldata refereces
+			size   = 0;
 			sqlvar = cursor->outsqlda->sqlvar;
 			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
 				size = rtypalign( size, sqlvar->sqltype );
