@@ -211,6 +211,11 @@ namespace ifx {
 			return Nan::ThrowError( "Invalid statement ID" );
 		}
 
+		Nan::Utf8String utf8curid( info[1] );
+		if ( stmt->cursors[ *utf8curid ] || self->_cursors[ *utf8curid ] ) {
+			return Nan::ThrowError( "A cursor with the same ID already exists" );
+		}
+
 
 		// SQL descriptor area
 		ifx::cursor_t * cursor = new ifx::cursor_t();
@@ -271,7 +276,6 @@ namespace ifx {
 
 
 		// prepare cursor data structures
-		Nan::Utf8String utf8curid( info[1] );
 		cursor->id      = *utf8curid;
 		cursor->stmt    = stmt;
 		cursor->insqlda = insqlda;
