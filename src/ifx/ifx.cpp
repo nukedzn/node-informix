@@ -242,7 +242,7 @@ namespace ifx {
 				insqlda->desc_occ = 0;
 
 				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[1] ) );
-				insqlda->sqlvar[0].sqltype = 109;    // #define CSTRINGTYPE	109;
+				insqlda->sqlvar[0].sqltype = CSTRINGTYPE;
 				insqlda->sqlvar[0].sqllen  = size;
 				insqlda->sqlvar[0].sqldata = arg;
 
@@ -265,7 +265,7 @@ namespace ifx {
 					cursor->args.push_back( arg );
 
 					std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
-					insqlda->sqlvar[i].sqltype = 109;    // #define CSTRINGTYPE	109;
+					insqlda->sqlvar[i].sqltype = CSTRINGTYPE;
 					insqlda->sqlvar[i].sqllen  = size;
 					insqlda->sqlvar[i].sqldata = arg;
 
