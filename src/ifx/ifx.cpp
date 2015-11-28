@@ -6,7 +6,9 @@
 #include "workers/connect.h"
 #include "workers/stmtprepare.h"
 #include "workers/stmtrun.h"
+#include "workers/stmtfree.h"
 #include "workers/fetch.h"
+#include "workers/cursorclose.h"
 
 
 namespace ifx {
@@ -40,6 +42,8 @@ namespace ifx {
 		Nan::SetPrototypeMethod( tpl, "prepare", prepare );
 		Nan::SetPrototypeMethod( tpl, "run", run );
 		Nan::SetPrototypeMethod( tpl, "fetch", fetch );
+		Nan::SetPrototypeMethod( tpl, "close", close );
+		Nan::SetPrototypeMethod( tpl, "free", free );
 
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
@@ -64,6 +68,7 @@ namespace ifx {
 		info.GetReturnValue().Set( info.This() );
 
 	}
+
 
 	void Ifx::connect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
@@ -361,6 +366,95 @@ namespace ifx {
 		// schedule async worker
 		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
 		Nan::AsyncQueueWorker( new ifx::workers::Fetch( cursor, cb ) );
+
+
+		// return undefined
+		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::close( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 2 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+		}
+
+		if (! info[1]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8curid( info[0] );
+		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
+
+		if (! cursor ) {
+			return Nan::ThrowError( "Invalid cursor ID" );
+		}
+
+
+		// FIXME: Deleting this here means we can't recover from any failures within
+		//        the async worker.
+		// update internal references
+		self->_cursors.erase( *utf8curid );
+
+		// schedule async worker
+		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+		Nan::AsyncQueueWorker( new ifx::workers::CursorClose( cursor, cb ) );
+
+
+		// return undefined
+		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::free( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 2 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement ID must be a string" );
+		}
+
+		if (! info[1]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8stmtid( info[0] );
+		ifx::stmt_t * stmt = self->_stmts[ *utf8stmtid ];
+
+		if (! stmt ) {
+			return Nan::ThrowError( "Invalid statement ID" );
+		}
+
+		if ( stmt->cursors.size() ) {
+			return Nan::ThrowError( "Cursors need to be closed" );
+		}
+
+		// FIXME: Deleting this here means we can't recover from any failures within
+		//        the async worker.
+		// update internal references
+		self->_stmts.erase( *utf8stmtid );
+
+		// schedule async worker
+		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+		Nan::AsyncQueueWorker( new ifx::workers::StmtFree( stmt, cb ) );
 
 
 		// return undefined
