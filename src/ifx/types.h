@@ -30,19 +30,6 @@ namespace ifx {
 	};
 
 
-	struct stmt_t {
-		std::string connid;
-		std::string id;
-		std::string stmt;
-		cursors_t cursors;
-
-		ifx_sqlda_t * insqlda;
-		ifx_sqlda_t * outsqlda;
-
-		stmt_t() : insqlda( 0 ), outsqlda( 0 ) {};
-	};
-
-
 	struct cursor_t {
 		std::string id;
 		cursor_args_t args;
@@ -53,6 +40,53 @@ namespace ifx {
 		ifx_sqlda_t * outsqlda;
 
 		cursor_t() : data( 0 ), stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {};
+		~cursor_t() {
+
+			for ( cursor_args_t::const_iterator it = args.begin(); it != args.end(); it++ ) {
+				delete [] (* it);
+			}
+
+			if ( data ) {
+				delete [] data;
+			}
+
+			if ( insqlda ) {
+				delete insqlda;
+			}
+
+			if ( outsqlda ) {
+				delete outsqlda;
+			}
+
+		}
+	};
+
+
+	struct stmt_t {
+		std::string connid;
+		std::string id;
+		std::string stmt;
+		cursors_t cursors;
+
+		ifx_sqlda_t * insqlda;
+		ifx_sqlda_t * outsqlda;
+
+		stmt_t() : insqlda( 0 ), outsqlda( 0 ) {};
+		~stmt_t() {
+
+			for ( cursors_t::iterator it = cursors.begin(); it != cursors.end(); it++ ) {
+				delete it->second;
+			}
+
+			if ( insqlda ) {
+				delete insqlda;
+			}
+
+			if ( outsqlda ) {
+				delete outsqlda;
+			}
+
+		}
 	};
 
 } /* end of namespace ifx */

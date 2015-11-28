@@ -95,7 +95,7 @@ int32_t esqlc::fetch( const char * curid, ifx_sqlda_t * outsqlda ) {
 }
 
 
-int32_t esqlc::closeS( const char * stmtid ) {
+int32_t esqlc::free( const char * stmtid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
@@ -111,7 +111,7 @@ int32_t esqlc::closeS( const char * stmtid ) {
 }
 
 
-int32_t esqlc::closeC( const char * curid ) {
+int32_t esqlc::close( const char * curid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 

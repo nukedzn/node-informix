@@ -75,6 +75,25 @@ ifx.connect( {
 					ifx.fetch( curid, fetchcb );
 				} else {
 					console.log( 'End of results for cursor:', curid );
+
+					// close cursor
+					ifx.close( curid, function ( err, curid ) {
+						if ( err ) {
+							return console.log( 'Failed to close cursor,', err );
+						}
+
+						console.log( '[', curid, '] closed' );
+
+						// free statement
+						ifx.free( stmtid, function ( err , stmtid ) {
+							if ( err ) {
+								return console.log( 'Failed to free statement,', err );
+							}
+
+							console.log( '[', stmtid ,'] freed' );
+						} );
+					} );
+
 				}
 
 			};

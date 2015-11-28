@@ -23,7 +23,9 @@
 				'src/ifx/workers/connect.cpp',
 				'src/ifx/workers/stmtprepare.cpp',
 				'src/ifx/workers/stmtrun.cpp',
+				'src/ifx/workers/stmtfree.cpp',
 				'src/ifx/workers/fetch.cpp',
+				'src/ifx/workers/cursorclose.cpp',
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [

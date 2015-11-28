@@ -25,8 +25,8 @@ namespace workers {
 			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
 
-		// FIXME: Better to not to access _stmt->sqlda directly here since we are
-		// out of the main event loop. Although it is unlikely we'll have two threads
+		// Not ideal to access _stmt->(in|out)sqlda pointers directly here since we are
+		// out of the main event loop. However it is unlikely we'll have two threads
 		// with the same statement ID coming here due to the uniqueue checks we have
 		// in the main event loop code.
 		code = esqlc::prepare(
