@@ -25,8 +25,14 @@ build:
 
     - script:
       name: npm install
-      code:
+      code: |
+         npm install -g jshint
          npm install --unsafe-perm
+
+    - script:
+      name: lint
+      code: |
+        npm run lint
 
     - script:
       name: npm test

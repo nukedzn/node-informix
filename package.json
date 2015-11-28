@@ -5,7 +5,7 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "lint": "jshint index.js lib test",
+    "lint": "jshint index.js examples test",
     "test": "mocha"
   },
   "files": [

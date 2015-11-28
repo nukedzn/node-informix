@@ -50,7 +50,7 @@ ifx.connect( {
 		*  A UUID v4 without dashes and prefixed with an underscore (to avoid -404
 		*  errors) is used as the connection ID.
 		*/
-		var curid = '_' + uuid.v4().replace( /\-/g, 's' );;
+		var curid = '_' + uuid.v4().replace( /\-/g, 's' );
 		ifx.run( stmtid, curid, [ 'sys%auth' ], function ( err, curid ) {
 
 			// check for errors
