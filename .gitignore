@@ -23,6 +23,7 @@ _steps/
 _temp/
 
 # temporary files
+tmp/
 *.swp
 *~
 
