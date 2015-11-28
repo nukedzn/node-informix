@@ -1,6 +1,6 @@
 
-#ifndef IFX_COMMON_H
-#define IFX_COMMON_H
+#ifndef IFX_TYPES_H
+#define IFX_TYPES_H
 
 #include <string>
 #include <map>
@@ -18,6 +18,8 @@ namespace ifx {
 
 	typedef std::map< std::string, stmt_t * > stmts_t;
 	typedef std::map< std::string, cursor_t * > cursors_t;
+
+	typedef std::list< char * > cursor_args_t;
 
 
 	struct conn_t {
@@ -43,7 +45,7 @@ namespace ifx {
 
 	struct cursor_t {
 		std::string id;
-		std::list< char * > args;
+		cursor_args_t args;
 		char * data;
 
 		stmt_t * stmt;
@@ -55,5 +57,5 @@ namespace ifx {
 
 } /* end of namespace ifx */
 
-#endif /* !IFX_COMMON_H */
+#endif /* !IFX_TYPES_H */
 

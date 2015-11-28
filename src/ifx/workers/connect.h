@@ -4,7 +4,7 @@
 
 #include <nan.h>
 
-#include "../common.h"
+#include "../types.h"
 
 
 namespace ifx {
