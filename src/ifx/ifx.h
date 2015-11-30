@@ -21,6 +21,7 @@ namespace ifx {
 		static void fetch( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void close( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void free( const Nan::FunctionCallbackInfo< v8::Value > &info );
+		static void disconnect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 
 
 	private:

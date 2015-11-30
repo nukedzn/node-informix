@@ -91,6 +91,15 @@ ifx.connect( {
 							}
 
 							console.log( '[', stmtid ,'] freed' );
+
+							// disconnect
+							ifx.disconnect( connid, function ( err, connid ) {
+								if ( err ) {
+									return console.log( 'Failed to disconnect', err );
+								}
+
+								console.log( '[', connid, '] disconnected' );
+							} );
 						} );
 					} );
 

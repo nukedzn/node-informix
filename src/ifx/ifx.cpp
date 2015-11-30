@@ -9,6 +9,7 @@
 #include "workers/stmtfree.h"
 #include "workers/fetch.h"
 #include "workers/cursorclose.h"
+#include "workers/disconnect.h"
 
 
 namespace ifx {
@@ -44,6 +45,7 @@ namespace ifx {
 		Nan::SetPrototypeMethod( tpl, "fetch", fetch );
 		Nan::SetPrototypeMethod( tpl, "close", close );
 		Nan::SetPrototypeMethod( tpl, "free", free );
+		Nan::SetPrototypeMethod( tpl, "disconnect", disconnect );
 
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
@@ -495,6 +497,51 @@ namespace ifx {
 		// schedule async worker
 		Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
 		Nan::AsyncQueueWorker( new ifx::workers::StmtFree( stmt, cb ) );
+
+
+		// return undefined
+		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::disconnect( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 2 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Connection ID must be a string" );
+		}
+
+		if (! info[1]->IsFunction() ) {
+			return Nan::ThrowTypeError( "Callback must be a function" );
+		}
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8connid( info[0] );
+		ifx::conn_t * conn = self->_conns[ *utf8connid ];
+		if (! conn ) {
+			return Nan::ThrowError( "Invalid connection ID" );
+		}
+
+		if ( conn->stmts.size() ) {
+			return Nan::ThrowError( "Statements must be freed" );
+		}
+
+
+		// FIXME: Deleting this here means we can't recover from any failures within
+		//        the async worker.
+		// update internal references
+		self->_conns.erase( conn->id );
+
+		// schedule async worker
+		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+		Nan::AsyncQueueWorker( new ifx::workers::Disconnect( conn, cb ) );
 
 
 		// return undefined

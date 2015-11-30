@@ -21,6 +21,7 @@
 				'src/module.cpp',
 				'src/ifx/ifx.cpp',
 				'src/ifx/workers/connect.cpp',
+				'src/ifx/workers/disconnect.cpp',
 				'src/ifx/workers/stmtprepare.cpp',
 				'src/ifx/workers/stmtexec.cpp',
 				'src/ifx/workers/stmtfree.cpp',
