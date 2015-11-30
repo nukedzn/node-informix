@@ -5,7 +5,7 @@
 #include "ifx.h"
 #include "workers/connect.h"
 #include "workers/stmtprepare.h"
-#include "workers/stmtrun.h"
+#include "workers/stmtexec.h"
 #include "workers/stmtfree.h"
 #include "workers/fetch.h"
 #include "workers/cursorclose.h"
@@ -40,7 +40,7 @@ namespace ifx {
 		// prototypes
 		Nan::SetPrototypeMethod( tpl, "connect", connect );
 		Nan::SetPrototypeMethod( tpl, "prepare", prepare );
-		Nan::SetPrototypeMethod( tpl, "run", run );
+		Nan::SetPrototypeMethod( tpl, "exec", exec );
 		Nan::SetPrototypeMethod( tpl, "fetch", fetch );
 		Nan::SetPrototypeMethod( tpl, "close", close );
 		Nan::SetPrototypeMethod( tpl, "free", free );
@@ -180,7 +180,7 @@ namespace ifx {
 	}
 
 
-	void Ifx::run( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+	void Ifx::exec( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
 		// basic validation
 		if ( info.Length() < 3 ) {
@@ -290,7 +290,7 @@ namespace ifx {
 
 		// schedule async worker
 		Nan::Callback * cb = new Nan::Callback( info[info.Length() - 1].As< v8::Function >() );
-		Nan::AsyncQueueWorker( new ifx::workers::StmtRun( cursor, cb ) );
+		Nan::AsyncQueueWorker( new ifx::workers::StmtExec( cursor, cb ) );
 
 
 		// return undefined

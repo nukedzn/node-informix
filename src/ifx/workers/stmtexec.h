@@ -1,6 +1,6 @@
 
-#ifndef IFX_WORKERS_STMTRUN_H
-#define IFX_WORKERS_STMTRUN_H
+#ifndef IFX_WORKERS_STMTEXEC_H
+#define IFX_WORKERS_STMTEXEC_H
 
 #include <nan.h>
 
@@ -10,11 +10,11 @@
 namespace ifx {
 namespace workers {
 
-	class StmtRun : public Nan::AsyncWorker {
+	class StmtExec : public Nan::AsyncWorker {
 	public:
 
-		StmtRun( ifx::cursor_t * cursor, Nan::Callback * cb );
-		virtual ~StmtRun();
+		StmtExec( ifx::cursor_t * cursor, Nan::Callback * cb );
+		virtual ~StmtExec();
 
 		void Execute();
 
@@ -33,5 +33,5 @@ namespace workers {
 } /* end of namespace workers */
 } /* end of namespace ifx */
 
-#endif /* !IFX_WORKERS_STMTRUN_H */
+#endif /* !IFX_WORKERS_STMTEXEC_H */
 

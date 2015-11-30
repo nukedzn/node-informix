@@ -13,7 +13,7 @@ public:
 
 	static int32_t connect( const char * connid, const char * database, const char * username = 0, const char * password = 0 );
 	static int32_t prepare( const char * stmtid, const char * stmtstr, ifx_sqlda_t * &insqlda, ifx_sqlda_t * &outsqlda );
-	static int32_t run( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda );
+	static int32_t exec( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda );
 	static int32_t fetch( const char * curid, ifx_sqlda_t * outsqlda );
 	static int32_t close( const char * curid );
 	static int32_t free( const char * stmtid );

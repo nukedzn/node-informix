@@ -17,7 +17,7 @@ namespace ifx {
 		static void construct( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void connect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void prepare( const Nan::FunctionCallbackInfo< v8::Value > &info );
-		static void run( const Nan::FunctionCallbackInfo< v8::Value > &info );
+		static void exec( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void fetch( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void close( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void free( const Nan::FunctionCallbackInfo< v8::Value > &info );

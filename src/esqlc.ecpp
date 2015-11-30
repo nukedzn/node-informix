@@ -54,7 +54,7 @@ int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * &i
 }
 
 
-int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
+int32_t esqlc::exec( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 

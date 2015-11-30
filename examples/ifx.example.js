@@ -2,7 +2,7 @@
 *
 *   ifx.example.js
 *
-*   Example of connecting to a database and running a prepared query using the
+*   Example of connecting to a database and executing a prepared query using the
 *   Node.js native binding directly.
 *
 */
@@ -46,16 +46,16 @@ ifx.connect( {
 		console.log( 'Statement prepared with ID:', stmtid );
 
 		/*
-		*  Run a prepared statement and open a cursor.
+		*  Execute a prepared statement and open a cursor.
 		*  A UUID v4 without dashes and prefixed with an underscore (to avoid -404
 		*  errors) is used as the connection ID.
 		*/
 		var curid = '_' + uuid.v4().replace( /\-/g, 's' );
-		ifx.run( stmtid, curid, [ 'sys%auth' ], function ( err, curid ) {
+		ifx.exec( stmtid, curid, [ 'sys%auth' ], function ( err, curid ) {
 
 			// check for errors
 			if ( err ) {
-				return console.log( 'Failed to run statmenet,', err );
+				return console.log( 'Failed to execute statmenet,', err );
 			}
 
 			console.log( 'Have a cursor with ID:', curid, ', for statement[', stmtid, ']' );
