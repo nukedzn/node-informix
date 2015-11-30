@@ -17,6 +17,7 @@ public:
 	static int32_t fetch( const char * curid, ifx_sqlda_t * outsqlda );
 	static int32_t close( const char * curid );
 	static int32_t free( const char * stmtid );
+	static int32_t disconnect( const char * connid );
 
 	static int32_t acquire( const char * connid );
 	static int32_t release( const char * connid );

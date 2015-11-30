@@ -128,6 +128,22 @@ int32_t esqlc::free( const char * stmtid ) {
 }
 
 
+int32_t esqlc::disconnect( const char * connid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_connid = connid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL disconnect :esql_connid;
+
+	return SQLCODE;
+
+}
+
+
 int32_t esqlc::acquire( const char * connid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
