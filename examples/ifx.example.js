@@ -51,7 +51,7 @@ ifx.connect( {
 		*  errors) is used as the connection ID.
 		*/
 		var curid = '_' + uuid.v4().replace( /\-/g, 's' );
-		ifx.exec( stmtid, curid, [ 'sys%auth' ], function ( err, curid ) {
+		ifx.exec( connid, stmtid, curid, [ 'sys%auth' ], function ( err, curid ) {
 
 			// check for errors
 			if ( err ) {
@@ -85,7 +85,7 @@ ifx.connect( {
 						console.log( '[', curid, '] closed' );
 
 						// free statement
-						ifx.free( stmtid, function ( err , stmtid ) {
+						ifx.free( connid, stmtid, function ( err , stmtid ) {
 							if ( err ) {
 								return console.log( 'Failed to free statement,', err );
 							}

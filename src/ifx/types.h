@@ -12,22 +12,16 @@
 namespace ifx {
 
 	// forward declarations
+	struct conn_t;
 	struct cursor_t;
 	struct stmt_t;
 
 
+	typedef std::map< std::string, conn_t * > conns_t;
 	typedef std::map< std::string, stmt_t * > stmts_t;
 	typedef std::map< std::string, cursor_t * > cursors_t;
 
 	typedef std::list< char * > cursor_args_t;
-
-
-	struct conn_t {
-		std::string id;
-		std::string database;
-		std::string username;
-		std::string password;
-	};
 
 
 	struct cursor_t {
@@ -39,7 +33,7 @@ namespace ifx {
 		ifx_sqlda_t * insqlda;
 		ifx_sqlda_t * outsqlda;
 
-		cursor_t() : data( 0 ), stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {};
+		cursor_t() : data( 0 ), stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {}
 		~cursor_t() {
 
 			for ( cursor_args_t::const_iterator it = args.begin(); it != args.end(); it++ ) {
@@ -63,15 +57,15 @@ namespace ifx {
 
 
 	struct stmt_t {
-		std::string connid;
 		std::string id;
 		std::string stmt;
 		cursors_t cursors;
 
+		conn_t * conn;
 		ifx_sqlda_t * insqlda;
 		ifx_sqlda_t * outsqlda;
 
-		stmt_t() : insqlda( 0 ), outsqlda( 0 ) {};
+		stmt_t() : conn( 0 ), insqlda( 0 ), outsqlda( 0 ) {}
 		~stmt_t() {
 
 			for ( cursors_t::iterator it = cursors.begin(); it != cursors.end(); it++ ) {
@@ -86,6 +80,22 @@ namespace ifx {
 				delete outsqlda;
 			}
 
+		}
+	};
+
+
+	struct conn_t {
+		std::string id;
+		std::string database;
+		std::string username;
+		std::string password;
+
+		stmts_t stmts;
+
+		~conn_t() {
+			for ( stmts_t::iterator it = stmts.begin(); it != stmts.end(); it++ ) {
+				delete it->second;
+			}
 		}
 	};
 

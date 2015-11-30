@@ -95,26 +95,46 @@ namespace ifx {
 		}
 
 
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		// check whether we already have a connection with the same ID
+		Nan::Utf8String utf8connid( params->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
+		ifx::conn_t * conn = self->_conns[ *utf8connid ];
+		if ( conn ) {
+			return Nan::ThrowError( "A connection with the same ID already exists" );
+		}
+
+
 		std::string username;
 		std::string password;
-		Nan::Utf8String id( params->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
-		Nan::Utf8String database( params->Get( Nan::New< v8::String >( "database" ).ToLocalChecked() ) );
+		Nan::Utf8String utf8database( params->Get( Nan::New< v8::String >( "database" ).ToLocalChecked() ) );
 		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
 
 		if ( params->Has( Nan::New< v8::String >( "username" ).ToLocalChecked() ) ) {
-			Nan::Utf8String user( params->Get( Nan::New< v8::String >( "username" ).ToLocalChecked() ) );
-			username = std::string( *user );
+			Nan::Utf8String utf8user( params->Get( Nan::New< v8::String >( "username" ).ToLocalChecked() ) );
+			username = std::string( *utf8user );
 		}
 
 		if ( params->Has( Nan::New< v8::String >( "password" ).ToLocalChecked() ) ) {
-			Nan::Utf8String pass( params->Get( Nan::New< v8::String >( "password" ).ToLocalChecked() ) );
-			password = std::string( *pass );
+			Nan::Utf8String utf8pass( params->Get( Nan::New< v8::String >( "password" ).ToLocalChecked() ) );
+			password = std::string( *utf8pass );
 		}
 
 
+		// prepare connection data structure
+		conn = new ifx::conn_t();
+		conn->id = *utf8connid;
+		conn->database = *utf8database;
+		conn->username = username;
+		conn->password = password;
+
+		// update internal reference
+		self->_conns[ conn->id ] = conn;
+
 		// schedule async connection worker
-		const ifx::conn_t conn = { *id, *database, username, password };
 		Nan::AsyncQueueWorker( new ifx::workers::Connect( conn, cb ) );
+
 
 		// return undefined
 		info.GetReturnValue().Set( Nan::Undefined() );
@@ -150,25 +170,31 @@ namespace ifx {
 		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
 
 		// grab JS arguments
-		Nan::Utf8String utf8conn ( info[0] );
-		Nan::Utf8String utf8sid ( info[1] );
+		Nan::Utf8String utf8connid ( info[0] );
+		Nan::Utf8String utf8stmtid ( info[1] );
 		Nan::Utf8String utf8stmt ( info[2] );
 		Nan::Callback * cb = new Nan::Callback( info[3].As< v8::Function >() );
 
+
+		ifx::conn_t * conn = self->_conns[ *utf8connid ];
+		if (! conn ) {
+			return Nan::ThrowError( "Invalid connection ID" );
+		}
+
 		// check whether we already have a prepared statement with the same ID
-		ifx::stmt_t * stmt = self->_stmts[ *utf8sid ];
+		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if ( stmt ) {
 			return Nan::ThrowError( "A Statement is already prepared with the same ID" );
 		}
 
 		// prepare statement data structures
 		stmt = new ifx::stmt_t();
-		stmt->connid = *utf8conn;
-		stmt->id = *utf8sid;
+		stmt->id = *utf8stmtid;
 		stmt->stmt = *utf8stmt;
+		stmt->conn = conn;
 
 		// update internal reference
-		self->_stmts[ stmt->id ] = stmt;
+		conn->stmts[ stmt->id ] = stmt;
 
 		// schedule async worker
 		Nan::AsyncQueueWorker( new ifx::workers::StmtPrepare( stmt, cb ) );
@@ -183,15 +209,19 @@ namespace ifx {
 	void Ifx::exec( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
 		// basic validation
-		if ( info.Length() < 3 ) {
+		if ( info.Length() < 4 ) {
 			return Nan::ThrowError( "Invalid number of arguments" );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string" );
 		}
 
 		if (! info[1]->IsString() ) {
+			return Nan::ThrowTypeError( "Statement ID must be a string" );
+		}
+
+		if (! info[2]->IsString() ) {
 			return Nan::ThrowTypeError( "Cursor ID must be a string" );
 		}
 
@@ -199,8 +229,8 @@ namespace ifx {
 			return Nan::ThrowTypeError( "Callback must be a function" );
 		}
 
-		if (! info[2]->IsFunction () ) {
-			if ( (! info[2]->IsString() ) && (! info[2]->IsArray() ) ) {
+		if (! info[3]->IsFunction () ) {
+			if ( (! info[3]->IsString() ) && (! info[3]->IsArray() ) ) {
 				return Nan::ThrowTypeError( "Statement args must be a string or an array" );
 			}
 		}
@@ -209,14 +239,19 @@ namespace ifx {
 		// unwrap ourself
 		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
 
-		Nan::Utf8String utf8stmtid( info[0] );
-		ifx::stmt_t * stmt = self->_stmts[ *utf8stmtid ];
+		Nan::Utf8String utf8connid( info[0] );
+		ifx::conn_t * conn = self->_conns[ *utf8connid ];
+		if (! conn ) {
+			return Nan::ThrowError( "Invalid connection ID" );
+		}
 
+		Nan::Utf8String utf8stmtid( info[1] );
+		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if (! stmt ) {
 			return Nan::ThrowError( "Invalid statement ID" );
 		}
 
-		Nan::Utf8String utf8curid( info[1] );
+		Nan::Utf8String utf8curid( info[2] );
 		if ( stmt->cursors[ *utf8curid ] || self->_cursors[ *utf8curid ] ) {
 			return Nan::ThrowError( "A cursor with the same ID already exists" );
 		}
@@ -226,16 +261,16 @@ namespace ifx {
 		ifx::cursor_t * cursor = new ifx::cursor_t();
 		ifx_sqlda_t * insqlda = 0;
 
-		if ( info.Length() > 3 ) {
+		if ( info.Length() > 4 ) {
 
 			insqlda = new ifx_sqlda_t();
 			std::memset( insqlda, 0, sizeof( ifx_sqlda_t ) );
 
 			// FIXME: can we get away with only using CSTRINGTYPE data?
 
-			if ( info[2]->IsString() ) {
+			if ( info[3]->IsString() ) {
 
-				Nan::Utf8String utf8arg( info[2] );
+				Nan::Utf8String utf8arg( info[3] );
 				size_t size = ( utf8arg.length() + 1 );
 				char * arg  = new char[ size ];
 
@@ -254,7 +289,7 @@ namespace ifx {
 			} else {
 
 				char * arg;
-				v8::Local< v8::Array > args = info[2].As< v8::Array >();
+				v8::Local< v8::Array > args = info[3].As< v8::Array >();
 
 				insqlda->sqld     = args->Length();
 				insqlda->sqlvar   = new ifx_sqlvar_t[ args->Length() ];
@@ -404,7 +439,7 @@ namespace ifx {
 		// FIXME: Deleting this here means we can't recover from any failures within
 		//        the async worker.
 		// update internal references
-		self->_cursors.erase( *utf8curid );
+		self->_cursors.erase( cursor->id );
 
 		// schedule async worker
 		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
@@ -420,15 +455,19 @@ namespace ifx {
 	void Ifx::free( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
 
 		// basic validation
-		if ( info.Length() != 2 ) {
+		if ( info.Length() != 3 ) {
 			return Nan::ThrowError( "Invalid number of arguments" );
 		}
 
 		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Connection ID must be a string" );
+		}
+
+		if (! info[1]->IsString() ) {
 			return Nan::ThrowTypeError( "Statement ID must be a string" );
 		}
 
-		if (! info[1]->IsFunction() ) {
+		if (! info[2]->IsFunction() ) {
 			return Nan::ThrowTypeError( "Callback must be a function" );
 		}
 
@@ -436,9 +475,14 @@ namespace ifx {
 		// unwrap ourself
 		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
 
-		Nan::Utf8String utf8stmtid( info[0] );
-		ifx::stmt_t * stmt = self->_stmts[ *utf8stmtid ];
+		Nan::Utf8String utf8connid( info[0] );
+		ifx::conn_t * conn = self->_conns[ *utf8connid ];
+		if (! conn ) {
+			return Nan::ThrowError( "Invalid connection ID" );
+		}
 
+		Nan::Utf8String utf8stmtid( info[1] );
+		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if (! stmt ) {
 			return Nan::ThrowError( "Invalid statement ID" );
 		}
@@ -447,13 +491,9 @@ namespace ifx {
 			return Nan::ThrowError( "Cursors need to be closed" );
 		}
 
-		// FIXME: Deleting this here means we can't recover from any failures within
-		//        the async worker.
-		// update internal references
-		self->_stmts.erase( *utf8stmtid );
 
 		// schedule async worker
-		Nan::Callback * cb = new Nan::Callback( info[1].As< v8::Function >() );
+		Nan::Callback * cb = new Nan::Callback( info[2].As< v8::Function >() );
 		Nan::AsyncQueueWorker( new ifx::workers::StmtFree( stmt, cb ) );
 
 
