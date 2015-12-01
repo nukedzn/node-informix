@@ -26,11 +26,21 @@ namespace workers {
 			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
 
-		// execute the statement (i.e. open a new cursor)
-		code = esqlc::exec(
-				_cursor->stmt->id.c_str(),
-				_cursor->id.c_str(),
-				_cursor->insqlda );
+
+		// execute the statement
+		if ( _cursor->stmt->type == 0 ) {
+			// this is a select statement, so execute and open a cursor
+			code = esqlc::exec(
+					_cursor->stmt->id.c_str(),
+					_cursor->id.c_str(),
+					_cursor->insqlda );
+		} else {
+			code = esqlc::exec(
+					_cursor->stmt->id.c_str(),
+					_cursor->insqlda,
+					&_cursor->serial );
+		}
+
 
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );

@@ -33,6 +33,8 @@ namespace ifx {
 		ifx_sqlda_t * insqlda;
 		ifx_sqlda_t * outsqlda;
 
+		int32_t serial;
+
 		cursor_t() : data( 0 ), stmt( 0 ), insqlda( 0 ), outsqlda( 0 ) {}
 		~cursor_t() {
 
@@ -59,6 +61,8 @@ namespace ifx {
 	struct stmt_t {
 		std::string id;
 		std::string stmt;
+		int32_t type;
+
 		cursors_t cursors;
 
 		conn_t * conn;
