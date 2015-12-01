@@ -297,6 +297,9 @@ namespace ifx {
 				insqlda->sqlvar   = new ifx_sqlvar_t[ args->Length() ];
 				insqlda->desc_occ = 0;
 
+				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
+
+
 				for ( uint32_t i = 0; i < args->Length(); i++ ) {
 
 					Nan::Utf8String utf8arg( args->Get( Nan::New< v8::Integer >( i ) ) );
@@ -306,7 +309,6 @@ namespace ifx {
 					std::strncpy( arg, *utf8arg, size );
 					cursor->args.push_back( arg );
 
-					std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
 					insqlda->sqlvar[i].sqltype = CSTRINGTYPE;
 					insqlda->sqlvar[i].sqllen  = size;
 					insqlda->sqlvar[i].sqldata = arg;
