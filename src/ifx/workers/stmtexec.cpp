@@ -1,33 +1,33 @@
 
-#include "stmtrun.h"
+#include "stmtexec.h"
 #include "../../esqlc.h"
 
 
 namespace ifx {
 namespace workers {
 
-	StmtRun::StmtRun( ifx::cursor_t * cursor, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _cursor( cursor ) {
+	StmtExec::StmtExec( ifx::cursor_t * cursor, Nan::Callback * cb ) : Nan::AsyncWorker( cb ), _cursor( cursor ) {
 		// constructor
 	}
 
 
-	StmtRun::~StmtRun() {
+	StmtExec::~StmtExec() {
 		// destructor
 	}
 
 
-	void StmtRun::Execute() {
+	void StmtExec::Execute() {
 
 		int32_t code = 0;
 
 		// acquire the connection for this thread
-		code = esqlc::acquire( _cursor->stmt->connid.c_str() );
+		code = esqlc::acquire( _cursor->stmt->conn->id.c_str() );
 		if ( code < 0 ) {
 			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
 
-		// run the statement (i.e. open a new cursor)
-		code = esqlc::run(
+		// execute the statement (i.e. open a new cursor)
+		code = esqlc::exec(
 				_cursor->stmt->id.c_str(),
 				_cursor->id.c_str(),
 				_cursor->insqlda );
@@ -37,12 +37,12 @@ namespace workers {
 		}
 
 		// release the connection
-		esqlc::release( _cursor->stmt->connid.c_str() );
+		esqlc::release( _cursor->stmt->conn->id.c_str() );
 
 	}
 
 
-	void StmtRun::HandleOKCallback() {
+	void StmtExec::HandleOKCallback() {
 
 		// stack-allocated handle scope
 		Nan::HandleScope scope;

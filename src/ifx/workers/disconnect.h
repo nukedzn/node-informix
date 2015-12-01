@@ -1,6 +1,6 @@
 
-#ifndef IFX_WORKERS_CONNECT_H
-#define IFX_WORKERS_CONNECT_H
+#ifndef IFX_WORKERS_DISCONNECT_H
+#define IFX_WORKERS_DISCONNECT_H
 
 #include <nan.h>
 
@@ -10,11 +10,11 @@
 namespace ifx {
 namespace workers {
 
-	class Connect : public Nan::AsyncWorker {
+	class Disconnect : public Nan::AsyncWorker {
 	public:
 
-		Connect( ifx::conn_t * conn, Nan::Callback * cb );
-		virtual ~Connect();
+		Disconnect( ifx::conn_t * conn, Nan::Callback * cb );
+		virtual ~Disconnect();
 
 		void Execute();
 
@@ -33,5 +33,5 @@ namespace workers {
 } /* end of namespace ifx::workers */
 } /* end of namespace ifx */
 
-#endif /* !IFX_WORKERS_CONNECT_H */
+#endif /* !IFX_WORKERS_DISCONNECT_H */
 

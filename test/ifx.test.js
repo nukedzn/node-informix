@@ -126,7 +126,7 @@ describe( 'ifx', function () {
 	} );
 
 
-	context( 'run', function () {
+	context( 'exec', function () {
 
 		var ifx    = new Ifx();
 		var connid = 'conn:id:4001';
@@ -153,7 +153,7 @@ describe( 'ifx', function () {
 
 		it( 'should be able to execute a prepared statement', function ( done ) {
 
-			ifx.run( stmtid, curid, 'sys%auth', function ( err, id ) {
+			ifx.exec( connid, stmtid, curid, 'sys%auth', function ( err, id ) {
 				expect( err ).to.be.null;
 				expect( id ).to.eql( curid );
 				done();
@@ -187,7 +187,7 @@ describe( 'ifx', function () {
 					ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
 						expect( err ).to.be.null;
 
-						ifx.run( stmtid, curid, 'sys%auth', function ( err, id ) {
+						ifx.exec( connid, stmtid, curid, 'sys%auth', function ( err, id ) {
 							done( err );
 						} );
 					} );
@@ -224,7 +224,7 @@ describe( 'ifx', function () {
 					ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
 						expect( err ).to.be.null;
 
-						ifx.run( stmtid, curid, 'sys%authxxxxxx', function ( err, id ) {
+						ifx.exec( connid, stmtid, curid, 'sys%authxxxxxx', function ( err, id ) {
 							done( err );
 						} );
 					} );

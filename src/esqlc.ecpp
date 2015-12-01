@@ -54,7 +54,7 @@ int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * &i
 }
 
 
-int32_t esqlc::run( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
+int32_t esqlc::exec( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
@@ -95,6 +95,23 @@ int32_t esqlc::fetch( const char * curid, ifx_sqlda_t * outsqlda ) {
 }
 
 
+int32_t esqlc::close( const char * curid ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_curid = curid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	EXEC SQL close :esql_curid;
+	EXEC SQL free :esql_curid;
+
+	return SQLCODE;
+
+}
+
+
 int32_t esqlc::free( const char * stmtid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
@@ -111,17 +128,16 @@ int32_t esqlc::free( const char * stmtid ) {
 }
 
 
-int32_t esqlc::close( const char * curid ) {
+int32_t esqlc::disconnect( const char * connid ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
 
-	const char * esql_curid = curid;
+	const char * esql_connid = connid;
 
 	EXEC SQL END DECLARE SECTION;
 
 
-	EXEC SQL close :esql_curid;
-	EXEC SQL free :esql_curid;
+	EXEC SQL disconnect :esql_connid;
 
 	return SQLCODE;
 

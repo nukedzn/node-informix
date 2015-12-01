@@ -13,14 +13,15 @@ namespace ifx {
 	public:
 
 		static void init( v8::Local< v8::Object > exports );
-
 		static void construct( const Nan::FunctionCallbackInfo< v8::Value > &info );
+
 		static void connect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void prepare( const Nan::FunctionCallbackInfo< v8::Value > &info );
-		static void run( const Nan::FunctionCallbackInfo< v8::Value > &info );
+		static void exec( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void fetch( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void close( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void free( const Nan::FunctionCallbackInfo< v8::Value > &info );
+		static void disconnect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 
 
 	private:
@@ -30,7 +31,7 @@ namespace ifx {
 
 		static Nan::Persistent< v8::Function > constructor;
 
-		ifx::stmts_t      _stmts;
+		ifx::conns_t      _conns;
 		ifx::cursors_t    _cursors;
 
 	};

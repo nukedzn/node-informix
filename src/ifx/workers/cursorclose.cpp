@@ -21,7 +21,7 @@ namespace workers {
 		int32_t code = 0;
 
 		// acquire the connection for this thread
-		code = esqlc::acquire( _cursor->stmt->connid.c_str() );
+		code = esqlc::acquire( _cursor->stmt->conn->id.c_str() );
 		if ( code < 0 ) {
 			return SetErrorMessage( esqlc::errmsg( code ).c_str() );
 		}
@@ -32,7 +32,7 @@ namespace workers {
 		}
 
 		// release the connection
-		esqlc::release( _cursor->stmt->connid.c_str() );
+		esqlc::release( _cursor->stmt->conn->id.c_str() );
 
 	}
 
