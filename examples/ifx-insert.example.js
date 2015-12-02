@@ -60,6 +60,7 @@ ifx.connect( {
 			}
 
 			console.log( 'Have a cursor with ID:', curid, ', for statement[', stmtid, ']' );
+			console.log( '[', curid, '] serial:', ifx.serial( curid ) );
 
 			// close cursor
 			ifx.close( curid, function ( err, curid ) {

@@ -70,7 +70,7 @@ int32_t esqlc::exec( const char * stmtid, ifx_sqlda_t * insqlda, int32_t * seria
 	}
 
 	if ( SQLCODE == 0 && serial ) {
-		serial = &sqlca.sqlerrd[1];
+		std::memcpy( serial, &sqlca.sqlerrd[1], sizeof( *serial ) );
 	}
 
 	return SQLCODE;

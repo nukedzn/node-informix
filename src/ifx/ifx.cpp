@@ -47,6 +47,9 @@ namespace ifx {
 		Nan::SetPrototypeMethod( tpl, "free", free );
 		Nan::SetPrototypeMethod( tpl, "disconnect", disconnect );
 
+		Nan::SetPrototypeMethod( tpl, "serial", serial );
+
+
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
 
@@ -548,6 +551,35 @@ namespace ifx {
 
 		// return undefined
 		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::serial( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 1 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8curid( info[0] );
+		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
+
+		if (! cursor ) {
+			return Nan::ThrowError( "Invalid cursor ID" );
+		}
+
+
+		// return serial
+		info.GetReturnValue().Set( Nan::New< v8::Int32 >( cursor->serial ) );
 
 	}
 
