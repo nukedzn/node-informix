@@ -47,6 +47,9 @@ namespace ifx {
 		Nan::SetPrototypeMethod( tpl, "free", free );
 		Nan::SetPrototypeMethod( tpl, "disconnect", disconnect );
 
+		Nan::SetPrototypeMethod( tpl, "serial", serial );
+
+
 		constructor.Reset( tpl->GetFunction() );
 		exports->Set( Nan::New( "Ifx" ).ToLocalChecked(), tpl->GetFunction() );
 
@@ -297,6 +300,9 @@ namespace ifx {
 				insqlda->sqlvar   = new ifx_sqlvar_t[ args->Length() ];
 				insqlda->desc_occ = 0;
 
+				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
+
+
 				for ( uint32_t i = 0; i < args->Length(); i++ ) {
 
 					Nan::Utf8String utf8arg( args->Get( Nan::New< v8::Integer >( i ) ) );
@@ -306,7 +312,6 @@ namespace ifx {
 					std::strncpy( arg, *utf8arg, size );
 					cursor->args.push_back( arg );
 
-					std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[ args->Length() ] ) );
 					insqlda->sqlvar[i].sqltype = CSTRINGTYPE;
 					insqlda->sqlvar[i].sqllen  = size;
 					insqlda->sqlvar[i].sqldata = arg;
@@ -546,6 +551,35 @@ namespace ifx {
 
 		// return undefined
 		info.GetReturnValue().Set( Nan::Undefined() );
+
+	}
+
+
+	void Ifx::serial( const Nan::FunctionCallbackInfo< v8::Value > &info ) {
+
+		// basic validation
+		if ( info.Length() != 1 ) {
+			return Nan::ThrowError( "Invalid number of arguments" );
+		}
+
+		if (! info[0]->IsString() ) {
+			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+		}
+
+
+		// unwrap ourself
+		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
+
+		Nan::Utf8String utf8curid( info[0] );
+		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
+
+		if (! cursor ) {
+			return Nan::ThrowError( "Invalid cursor ID" );
+		}
+
+
+		// return serial
+		info.GetReturnValue().Set( Nan::New< v8::Int32 >( cursor->serial ) );
 
 	}
 

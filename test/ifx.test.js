@@ -130,9 +130,6 @@ describe( 'ifx', function () {
 
 		var ifx    = new Ifx();
 		var connid = 'conn:id:4001';
-		var stmtid = 'statement_4001';
-		var curid  = 'cursor_4001';
-		var sql    = 'select tabname from systables where tabname like ?;';
 
 		before( function ( done ) {
 			ifx.connect( {
@@ -140,23 +137,53 @@ describe( 'ifx', function () {
 				database : 'test',
 				username : 'informix',
 				password : 'informix'
-			}, function ( err, conn ) {
-
-				expect( err ).to.be.null;
-				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
-					done( err );
-				} );
-
+			}, function ( err, connid ) {
+				done( err );
 			} );
 		} );
 
 
-		it( 'should be able to execute a prepared statement', function ( done ) {
+		context( 'when a select statement is prepared', function () {
 
-			ifx.exec( connid, stmtid, curid, 'sys%auth', function ( err, id ) {
-				expect( err ).to.be.null;
-				expect( id ).to.eql( curid );
-				done();
+			var stmtid = 'statement_4001';
+			var curid  = 'cursor_4001';
+			var sql    = 'select tabname from systables where tabname like ?;';
+
+			before( function ( done ) {
+				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+					done( err );
+				} );
+			} );
+
+			it( 'should be able to execute the prepared statement', function ( done ) {
+				ifx.exec( connid, stmtid, curid, 'sys%auth', function ( err, id ) {
+					expect( err ).to.be.null;
+					expect( id ).to.eql( curid );
+					done();
+				} );
+			} );
+
+		} );
+
+
+		context( 'when an insert statement is prepared', function () {
+
+			var stmtid = 'statement_4002';
+			var curid  = 'cursor_4002';
+			var sql    = 'insert into customers( fname, lname ) values( ?, ? );';
+
+			before( function ( done ) {
+				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+					done( err );
+				} );
+			} );
+
+			it( 'should be able to execute the prepared statement', function ( done ) {
+				ifx.exec( connid, stmtid, curid, [ 'First', 'Last' ], function ( err, id ) {
+					expect( err ).to.be.null;
+					expect( id ).to.eql( curid );
+					done();
+				} );
 			} );
 
 		} );

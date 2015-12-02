@@ -37,6 +37,9 @@ namespace workers {
 
 		if ( code < 0 ) {
 			SetErrorMessage( esqlc::errmsg( code ).c_str() );
+		} else {
+			// 0 or a positive code represents the type of statement
+			_stmt->type = code;
 		}
 
 		// release the connection

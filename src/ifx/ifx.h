@@ -23,6 +23,8 @@ namespace ifx {
 		static void free( const Nan::FunctionCallbackInfo< v8::Value > &info );
 		static void disconnect( const Nan::FunctionCallbackInfo< v8::Value > &info );
 
+		static void serial( const Nan::FunctionCallbackInfo< v8::Value > &info );
+
 
 	private:
 

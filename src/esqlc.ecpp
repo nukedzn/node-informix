@@ -54,6 +54,30 @@ int32_t esqlc::prepare( const char * stmtid, const char * stmt, ifx_sqlda_t * &i
 }
 
 
+int32_t esqlc::exec( const char * stmtid, ifx_sqlda_t * insqlda, int32_t * serial ) {
+
+	EXEC SQL BEGIN DECLARE SECTION;
+
+	const char * esql_stmtid = stmtid;
+
+	EXEC SQL END DECLARE SECTION;
+
+
+	if ( insqlda ) {
+		EXEC SQL execute :esql_stmtid using descriptor insqlda;
+	} else {
+		EXEC SQL execute :esql_stmtid;
+	}
+
+	if ( SQLCODE == 0 && serial ) {
+		std::memcpy( serial, &sqlca.sqlerrd[1], sizeof( *serial ) );
+	}
+
+	return SQLCODE;
+
+}
+
+
 int32_t esqlc::exec( const char * stmtid, const char * curid, ifx_sqlda_t * insqlda ) {
 
 	EXEC SQL BEGIN DECLARE SECTION;
