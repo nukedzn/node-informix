@@ -188,6 +188,52 @@ describe( 'ifx', function () {
 
 		} );
 
+
+		context( 'when an execute procedure statement is prepared which returns a value', function () {
+
+			var stmtid = 'statement_4003';
+			var curid  = 'cursor_4003';
+			var sql    = 'execute procedure pinscustomer( ?, ? );';
+
+			before( function ( done ) {
+				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+					done( err );
+				} );
+			} );
+
+			it( 'should be able to execute the prepared statement', function ( done ) {
+				ifx.exec( connid, stmtid, curid, [ 'First', 'Last' ], function ( err, id ) {
+					expect( err ).to.be.null;
+					expect( id ).to.eql( curid );
+					done();
+				} );
+			} );
+
+		} );
+
+
+		context( 'when an execute procedure statement is prepared which does not return any values', function () {
+
+			var stmtid = 'statement_4004';
+			var curid  = 'cursor_4004';
+			var sql    = 'execute procedure ppurgecustomers();';
+
+			before( function ( done ) {
+				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
+					done( err );
+				} );
+			} );
+
+			it( 'should be able to execute the prepared statement', function ( done ) {
+				ifx.exec( connid, stmtid, curid, function ( err, id ) {
+					expect( err ).to.be.null;
+					expect( id ).to.eql( curid );
+					done();
+				} );
+			} );
+
+		} );
+
 	} );
 
 
