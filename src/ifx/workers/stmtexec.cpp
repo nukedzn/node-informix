@@ -1,4 +1,6 @@
 
+#include <sqlstype.h>
+
 #include "stmtexec.h"
 #include "../../esqlc.h"
 
@@ -28,12 +30,19 @@ namespace workers {
 
 
 		// execute the statement
-		if ( _cursor->stmt->type == 0 ) {
-			// this is a select statement, so execute and open a cursor
+		if ( ( _cursor->stmt->type == 0 )
+			|| ( ( _cursor->stmt->type == SQ_EXECPROC )
+				&& ( _cursor->stmt->outsqlda )
+				&& ( _cursor->stmt->outsqlda->sqld > 0 ) )
+			) {
+
+			// this is a select statement or an execute procedure which returns
+			// data, so execute and open a cursor
 			code = esqlc::exec(
 					_cursor->stmt->id.c_str(),
 					_cursor->id.c_str(),
 					_cursor->insqlda );
+
 		} else {
 			code = esqlc::exec(
 					_cursor->stmt->id.c_str(),
