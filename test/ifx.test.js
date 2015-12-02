@@ -170,7 +170,7 @@ describe( 'ifx', function () {
 
 			var stmtid = 'statement_4002';
 			var curid  = 'cursor_4002';
-			var sql    = 'insert into customers( fname, lname ) values( ?, ? );';
+			var sql    = 'insert into tcustomers( fname, lname ) values( ?, ? );';
 
 			before( function ( done ) {
 				ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {

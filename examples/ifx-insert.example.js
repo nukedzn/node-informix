@@ -34,7 +34,7 @@ ifx.connect( {
 	*  an underscore to avoid -481 errors). Using a sha256 hash helps to ensure
 	*  we don't try to prepare the same statmement twice.
 	*/
-	var sql    = 'insert into customers( fname, lname ) values( ?, ? );';
+	var sql    = 'insert into tcustomers( fname, lname ) values( ?, ? );';
 	var stmtid = '_' + crypto.createHash( 'sha256' ).update( sql ).digest( 'hex' );
 	ifx.prepare( connid, stmtid, sql, function ( err, stmtid ) {
 
