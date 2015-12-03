@@ -1,4 +1,6 @@
 
+#include <sqltypes.h>
+
 #include "fetch.h"
 #include "../../esqlc.h"
 
@@ -62,7 +64,13 @@ namespace workers {
 		v8::Local< v8::Array > result = Nan::New< v8::Array >( _cursor->outsqlda->sqld );
 		ifx_sqlvar_t * sqlvar = _cursor->outsqlda->sqlvar;
 		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
-			result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( sqlvar->sqldata ).ToLocalChecked() );
+			// FIXME: data conversions
+			if ( sqlvar->sqltype == SQLINT ) {
+				result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
+			} else {
+				result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( sqlvar->sqldata ).ToLocalChecked() );
+			}
+
 			sqlvar++;
 		}
 
