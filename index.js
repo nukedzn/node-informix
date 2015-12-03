@@ -1,8 +1,20 @@
 
 'use strict';
 
-var Ifx = require( 'bindings' )( 'ifx' ).Ifx;
-var ifx = new Ifx();
+/**
+*   A node.js native client for IBM Informix.
+*   @module informix
+*/
 
-module.exports = ifx;
+var Informix = require( 'lib/informix' );
+
+
+/**
+*   Initialise a new {@link Informix} instance
+*
+*   @param {object} opts - Options
+*/
+module.exports = function( opts ) {
+	return new Informix( opts );
+};
 
