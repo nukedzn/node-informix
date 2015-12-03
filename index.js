@@ -6,7 +6,7 @@
 *   @module informix
 */
 
-var Informix = require( 'lib/informix' );
+var Informix = require( './lib/informix' );
 
 
 /**
