@@ -38,7 +38,7 @@ describe( 'lib/Cursor', function () {
 				.then( function ( c ) {
 					expect( c ).to.be.an.instanceof( Cursor );
 					cursor = c;
-				} )
+				} );
 		} );
 
 
@@ -58,7 +58,7 @@ describe( 'lib/Cursor', function () {
 					expect( results ).to.have.length.of.at.least( 4 );
 					expect( results[0] ).to.be.an( 'array' )
 						.with.length( 1 );
-				} )
+				} );
 		} );
 
 	} );
