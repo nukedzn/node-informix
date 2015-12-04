@@ -21,7 +21,7 @@ build:
     - script:
       name: npm install
       code: |
-         npm install -g jshint
+         npm install -g jshint codecov coveralls
          npm install --unsafe-perm
 
     - script:
@@ -43,4 +43,9 @@ build:
       name: coveralls.io
       code: |
         INFORMIXSERVER=ol_informix1210 npm run coveralls
+
+    - script:
+      name: codecov.io
+      code: |
+        INFORMIXSERVER=ol_informix1210 npm run codecov
 

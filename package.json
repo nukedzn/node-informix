@@ -5,10 +5,14 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
+    "codecov": "codecov",
     "coverage": "istanbul cover _mocha -- --reporter spec",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- --reporter spec && cat ./coverage/lcov.info | coveralls",
+    "coverage:lcovonly": "istanbul cover _mocha --report lcovonly -- --reporter spec",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "docs": "jsdoc -c jsdoc-conf.json ./README.md",
     "lint": "jshint index.js examples lib test",
+    "precodecov": "npm run coverage:lcovonly",
+    "precoveralls": "npm run coverage:lcovonly",
     "test": "mocha"
   },
   "files": [
@@ -25,7 +29,6 @@
   "repository": "nukedzn/node-informix",
   "dependencies": {
     "bindings": "^1.2.1",
-    "coveralls": "^2.11.4",
     "nan": "^2.1.0",
     "uuid": "^2.0.1"
   },
