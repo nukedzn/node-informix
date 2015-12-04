@@ -2,7 +2,7 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
-var Ifx    = require( 'bindings' )( 'ifx' ).Ifx;
+var Ifx    = require( '../' ).Ifx;
 
 var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
