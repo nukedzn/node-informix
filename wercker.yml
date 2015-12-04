@@ -39,3 +39,8 @@ build:
       code: |
         INFORMIXSERVER=ol_informix1210 npm test
 
+    - script:
+      name: coveralls.io
+      code: |
+        INFORMIXSERVER=ol_informix1210 npm run coveralls
+

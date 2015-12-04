@@ -5,6 +5,7 @@ node-informix
 
 [![npm version](https://img.shields.io/npm/v/informix.svg)](https://www.npmjs.com/package/informix)
 [![wercker status](https://app.wercker.com/status/6f7f1a8246881c3d98acec4875280c54/s "wercker status")](https://app.wercker.com/project/bykey/6f7f1a8246881c3d98acec4875280c54)
+[![Coverage Status](https://coveralls.io/repos/nukedzn/node-informix/badge.svg?branch=master&service=github)](https://coveralls.io/github/nukedzn/node-informix?branch=master)
 [![Dependency Status](https://david-dm.org/nukedzn/node-informix.svg)](https://david-dm.org/nukedzn/node-informix)
 [![devDependency Status](https://david-dm.org/nukedzn/node-informix/dev-status.svg)](https://david-dm.org/nukedzn/node-informix#info=devDependencies)
 

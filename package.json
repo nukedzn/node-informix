@@ -5,6 +5,8 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
+    "coverage": "istanbul cover _mocha -- --reporter spec",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- --reporter spec && cat ./coverage/lcov.info | coveralls",
     "docs": "jsdoc -c jsdoc-conf.json ./README.md",
     "lint": "jshint index.js examples lib test",
     "test": "mocha"
@@ -23,11 +25,13 @@
   "repository": "nukedzn/node-informix",
   "dependencies": {
     "bindings": "^1.2.1",
+    "coveralls": "^2.11.4",
     "nan": "^2.1.0",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "istanbul": "^0.4.1",
     "mocha": "^2.3.3"
   }
 }
