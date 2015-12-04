@@ -19,6 +19,12 @@ build:
         echo "npm: v$(npm --version)"
 
     - script:
+      name: apt-get install
+      code: |
+         apt-get update
+         apt-get install -y --no-install-recommends git
+
+    - script:
       name: npm install
       code: |
          npm install -g jshint codecov coveralls
