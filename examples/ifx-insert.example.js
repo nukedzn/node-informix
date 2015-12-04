@@ -9,7 +9,7 @@
 
 'use strict';
 
-var Ifx    = require( 'bindings' )( 'ifx' ).Ifx;
+var Ifx    = require( '../' ).Ifx;
 var uuid   = require( 'uuid' );
 var crypto = require( 'crypto' );
 var ifx    = new Ifx();
