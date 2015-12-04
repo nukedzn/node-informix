@@ -12,14 +12,12 @@ describe( 'ifx', function () {
 
 		var ifx = new Ifx();
 
-		/**
-		*   Note: This test assumes the default user doesn't have permissions
-		*         to connect to the database.
-		*/
 		it( 'should handle connection errors', function ( done ) {
 			ifx.connect( {
+				id : 'conn:id:1001',
 				database : 'test',
-				id : 'conn:id:1001'
+				username : 'dummy',
+				password : 'dummy',
 			}, function ( err, conn ) {
 				expect( err ).to.be.an.instanceof( Error );
 				expect( err.message ).to.be.string( '[-951] Incorrect password or user %s is not known on the database server.' );
