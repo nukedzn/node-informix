@@ -5,7 +5,14 @@
   "main": "index.js",
   "gypfile": true,
   "scripts": {
-    "lint": "jshint index.js examples test",
+    "codecov": "codecov",
+    "coverage": "istanbul cover _mocha -- --reporter spec",
+    "coverage:lcovonly": "istanbul cover _mocha --report lcovonly -- --reporter spec",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "docs": "jsdoc -c jsdoc-conf.json ./README.md",
+    "lint": "jshint index.js examples lib test",
+    "precodecov": "npm run coverage:lcovonly",
+    "precoveralls": "npm run coverage:lcovonly",
     "test": "mocha"
   },
   "files": [
@@ -27,6 +34,7 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "istanbul": "^0.4.1",
     "mocha": "^2.3.3"
   }
 }

@@ -13,20 +13,21 @@ build:
         echo "ol_informix1210 onsoctcp ${INFORMIX_PORT_9088_TCP_ADDR} 9088" > ${INFORMIXDIR}/etc/sqlhosts
 
     - script:
-      name: setup db
-      code: |
-        /bin/bash ${WERCKER_SOURCE_DIR}/test/support/setup-db.sh ${WERCKER_SOURCE_DIR}/test/support/test-db.sql
-
-    - script:
       name: echo versions
       code: |
         echo "node: $(node --version)"
         echo "npm: v$(npm --version)"
 
     - script:
+      name: apt-get install
+      code: |
+         apt-get update
+         apt-get install -y --no-install-recommends git
+
+    - script:
       name: npm install
       code: |
-         npm install -g jshint
+         npm install -g jshint codecov coveralls
          npm install --unsafe-perm
 
     - script:
@@ -35,7 +36,22 @@ build:
         npm run lint
 
     - script:
+      name: setup db
+      code: |
+        /bin/bash ${WERCKER_SOURCE_DIR}/test/support/setup-db.sh ${WERCKER_SOURCE_DIR}/test/support/test-db.sql
+
+    - script:
       name: npm test
       code: |
         INFORMIXSERVER=ol_informix1210 npm test
+
+    - script:
+      name: coveralls.io
+      code: |
+        INFORMIXSERVER=ol_informix1210 npm run coveralls
+
+    - script:
+      name: codecov.io
+      code: |
+        INFORMIXSERVER=ol_informix1210 npm run codecov
 

@@ -234,12 +234,6 @@ namespace ifx {
 			return Nan::ThrowTypeError( "Callback must be a function" );
 		}
 
-		if (! info[3]->IsFunction () ) {
-			if ( (! info[3]->IsString() ) && (! info[3]->IsArray() ) ) {
-				return Nan::ThrowTypeError( "Statement args must be a string or an array" );
-			}
-		}
-
 
 		// unwrap ourself
 		Ifx * self = ObjectWrap::Unwrap< Ifx >( info.Holder() );
@@ -273,25 +267,7 @@ namespace ifx {
 
 			// FIXME: can we get away with only using CSTRINGTYPE data?
 
-			if ( info[3]->IsString() ) {
-
-				Nan::Utf8String utf8arg( info[3] );
-				size_t size = ( utf8arg.length() + 1 );
-				char * arg  = new char[ size ];
-
-				std::strncpy( arg, *utf8arg, size );
-				cursor->args.push_back( arg );
-
-				insqlda->sqld     = 1;
-				insqlda->sqlvar   = new ifx_sqlvar_t[1];
-				insqlda->desc_occ = 0;
-
-				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[1] ) );
-				insqlda->sqlvar[0].sqltype = CSTRINGTYPE;
-				insqlda->sqlvar[0].sqllen  = size;
-				insqlda->sqlvar[0].sqldata = arg;
-
-			} else {
+			if ( info[3]->IsArray() ) {
 
 				char * arg;
 				v8::Local< v8::Array > args = info[3].As< v8::Array >();
@@ -317,6 +293,24 @@ namespace ifx {
 					insqlda->sqlvar[i].sqldata = arg;
 
 				}
+
+			} else {
+
+				Nan::Utf8String utf8arg( info[3] );
+				size_t size = ( utf8arg.length() + 1 );
+				char * arg  = new char[ size ];
+
+				std::strncpy( arg, *utf8arg, size );
+				cursor->args.push_back( arg );
+
+				insqlda->sqld     = 1;
+				insqlda->sqlvar   = new ifx_sqlvar_t[1];
+				insqlda->desc_occ = 0;
+
+				std::memset( insqlda->sqlvar, 0, sizeof( ifx_sqlvar_t[1] ) );
+				insqlda->sqlvar[0].sqltype = CSTRINGTYPE;
+				insqlda->sqlvar[0].sqllen  = size;
+				insqlda->sqlvar[0].sqldata = arg;
 
 			}
 		}
