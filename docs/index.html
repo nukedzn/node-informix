@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>node-informix</h1><p><a href="https://gitter.im/nukedzn/node-informix?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/nukedzn/node-informix"></a></p>
+<p><a href="https://www.npmjs.com/package/informix"><img src="https://img.shields.io/npm/v/informix.svg" alt="npm version"></a>
+<a href="https://app.wercker.com/project/bykey/6f7f1a8246881c3d98acec4875280c54"><img src="https://app.wercker.com/status/6f7f1a8246881c3d98acec4875280c54/s/master" alt="wercker status" title="wercker status"></a>
+<a href="https://codecov.io/github/nukedzn/node-informix?branch=master"><img src="https://codecov.io/github/nukedzn/node-informix/coverage.svg?branch=master" alt="codecov.io"></a>
+<a href="https://coveralls.io/github/nukedzn/node-informix?branch=master"><img src="https://coveralls.io/repos/nukedzn/node-informix/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a>
+<a href="https://david-dm.org/nukedzn/node-informix"><img src="https://david-dm.org/nukedzn/node-informix.svg" alt="Dependency Status"></a>
+<a href="https://david-dm.org/nukedzn/node-informix#info=devDependencies"><img src="https://david-dm.org/nukedzn/node-informix/dev-status.svg" alt="devDependency Status"></a></p>
+<p>A node.js native client for IBM Informix.</p>
+<h2>Dependencies</h2><ul>
+<li><a href="http://www-03.ibm.com/software/products/en/esqlc">IBM Informix ESQL/C</a> which
+can be installed using <a href="http://www-03.ibm.com/software/products/en/csdk">IBM Informix CSDK</a>.</li>
+<li>A compiler with C++11 standards support (e.g. <code>g++ v4.8</code>).</li>
+</ul>
+<h3>Environment variables</h3><ul>
+<li><a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_264.htm">INFORMIXDIR</a> -
+(e.g. <code>INFORMIXDIR=/opt/informix</code>)</li>
+<li><a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_266.htm">INFORMIXSERVER</a> -
+(e.g. <code>INFORMIXSERVER=ol_informix1210</code>)</li>
+<li><a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_268.htm">INFORMIXSQLHOSTS</a></li>
+<li><code>PATH</code> to include <code>${INFORMIXDIR}/bin</code> - (e.g. <code>export PATH=&quot;${INFORMIXDIR}/bin:${PATH}&quot;</code>)</li>
+<li><code>LD_LIBRARY_PATH</code> (or <code>DYLD_LIBRARY_PATH</code> on OSX) pointing to ESQL/C shared libraries -
+(e.g. <code>export LD_LIBRARY_PATH=&quot;${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}&quot;</code>)</li>
+</ul>
+<h3>Debian/Ubuntu</h3><p>You'll need to patch <code>${INFORMIXDIR}/bin/esql</code> on Debian based systems.
+e.g.</p>
+<pre class="prettyprint source lang-bash"><code>$ cat esql-4.10.debian.patch | patch ${INFORMIXDIR}/bin/esql</code></pre><h2>Installation</h2><pre class="prettyprint source lang-bash"><code>$ npm install --save informix</code></pre><h2>Usage</h2><pre class="prettyprint source lang-js"><code>var opts = {
+    database : 'test@ol_informix1210',
+    username : 'rockstar',
+    password : 'secret'
+};
+
+var informix = require( 'informix' )( opts );</code></pre><pre class="prettyprint source lang-js"><code>var Informix = require( 'informix' ).Informix;
+var informix = new Informix( { database : 'test@ol_informix1210' } );</code></pre><pre class="prettyprint source lang-js"><code>informix
+    .query( &quot;select tabname from systables where tabname like 'sys%auth';&quot; )
+    .then( function ( cursor ) {
+        return cursor.fetchAll();
+    } )
+    .then( function ( results ) {
+        console.log( 'results:', results );
+    } );</code></pre><h2>API Documentation</h2><p>JSDoc generated API documentation can be found at <a href="http://nukedzn.github.io/node-informix/docs/">http://nukedzn.github.io/node-informix/docs/</a>.</p>
+<h2>Contributing</h2><p>Contributions are welcome through GitHub pull requests (<a href="https://help.github.com/articles/using-pull-requests/#fork--pull">using fork &amp; pull model</a>).</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Statement.html">Statement</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Dec 05 2015 21:35:57 GMT+0000 (GMT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
