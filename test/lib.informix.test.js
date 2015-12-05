@@ -3,26 +3,22 @@
 
 var expect = require( 'chai' ).expect;
 
-var Informix = require( '../lib/informix' );
+var Informix   = require( '../lib/informix' );
 var Connection = require( '../lib/connection' );
+var Cursor     = require( '../lib/cursor' );
 
 
 describe( 'lib/Informix', function () {
 
-	var informix = {};
-
-	beforeEach( function () {
-		var opts = {
-			database : 'test@ol_informix1210',
-			username : 'informix',
-			password : 'informix'
-		};
-
-		informix = new Informix( opts );
-	} );
+	var opts = {
+		database : 'test@ol_informix1210',
+		username : 'informix',
+		password : 'informix'
+	};
 
 
 	it( 'should be able to connect to a database', function () {
+		var informix = new Informix( opts );
 		return informix.connect()
 			.then( function ( conn ) {
 				expect( conn ).to.be.an.instanceof( Connection );
@@ -37,9 +33,9 @@ describe( 'lib/Informix', function () {
 		};
 
 		it( 'should emit an error object', function ( done ) {
-			var ifx = new Informix( opts );
+			var informix = new Informix( opts );
 
-			ifx.on( 'error', function ( err ) {
+			informix.on( 'error', function ( err ) {
 				try {
 					expect( err ).to.be.an.instanceof( Error );
 				} catch ( e ) {
@@ -49,7 +45,7 @@ describe( 'lib/Informix', function () {
 				done();
 			} );
 
-			ifx.connect()
+			informix.connect()
 				.then( function ( conn ) {
 					done( new Error( 'Expected the connection to fail, but it did not!!!' ) );
 				} );
@@ -60,14 +56,16 @@ describe( 'lib/Informix', function () {
 
 	context( 'when connected to a database', function () {
 
+		var informix = new Informix( opts );
 		before( function () {
 			return informix.connect();
 		} );
 
 		it( 'should be able to run a query', function () {
 			return informix.query( 'select first 1 * from tcustomers;' )
-				.catch( function ( err ) {
-					expect( err ).to.be.an.instanceof( Error );
+				.then( function ( cursor ) {
+					expect( cursor ).to.be.an.instanceof( Cursor );
+					return cursor.close();
 				} );
 		} );
 

@@ -256,11 +256,11 @@ namespace ifx {
 		*  arguments here rather than relying on ESQL/C.
 		*/
 		if ( ( stmt->insqlda && stmt->insqlda->sqld > 0 ) && info.Length() < 5 ) {
-			return Nan::ThrowError( "This statment requires input parameters." );
+			return Nan::ThrowError( "This statment requires input arguments." );
 		}
 
 		if ( (! stmt->insqlda ) && info.Length() > 4 ) {
-			return Nan::ThrowError( "This statment does not expect any input parameters." );
+			return Nan::ThrowError( "This statment does not expect any input arguments." );
 		}
 
 		Nan::Utf8String utf8curid( info[2] );
