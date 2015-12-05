@@ -25,6 +25,16 @@ describe( 'lib/Informix', function () {
 			} );
 	} );
 
+	it( 'should use lazy auto connect', function () {
+		var informix = new Informix( opts );
+		expect( informix._$ ).to.not.to.have.property( 'conn' );
+
+		return informix.query( 'select count(*) from tcustomers;' )
+			.then( function ( cursor ) {
+				expect( informix._$.conn ).to.be.an.instanceof( Connection );
+			} );
+	} );
+
 
 	context( 'when a connection fails', function () {
 
@@ -48,6 +58,31 @@ describe( 'lib/Informix', function () {
 			informix.connect()
 				.then( function ( conn ) {
 					done( new Error( 'Expected the connection to fail, but it did not!!!' ) );
+				} );
+		} );
+
+		it( 'should emit an error object on auto connect', function ( done ) {
+			var informix = new Informix( opts );
+			informix.connect()
+				.then( function ( conn ) {
+					done( new Error( 'Expected the connection to fail, but it did not!!!' ) );
+				} )
+				.catch( function ( err ) {
+
+					informix.on( 'error', function ( err ) {
+						try {
+							expect( err ).to.be.an.instanceof( Error );
+						} catch ( e ) {
+							return done( e );
+						}
+
+						done();
+					} );
+
+					informix.query( 'select count(*) from tcustomers;' )
+						.then( function ( cursor ) {
+							done( new Error( 'Expected to fail, but it did not!!!' ) );
+						} );
 				} );
 		} );
 
