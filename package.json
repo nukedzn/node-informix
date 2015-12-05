@@ -17,6 +17,7 @@
   },
   "files": [
     "gyp",
+    "lib",
     "src",
     "binding.gyp",
     "index.js"
