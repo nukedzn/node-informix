@@ -250,11 +250,6 @@ namespace ifx {
 			return Nan::ThrowError( "Invalid statement ID." );
 		}
 
-		Nan::Utf8String utf8curid( info[2] );
-		if ( stmt->cursors[ *utf8curid ] || self->_cursors[ *utf8curid ] ) {
-			return Nan::ThrowError( "A cursor with the same ID already exists." );
-		}
-
 		/*
 		*  ESQL/C has this bad habit of reusing last closed cursor's input ifx_sqlda_t
 		*  (insqda) if the cursor is closed and freed. So we have to check input
@@ -262,6 +257,15 @@ namespace ifx {
 		*/
 		if ( ( stmt->insqlda && stmt->insqlda->sqld > 0 ) && info.Length() < 5 ) {
 			return Nan::ThrowError( "This statment requires input parameters." );
+		}
+
+		if ( (! stmt->insqlda ) && info.Length() > 4 ) {
+			return Nan::ThrowError( "This statment does not expect any input parameters." );
+		}
+
+		Nan::Utf8String utf8curid( info[2] );
+		if ( stmt->cursors[ *utf8curid ] || self->_cursors[ *utf8curid ] ) {
+			return Nan::ThrowError( "A cursor with the same ID already exists." );
 		}
 
 
