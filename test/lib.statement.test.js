@@ -25,7 +25,7 @@ describe( 'lib/Statement', function () {
 
 	it( 'should be able to prepare a statement', function () {
 		var sql  = 'select tabname from systables where tabname like ?;';
-		var stmt = new Statement( ifx, conn.id() );
+		var stmt = new Statement( ifx, conn );
 		return stmt.prepare( sql )
 			.then( function ( stmt ) {
 				expect( stmt ).to.be.an.instanceof( Statement );
@@ -35,7 +35,7 @@ describe( 'lib/Statement', function () {
 
 	context( 'when preparing a statement', function () {
 
-		var stmt = new Statement( ifx, conn.id() );
+		var stmt = new Statement( ifx, conn );
 
 		it( 'should reject the promise on syntax errors', function () {
 			return stmt.prepare( 'select something;' )
@@ -52,7 +52,7 @@ describe( 'lib/Statement', function () {
 
 	context( 'when a statement is prepared which has input arguments', function () {
 
-		var stmt = new Statement( ifx, conn.id() );
+		var stmt = new Statement( ifx, conn );
 		before( function () {
 			var sql = 'select * from tcustomers where id < ?;';
 			return stmt.prepare( sql );
@@ -83,7 +83,7 @@ describe( 'lib/Statement', function () {
 
 	context( 'when a statement is prepared which does not have any input arguments', function () {
 
-		var stmt = new Statement( ifx, conn.id() );
+		var stmt = new Statement( ifx, conn );
 		before( function () {
 			var sql = 'select * from tcustomers where id < 3;';
 			return stmt.prepare( sql );

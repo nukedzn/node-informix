@@ -13,7 +13,7 @@ describe( 'lib/Cursor', function () {
 
 	var ifx  = new Ifx();
 	var conn = new Connection( ifx );
-	var stmt = new Statement( ifx, conn.id() );
+	var stmt = new Statement( ifx, conn );
 
 	before( function () {
 		return conn.connect( {
