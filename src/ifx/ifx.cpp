@@ -79,15 +79,15 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 2 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsObject() ) {
-			return Nan::ThrowTypeError( "Connection parameters must be an object" );
+			return Nan::ThrowTypeError( "Connection parameters must be an object." );
 		}
 
 		if (! info[1]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -96,7 +96,7 @@ namespace ifx {
 		// validate mandatory connection params
 		if ( (! params->Has( Nan::New< v8::String >( "id" ).ToLocalChecked() ) )
 			|| (! params->Has( Nan::New< v8::String >( "database" ).ToLocalChecked() ) ) ) {
-			return Nan::ThrowTypeError( "Connection parameter 'id' and 'database' are mandatory" );
+			return Nan::ThrowTypeError( "Connection parameter 'id' and 'database' are mandatory." );
 		}
 
 
@@ -107,7 +107,7 @@ namespace ifx {
 		Nan::Utf8String utf8connid( params->Get( Nan::New< v8::String >( "id" ).ToLocalChecked() ) );
 		ifx::conn_t * conn = self->_conns[ *utf8connid ];
 		if ( conn ) {
-			return Nan::ThrowError( "A connection with the same ID already exists" );
+			return Nan::ThrowError( "A connection with the same ID already exists." );
 		}
 
 
@@ -151,23 +151,23 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 4 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Connection ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string." );
 		}
 
 		if (! info[1]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement ID must be a string" );
+			return Nan::ThrowTypeError( "Statement ID must be a string." );
 		}
 
 		if (! info[2]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement must be a string" );
+			return Nan::ThrowTypeError( "Statement must be a string." );
 		}
 
 		if (! info[3]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -183,13 +183,13 @@ namespace ifx {
 
 		ifx::conn_t * conn = self->_conns[ *utf8connid ];
 		if (! conn ) {
-			return Nan::ThrowError( "Invalid connection ID" );
+			return Nan::ThrowError( "Invalid connection ID." );
 		}
 
 		// check whether we already have a prepared statement with the same ID
 		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if ( stmt ) {
-			return Nan::ThrowError( "A Statement is already prepared with the same ID" );
+			return Nan::ThrowError( "A Statement is already prepared with the same ID." );
 		}
 
 		// prepare statement data structures
@@ -215,23 +215,23 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() < 4 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Connection ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string." );
 		}
 
 		if (! info[1]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement ID must be a string" );
+			return Nan::ThrowTypeError( "Statement ID must be a string." );
 		}
 
 		if (! info[2]->IsString() ) {
-			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+			return Nan::ThrowTypeError( "Cursor ID must be a string." );
 		}
 
 		if (! info[info.Length() - 1]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -241,18 +241,18 @@ namespace ifx {
 		Nan::Utf8String utf8connid( info[0] );
 		ifx::conn_t * conn = self->_conns[ *utf8connid ];
 		if (! conn ) {
-			return Nan::ThrowError( "Invalid connection ID" );
+			return Nan::ThrowError( "Invalid connection ID." );
 		}
 
 		Nan::Utf8String utf8stmtid( info[1] );
 		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if (! stmt ) {
-			return Nan::ThrowError( "Invalid statement ID" );
+			return Nan::ThrowError( "Invalid statement ID." );
 		}
 
 		Nan::Utf8String utf8curid( info[2] );
 		if ( stmt->cursors[ *utf8curid ] || self->_cursors[ *utf8curid ] ) {
-			return Nan::ThrowError( "A cursor with the same ID already exists" );
+			return Nan::ThrowError( "A cursor with the same ID already exists." );
 		}
 
 		/*
@@ -349,15 +349,15 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 2 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+			return Nan::ThrowTypeError( "Cursor ID must be a string." );
 		}
 
 		if (! info[1]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -368,7 +368,7 @@ namespace ifx {
 		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
 
 		if (! cursor ) {
-			return Nan::ThrowError( "Invalid cursor ID" );
+			return Nan::ThrowError( "Invalid cursor ID." );
 		}
 
 
@@ -424,15 +424,15 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 2 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+			return Nan::ThrowTypeError( "Cursor ID must be a string." );
 		}
 
 		if (! info[1]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -443,7 +443,7 @@ namespace ifx {
 		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
 
 		if (! cursor ) {
-			return Nan::ThrowError( "Invalid cursor ID" );
+			return Nan::ThrowError( "Invalid cursor ID." );
 		}
 
 
@@ -467,19 +467,19 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 3 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Connection ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string." );
 		}
 
 		if (! info[1]->IsString() ) {
-			return Nan::ThrowTypeError( "Statement ID must be a string" );
+			return Nan::ThrowTypeError( "Statement ID must be a string." );
 		}
 
 		if (! info[2]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 
@@ -489,17 +489,17 @@ namespace ifx {
 		Nan::Utf8String utf8connid( info[0] );
 		ifx::conn_t * conn = self->_conns[ *utf8connid ];
 		if (! conn ) {
-			return Nan::ThrowError( "Invalid connection ID" );
+			return Nan::ThrowError( "Invalid connection ID." );
 		}
 
 		Nan::Utf8String utf8stmtid( info[1] );
 		ifx::stmt_t * stmt = conn->stmts[ *utf8stmtid ];
 		if (! stmt ) {
-			return Nan::ThrowError( "Invalid statement ID" );
+			return Nan::ThrowError( "Invalid statement ID." );
 		}
 
 		if ( stmt->cursors.size() ) {
-			return Nan::ThrowError( "Cursors need to be closed" );
+			return Nan::ThrowError( "Cursors need to be closed." );
 		}
 
 
@@ -518,15 +518,15 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 2 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Connection ID must be a string" );
+			return Nan::ThrowTypeError( "Connection ID must be a string." );
 		}
 
 		if (! info[1]->IsFunction() ) {
-			return Nan::ThrowTypeError( "Callback must be a function" );
+			return Nan::ThrowTypeError( "Callback must be a function." );
 		}
 
 		// unwrap ourself
@@ -535,11 +535,11 @@ namespace ifx {
 		Nan::Utf8String utf8connid( info[0] );
 		ifx::conn_t * conn = self->_conns[ *utf8connid ];
 		if (! conn ) {
-			return Nan::ThrowError( "Invalid connection ID" );
+			return Nan::ThrowError( "Invalid connection ID." );
 		}
 
 		if ( conn->stmts.size() ) {
-			return Nan::ThrowError( "Statements must be freed" );
+			return Nan::ThrowError( "Statements must be freed." );
 		}
 
 
@@ -563,11 +563,11 @@ namespace ifx {
 
 		// basic validation
 		if ( info.Length() != 1 ) {
-			return Nan::ThrowError( "Invalid number of arguments" );
+			return Nan::ThrowError( "Invalid number of arguments." );
 		}
 
 		if (! info[0]->IsString() ) {
-			return Nan::ThrowTypeError( "Cursor ID must be a string" );
+			return Nan::ThrowTypeError( "Cursor ID must be a string." );
 		}
 
 
@@ -578,7 +578,7 @@ namespace ifx {
 		ifx::cursor_t * cursor = self->_cursors[ *utf8curid ];
 
 		if (! cursor ) {
-			return Nan::ThrowError( "Invalid cursor ID" );
+			return Nan::ThrowError( "Invalid cursor ID." );
 		}
 
 
