@@ -27,8 +27,9 @@ can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/produc
 * [INFORMIXSERVER](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_266.htm) -
 (e.g. `INFORMIXSERVER=ol_informix1210`)
 * [INFORMIXSQLHOSTS](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_268.htm)
-* `LD_LIBRARY_PATH` (or `DYLD_LIBRARY_PATH` for OSX) pointing to ESQL/C shared libraries -
-(e.g. `LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql"`)
+* `PATH` to include `${INFORMIXDIR}/bin` - (e.g. `export PATH="${INFORMIXDIR}/bin:${PATH}"`)
+* `LD_LIBRARY_PATH` (or `DYLD_LIBRARY_PATH` on OSX) pointing to ESQL/C shared libraries -
+(e.g. `export LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}"`)
 
 
 ### Debian/Ubuntu
