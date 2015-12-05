@@ -67,6 +67,23 @@ var Informix = require( 'informix' ).Informix;
 var informix = new Informix( { database : 'test@ol_informix1210' } );
 ```
 
+```js
+informix
+	.query( "select tabname from systables where tabname like 'sys%auth';" )
+	.then( function ( cursor ) {
+		return cursor.fetchAll();
+	} )
+	.then( function ( results ) {
+		console.log( 'results:', results );
+	} );
+```
+
+
+
+## API Documentation
+
+JSDoc generated API documentation can be found at [http://nukedzn.github.io/node-informix/docs/](http://nukedzn.github.io/node-informix/docs/).
+
 
 
 ## Contributing
