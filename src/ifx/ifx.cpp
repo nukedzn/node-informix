@@ -260,7 +260,7 @@ namespace ifx {
 		*  (insqda) if the cursor is closed and freed. So we have to check input
 		*  arguments here rather than relying on ESQL/C.
 		*/
-		if ( stmt->insqlda->sqld > 0 && info.Length() < 5 ) {
+		if ( ( stmt->insqlda && stmt->insqlda->sqld > 0 ) && info.Length() < 5 ) {
 			return Nan::ThrowError( "This statment requires input parameters." );
 		}
 
