@@ -65,10 +65,15 @@ namespace workers {
 		ifx_sqlvar_t * sqlvar = _cursor->outsqlda->sqlvar;
 		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
 			// FIXME: data conversions
-			if ( sqlvar->sqltype == SQLINT ) {
-				result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
-			} else {
-				result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( sqlvar->sqldata ).ToLocalChecked() );
+			switch ( sqlvar->sqltype ) {
+				case SQLINT:
+				case SQLSERIAL:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
+					break;
+
+				default:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( sqlvar->sqldata ).ToLocalChecked() );
+					break;
 			}
 
 			sqlvar++;

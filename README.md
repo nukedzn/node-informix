@@ -16,5 +16,60 @@ A node.js native client for IBM Informix.
 ## Dependencies
 
 * [IBM Informix ESQL/C](http://www-03.ibm.com/software/products/en/esqlc) which
-can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/products/en/csdk)
+can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/products/en/csdk).
+* A compiler with C++11 standards support (e.g. `g++ v4.8`).
+
+
+### Environment variables
+
+* [INFORMIXDIR](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_264.htm) -
+(e.g. `INFORMIXDIR=/opt/informix`)
+* [INFORMIXSERVER](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_266.htm) -
+(e.g. `INFORMIXSERVER=ol_informix1210`)
+* [INFORMIXSQLHOSTS](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_268.htm)
+* `PATH` to include `${INFORMIXDIR}/bin` - (e.g. `export PATH="${INFORMIXDIR}/bin:${PATH}"`)
+* `LD_LIBRARY_PATH` (or `DYLD_LIBRARY_PATH` on OSX) pointing to ESQL/C shared libraries -
+(e.g. `export LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}"`)
+
+
+### Debian/Ubuntu
+
+You'll need to patch `${INFORMIXDIR}/bin/esql` on Debian based systems.
+e.g.
+``` bash
+$ cat esql-4.10.debian.patch | patch ${INFORMIXDIR}/bin/esql
+```
+
+
+
+## Installation
+
+``` bash
+$ npm install --save informix
+```
+
+
+
+## Usage
+
+```js
+var opts = {
+	database : 'test@ol_informix1210',
+	username : 'rockstar',
+	password : 'secret'
+};
+
+var informix = require( 'informix' )( opts );
+```
+
+```js
+var Informix = require( 'informix' ).Informix;
+var informix = new Informix( { database : 'test@ol_informix1210' } );
+```
+
+
+
+## Contributing
+
+Contributions are welcome through GitHub pull requests ([using fork & pull model](https://help.github.com/articles/using-pull-requests/#fork--pull)).
 
