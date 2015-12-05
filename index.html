@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Node-informix by nukedzn</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Node-informix</h1>
+        <p>A node.js native client for IBM Informix</p>
+
+        <p class="view"><a href="https://github.com/nukedzn/node-informix">View the Project on GitHub <small>nukedzn/node-informix</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/nukedzn/node-informix/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/nukedzn/node-informix/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/nukedzn/node-informix">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="node-informix" class="anchor" href="#node-informix" aria-hidden="true"><span class="octicon octicon-link"></span></a>node-informix</h1>
+
+<p><a href="https://gitter.im/nukedzn/node-informix?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/nukedzn/node-informix"></a></p>
+
+<p><a href="https://www.npmjs.com/package/informix"><img src="https://img.shields.io/npm/v/informix.svg" alt="npm version"></a>
+<a href="https://app.wercker.com/project/bykey/6f7f1a8246881c3d98acec4875280c54"><img src="https://app.wercker.com/status/6f7f1a8246881c3d98acec4875280c54/s/master" alt="wercker status" title="wercker status"></a>
+<a href="https://codecov.io/github/nukedzn/node-informix?branch=master"><img src="https://codecov.io/github/nukedzn/node-informix/coverage.svg?branch=master" alt="codecov.io"></a>
+<a href="https://coveralls.io/github/nukedzn/node-informix?branch=master"><img src="https://coveralls.io/repos/nukedzn/node-informix/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a>
+<a href="https://david-dm.org/nukedzn/node-informix"><img src="https://david-dm.org/nukedzn/node-informix.svg" alt="Dependency Status"></a>
+<a href="https://david-dm.org/nukedzn/node-informix#info=devDependencies"><img src="https://david-dm.org/nukedzn/node-informix/dev-status.svg" alt="devDependency Status"></a></p>
+
+<p>A node.js native client for IBM Informix.</p>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<ul>
+<li>
+<a href="http://www-03.ibm.com/software/products/en/esqlc">IBM Informix ESQL/C</a> which
+can be installed using <a href="http://www-03.ibm.com/software/products/en/csdk">IBM Informix CSDK</a>.</li>
+<li>A compiler with C++11 standards support (e.g. <code>g++ v4.8</code>).</li>
+</ul>
+
+<h3>
+<a id="environment-variables" class="anchor" href="#environment-variables" aria-hidden="true"><span class="octicon octicon-link"></span></a>Environment variables</h3>
+
+<ul>
+<li>
+<a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_264.htm">INFORMIXDIR</a> -
+(e.g. <code>INFORMIXDIR=/opt/informix</code>)</li>
+<li>
+<a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_266.htm">INFORMIXSERVER</a> -
+(e.g. <code>INFORMIXSERVER=ol_informix1210</code>)</li>
+<li><a href="https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_268.htm">INFORMIXSQLHOSTS</a></li>
+<li>
+<code>PATH</code> to include <code>${INFORMIXDIR}/bin</code> - (e.g. <code>export PATH="${INFORMIXDIR}/bin:${PATH}"</code>)</li>
+<li>
+<code>LD_LIBRARY_PATH</code> (or <code>DYLD_LIBRARY_PATH</code> on OSX) pointing to ESQL/C shared libraries -
+(e.g. <code>export LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}"</code>)</li>
+</ul>
+
+<h3>
+<a id="debianubuntu" class="anchor" href="#debianubuntu" aria-hidden="true"><span class="octicon octicon-link"></span></a>Debian/Ubuntu</h3>
+
+<p>You'll need to patch <code>${INFORMIXDIR}/bin/esql</code> on Debian based systems.
+e.g.</p>
+
+<div class="highlight highlight-source-shell"><pre>$ cat esql-4.10.debian.patch <span class="pl-k">|</span> patch <span class="pl-smi">${INFORMIXDIR}</span>/bin/esql</pre></div>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install --save informix</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> opts <span class="pl-k">=</span> {
+    database <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>test@ol_informix1210<span class="pl-pds">'</span></span>,
+    username <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>rockstar<span class="pl-pds">'</span></span>,
+    password <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>secret<span class="pl-pds">'</span></span>
+};
+
+<span class="pl-k">var</span> informix <span class="pl-k">=</span> <span class="pl-c1">require</span>( <span class="pl-s"><span class="pl-pds">'</span>informix<span class="pl-pds">'</span></span> )( opts );</pre></div>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Informix <span class="pl-k">=</span> <span class="pl-c1">require</span>( <span class="pl-s"><span class="pl-pds">'</span>informix<span class="pl-pds">'</span></span> ).<span class="pl-c1">I</span>nformix;
+<span class="pl-k">var</span> informix <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Informix</span>( { database <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>test@ol_informix1210<span class="pl-pds">'</span></span> } );</pre></div>
+
+<div class="highlight highlight-source-js"><pre>informix
+    .<span class="pl-en">query</span>( <span class="pl-s"><span class="pl-pds">"</span>select tabname from systables where tabname like 'sys%auth';<span class="pl-pds">"</span></span> )
+    .<span class="pl-en">then</span>( <span class="pl-k">function</span> ( <span class="pl-smi">cursor</span> ) {
+        <span class="pl-k">return</span> <span class="pl-smi">cursor</span>.<span class="pl-en">fetchAll</span>();
+    } )
+    .<span class="pl-en">then</span>( <span class="pl-k">function</span> ( <span class="pl-smi">results</span> ) {
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>( <span class="pl-s"><span class="pl-pds">'</span>results:<span class="pl-pds">'</span></span>, results );
+    } );</pre></div>
+
+<h2>
+<a id="api-documentation" class="anchor" href="#api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>API Documentation</h2>
+
+<p>JSDoc generated API documentation can be found at <a href="http://nukedzn.github.io/node-informix/docs/">http://nukedzn.github.io/node-informix/docs/</a>.</p>
+
+<h2>
+<a id="contributing" class="anchor" href="#contributing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>Contributions are welcome through GitHub pull requests (<a href="https://help.github.com/articles/using-pull-requests/#fork--pull">using fork &amp; pull model</a>).</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/nukedzn">nukedzn</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
