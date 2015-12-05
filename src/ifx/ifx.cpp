@@ -255,6 +255,15 @@ namespace ifx {
 			return Nan::ThrowError( "A cursor with the same ID already exists" );
 		}
 
+		/*
+		*  ESQL/C has this bad habit of reusing last closed cursor's input ifx_sqlda_t
+		*  (insqda) if the cursor is closed and freed. So we have to check input
+		*  arguments here rather than relying on ESQL/C.
+		*/
+		if ( stmt->insqlda->sqld > 0 && info.Length() < 5 ) {
+			return Nan::ThrowError( "This statment requires input parameters." );
+		}
+
 
 		// SQL descriptor area
 		ifx::cursor_t * cursor = new ifx::cursor_t();
@@ -313,6 +322,7 @@ namespace ifx {
 				insqlda->sqlvar[0].sqldata = arg;
 
 			}
+
 		}
 
 
