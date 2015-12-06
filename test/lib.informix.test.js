@@ -28,11 +28,11 @@ describe( 'lib/Informix', function () {
 
 	it( 'should use lazy auto connect', function () {
 		var informix = new Informix( opts );
-		expect( informix._$ ).to.not.to.have.property( 'conn' );
+		expect( informix.$ ).to.not.to.have.property( 'conn' );
 
 		return informix.query( 'select count(*) from tcustomers;' )
 			.then( function ( cursor ) {
-				expect( informix._$.conn ).to.be.an.instanceof( Connection );
+				expect( informix.$.conn ).to.be.an.instanceof( Connection );
 			} );
 	} );
 
