@@ -66,9 +66,16 @@ namespace workers {
 		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
 			// FIXME: data conversions
 			switch ( sqlvar->sqltype ) {
+				case SQLSMINT:
 				case SQLINT:
 				case SQLSERIAL:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
+					break;
+
+				case SQLFLOAT:
+				case SQLSMFLOAT:
+				case SQLDECIMAL:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( *sqlvar->sqldata ) );
 					break;
 
 				default:
