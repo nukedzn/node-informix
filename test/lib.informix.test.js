@@ -90,6 +90,60 @@ describe( 'lib/Informix', function () {
 	} );
 
 
+	context( 'when a connection is in a failed state', function () {
+
+		var informix = {};
+
+		beforeEach( function () {
+			informix = new Informix( { database : 'dummy@ol_informix1210' } );
+
+			return informix.connect( { silent : true } )
+				.then( function ( conn ) {
+					throw new Error( 'Expected to fail, but it did not!!!' );
+				} )
+				.catch( function ( err ) {
+					expect( err.message ).to.be.string( '[-329] Database not found or no system permission.' );
+				} );
+		} );
+
+
+		it( 'should honor silent=false', function ( done ) {
+			informix.on( 'error', function ( err ) {
+				try {
+					expect( err ).to.be.an.instanceof( Error );
+				} catch ( e ) {
+					return done( e );
+				}
+
+				done();
+			} );
+
+			informix.connect( { silent : false } )
+				.then( function ( conn ) {
+					done( new Error( 'Expected to fail, but it did not!!!' ) );
+				} );
+		} );
+
+		it( 'should emit an error object when preparing a statement', function ( done ) {
+			informix.on( 'error', function ( err ) {
+				try {
+					expect( err ).to.be.an.instanceof( Error );
+				} catch ( e ) {
+					return done( e );
+				}
+
+				done();
+			} );
+
+			informix.prepare( 'select count(*) from tcustomers;' )
+				.then( function ( stmt ) {
+					done( new Error( 'Expected to fail, but it did not!!!' ) );
+				} );
+		} );
+
+	} );
+
+
 	context( 'when connected to a database', function () {
 
 		var informix = new Informix( opts );
