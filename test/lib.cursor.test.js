@@ -105,6 +105,9 @@ describe( 'lib/Cursor', function () {
 
 		it( 'should fail to fetch results', function () {
 			return cursor.fetch()
+				.then( function ( result ) {
+					throw new Error( 'Expected to fail, but it did not!!!' );
+				} )
 				.catch( function ( err ) {
 					expect( err ).to.be.an.instanceof( Error );
 					expect( err.message ).to.be.string( '[-400] Fetch attempted on unopen cursor.' );
@@ -113,6 +116,9 @@ describe( 'lib/Cursor', function () {
 
 		it( 'should fail to fetch all results', function () {
 			return cursor.fetchAll()
+				.then( function ( results ) {
+					throw new Error( 'Expected to fail, but it did not!!!' );
+				} )
 				.catch( function ( err ) {
 					expect( err ).to.be.an.instanceof( Error );
 					expect( err.message ).to.be.string( '[-400] Fetch attempted on unopen cursor.' );
