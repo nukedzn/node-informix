@@ -1,3 +1,4 @@
+/* jshint expr: true */
 
 'use strict';
 
@@ -74,7 +75,7 @@ describe( 'lib/Cursor', function () {
 				.then( function ( results ) {
 					expect( spy.calledOnce ).to.be.true;
 					spy.reset();
-				} )
+				} );
 		} );
 
 

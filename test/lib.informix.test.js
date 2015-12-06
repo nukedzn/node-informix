@@ -110,7 +110,7 @@ describe( 'lib/Informix', function () {
 				.then( function ( stmt ) {
 					expect( stmt ).to.be.an.instanceof( Statement );
 					return stmt.free();
-				} )
+				} );
 		} );
 
 	} );
