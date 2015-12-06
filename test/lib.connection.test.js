@@ -48,6 +48,20 @@ describe( 'lib/Connection', function () {
 				} );
 		} );
 
+		it( 'should set the INFORMIXSERVER environment variable', function () {
+			var params = {
+				database : 'test@ol_informix1210',
+				username : 'informix',
+				password : 'informix'
+			};
+
+			process.env.INFORMIXSERVER = 'dummy';
+			return conn.connect( params )
+				.then( function ( c ) {
+					expect( process.env.INFORMIXSERVER ).to.be.string( 'ol_informix1210' );
+				} );
+		} );
+
 	} );
 
 
