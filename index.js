@@ -11,7 +11,7 @@ var Ifx      = require( 'bindings' )( 'ifx' ).Ifx;
 
 
 /**
-*   Initialise a new {@link Informix} instance
+*   Create a new client by initialising a new {@link Informix} instance
 *
 *   @param {object} opts - Options
 */
