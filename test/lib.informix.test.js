@@ -4,6 +4,7 @@
 var expect = require( 'chai' ).expect;
 
 var Informix   = require( '../lib/informix' );
+var Statement  = require( '../lib/statement' );
 var Connection = require( '../lib/connection' );
 var Cursor     = require( '../lib/cursor' );
 
@@ -102,6 +103,14 @@ describe( 'lib/Informix', function () {
 					expect( cursor ).to.be.an.instanceof( Cursor );
 					return cursor.close();
 				} );
+		} );
+
+		it( 'should be able to prepare a query', function () {
+			return informix.prepare( 'select count(*) from tcustomers where id > ?;' )
+				.then( function ( stmt ) {
+					expect( stmt ).to.be.an.instanceof( Statement );
+					return stmt.free();
+				} )
 		} );
 
 	} );
