@@ -31,6 +31,9 @@
 			],
 			'conditions' : [
 				[ 'OS=="mac"', {
+					'variables' : {
+						'extraesqlopts%' : '-static'
+					},
 					'xcode_settings' : {
 						'MACOSX_DEPLOYMENT_TARGET' : '10.7',
 						'OTHER_LDFLAGS' : [
@@ -49,34 +52,15 @@
 				'src'
 			],
 			'link_settings' : {
+				'variables' : {
+					'extraesqlopts%' : ''
+				},
 				'libraries' : [
 					'-L<!(echo ${INFORMIXDIR}/lib)',
 					'-L<!(echo ${INFORMIXDIR}/lib/esql)',
-					'<!@(THREADLIB=POSIX esql -thread -libs)'
+					'<!@(THREADLIB=POSIX esql <(extraesqlopts) -thread -libs)'
 				]
 			}
-		},
-		{
-			'target_name' : 'mac-otool',
-			'type' : 'none',
-			'dependencies' : [ 'ifx' ],
-			'conditions' : [
-				[ 'OS=="mac"', {
-					'variables' : {
-						'IFX_PRODUCT%' : '<(PRODUCT_DIR)/ifx.node'
-					},
-					'actions' : [ {
-						'action_name' : 'fix-mac-dylib-install-names',
-						'inputs' : [
-							'<(IFX_PRODUCT)'
-						],
-						'outputs' : [
-							''
-						],
-						'action' : [ 'bash', './gyp/otool.sh', '<(IFX_PRODUCT)' ]
-					} ]
-				} ]
-			]
 		}
 	]
 }
