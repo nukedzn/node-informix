@@ -2,6 +2,7 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
+var sinon  = require( 'sinon' );
 var Ifx    = require( '../' ).Ifx;
 
 var Connection = require( '../lib/connection' );
@@ -41,10 +42,6 @@ describe( 'lib/Cursor', function () {
 				} );
 		} );
 
-		afterEach( function () {
-			return cursor.close();
-		} );
-
 		after( function () {
 			return stmt.free();
 		} );
@@ -56,6 +53,7 @@ describe( 'lib/Cursor', function () {
 					expect( result ).to.be.an.instanceof( Array );
 					expect( result ).to.have.length( 1 );
 					expect( result[0] ).to.match( /^sys(\w+)?auth$/ );
+					return cursor.close();
 				} );
 		} );
 
@@ -66,7 +64,44 @@ describe( 'lib/Cursor', function () {
 					expect( results ).to.have.length.of.at.least( 4 );
 					expect( results[0] ).to.be.an( 'array' )
 						.with.length( 1 );
+					return cursor.close();
 				} );
+		} );
+
+		it( 'should be possible to fetch all results and close the cursor', function () {
+			var spy = sinon.spy( cursor, 'close' );
+			return cursor.fetchAll( { close : true } )
+				.then( function ( results ) {
+					expect( spy.calledOnce ).to.be.true;
+					spy.reset();
+				} )
+		} );
+
+
+		context( 'when failing to close cursor', function () {
+
+			beforeEach( function () {
+				sinon.stub( cursor, 'close', function () {
+					return Promise.reject( new Error( '[stub] Failed to close.' ) );
+				} );
+			} );
+
+			afterEach( function () {
+				cursor.close.restore();
+				return cursor.close();
+			} );
+
+
+			it( 'should handle failures when fetching all and closing cursor', function () {
+				return cursor.fetchAll( { close : true } )
+					.then( function ( results ) {
+						throw new Error( 'Expected to fail, but it did not!!!' );
+					} )
+					.catch( function ( err ) {
+						expect( err.message ).to.be.string( '[stub] Failed to close.' );
+					} );
+			} );
+
 		} );
 
 	} );
