@@ -102,7 +102,7 @@ describe( 'lib/Informix', function () {
 					throw new Error( 'Expected to fail, but it did not!!!' );
 				} )
 				.catch( function ( err ) {
-					expect( err.message ).to.be.string( '[-329] Database not found or no system permission.' );
+					expect( err ).to.be.an.instanceof( Error );
 				} );
 		} );
 
