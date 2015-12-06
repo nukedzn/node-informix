@@ -55,6 +55,28 @@
 					'<!@(THREADLIB=POSIX esql -thread -libs)'
 				]
 			}
+		},
+		{
+			'target_name' : 'mac-otool',
+			'type' : 'none',
+			'dependencies' : [ 'ifx' ],
+			'conditions' : [
+				[ 'OS=="mac"', {
+					'variables' : {
+						'IFX_PRODUCT%' : '<(PRODUCT_DIR)/ifx.node'
+					},
+					'actions' : [ {
+						'action_name' : 'fix-mac-dylib-install-names',
+						'inputs' : [
+							'<(IFX_PRODUCT)'
+						],
+						'outputs' : [
+							''
+						],
+						'action' : [ 'bash', './gyp/otool.sh', '<(IFX_PRODUCT)' ]
+					} ]
+				} ]
+			]
 		}
 	]
 }
