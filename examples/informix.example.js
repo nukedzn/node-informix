@@ -24,12 +24,38 @@ informix.on( 'connect', function ( conn ) {
 } );
 
 
+
+// Execute a query
 informix
 	.query( "select tabname from systables where tabname like 'sys%auth';" )
 	.then( function ( cursor ) {
-		return cursor.fetchAll();
+		// Fetch all results and close cursor
+		return cursor.fetchAll( { close : true } );
 	} )
 	.then( function ( results ) {
 		console.log( 'results:', results );
+	} )
+	.catch( function ( err ) {
+		console.log( err );
+	} )
+	.then( function () {
+
+		// Wait for the query and execute a prepared statement
+		informix
+			.prepare( 'select count(*) from tcustomers where id > ?;' )
+			.then( function ( stmt ) {
+				return stmt.exec( 0 );
+			} )
+			.then( function ( cursor ) {
+				// Fetch all results and close cursor
+				return cursor.fetchAll( { close : true } );
+			} )
+			.then( function ( results ) {
+				console.log( 'prepared stmt results:', results );
+			} )
+			.catch( function ( err ) {
+				console.log( err );
+			} );
+
 	} );
 
