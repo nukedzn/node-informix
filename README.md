@@ -71,10 +71,13 @@ var informix = new Informix( { database : 'test@ol_informix1210' } );
 informix
 	.query( "select tabname from systables where tabname like 'sys%auth';" )
 	.then( function ( cursor ) {
-		return cursor.fetchAll();
+		return cursor.fetchAll( { close : true } );
 	} )
 	.then( function ( results ) {
 		console.log( 'results:', results );
+	} )
+	.catch( function ( err ) {
+		console.log( err );
 	} );
 ```
 
