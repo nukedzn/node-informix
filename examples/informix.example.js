@@ -37,7 +37,7 @@ informix
 	} )
 	.catch( function ( err ) {
 		console.log( err );
-	} )
+	} );
 
 
 // Execute a prepared statement
