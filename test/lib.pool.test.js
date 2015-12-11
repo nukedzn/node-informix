@@ -25,7 +25,7 @@ describe( 'lib/Pool', function () {
 			.then( function ( conn ) {
 				expect( conn ).to.be.an.instanceof( Connection );
 				return pool.release( conn );
-			} )
+			} );
 	} );
 
 
