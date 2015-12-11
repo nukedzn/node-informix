@@ -6,6 +6,7 @@ var Ifx    = require( '../' ).Ifx;
 
 var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
+var pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Connection', function () {
@@ -84,12 +85,17 @@ describe( 'lib/Connection', function () {
 
 		var conn = {};
 		before( function () {
-			conn = new Connection( new Ifx() );
-			return conn.connect( {
+			pool.$reset( {
 				database : 'test@ol_informix1210',
 				username : 'informix',
 				password : 'informix'
 			} );
+
+			return pool.acquire()
+				.then( function ( c ) {
+					conn = c;
+					pool.release( c );
+				} );
 		} );
 
 		it( 'should be able to prepare a statement', function () {

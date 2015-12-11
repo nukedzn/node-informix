@@ -2,30 +2,35 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
-var Ifx    = require( '../' ).Ifx;
 
-var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
+var pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Statement', function () {
 
-	var ifx  = new Ifx();
-	var conn = new Connection( ifx );
+	var conn = {};
 
 	before( function () {
-		return conn.connect( {
+		pool.$reset( {
+			max : 1,
 			database : 'test@ol_informix1210',
 			username : 'informix',
 			password : 'informix'
 		} );
+
+		return pool.acquire()
+			.then( function ( c ) {
+				conn = c;
+				pool.release( c );
+			} );
 	} );
 
 
 	it( 'should be able to prepare a statement', function () {
 		var sql  = 'select tabname from systables where tabname like ?;';
-		var stmt = new Statement( ifx, conn );
+		var stmt = new Statement( conn.$.ifx, conn );
 		return stmt.prepare( sql )
 			.then( function ( stmt ) {
 				expect( stmt ).to.be.an.instanceof( Statement );
@@ -38,9 +43,10 @@ describe( 'lib/Statement', function () {
 
 		context( 'when autoFree=true', function () {
 
-			var stmt = new Statement( ifx, conn, { autoFree : true } );
+			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
+				stmt = new Statement( conn.$.ifx, conn, { autoFree : true } );
 				return stmt.prepare( sql );
 			} );
 
@@ -67,9 +73,10 @@ describe( 'lib/Statement', function () {
 
 		context( 'when autoFree=false', function () {
 
-			var stmt = new Statement( ifx, conn, { autoFree : false } );
+			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
+				stmt = new Statement( conn.$.ifx, conn, { autoFree : false } );
 				return stmt.prepare( sql );
 			} );
 
@@ -91,9 +98,8 @@ describe( 'lib/Statement', function () {
 
 	context( 'when preparing a statement', function () {
 
-		var stmt = new Statement( ifx, conn );
-
 		it( 'should reject the promise on syntax errors', function () {
+			var stmt = new Statement( conn.$.ifx, conn );
 			return stmt.prepare( 'select something;' )
 				.then( function ( s ) {
 					throw new Error( 'Expected the statement to fail, but it did not!!!' );
@@ -109,9 +115,10 @@ describe( 'lib/Statement', function () {
 
 	context( 'when a statement is prepared which has input parameters', function () {
 
-		var stmt = new Statement( ifx, conn );
+		var stmt = {};
 		before( function () {
 			var sql = 'select * from tcustomers where id < ?;';
+			stmt = new Statement( conn.$.ifx, conn );
 			return stmt.prepare( sql );
 		} );
 
@@ -148,9 +155,10 @@ describe( 'lib/Statement', function () {
 
 	context( 'when a statement is prepared which does not have any input parameters', function () {
 
-		var stmt = new Statement( ifx, conn );
+		var stmt = {};
 		before( function () {
 			var sql = 'select * from tcustomers where id < 3;';
+			stmt = new Statement( conn.$.ifx, conn );
 			return stmt.prepare( sql );
 		} );
 

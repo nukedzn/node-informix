@@ -2,6 +2,7 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
+var Ifx    = require( 'bindings' )( 'ifx' ).Ifx;
 var pool   = require( '../lib/pool' );
 
 var Connection = require( '../lib/connection' );
@@ -10,7 +11,7 @@ var Connection = require( '../lib/connection' );
 describe( 'lib/Pool', function () {
 
 	before( function () {
-		pool.options( {
+		pool.$reset( {
 			max : 3,
 			database : 'test@ol_informix1210',
 			username : 'informix',
