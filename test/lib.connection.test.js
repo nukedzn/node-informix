@@ -10,6 +10,21 @@ var Statement  = require( '../lib/statement' );
 
 describe( 'lib/Connection', function () {
 
+	context( 'connection index', function () {
+
+		it( 'should return the correct connection index when passed in as options', function () {
+			var conn = new Connection( new Ifx(), { index : 2 } );
+			expect( conn.index() ).to.eql( 2 );
+		} );
+
+		it( 'should return -1 when index is not passed in as options', function () {
+			var conn = new Connection( new Ifx() );
+			expect( conn.index() ).to.eql( -1 );
+		} );
+
+	} );
+
+
 	context( 'when connecting to a database', function () {
 
 		var conn = {};
