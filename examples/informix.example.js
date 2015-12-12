@@ -33,29 +33,27 @@ informix
 		return cursor.fetchAll( { close : true } );
 	} )
 	.then( function ( results ) {
-		console.log( 'results:', results );
+		console.log( '[query] results:', results );
 	} )
 	.catch( function ( err ) {
 		console.log( err );
+	} );
+
+
+// Execute a prepared statement
+informix
+	.prepare( 'select count(*) from tcustomers where id > ?;' )
+	.then( function ( stmt ) {
+		return stmt.exec( 0 );
 	} )
-	.then( function () {
-
-		// Wait for the query and execute a prepared statement
-		informix
-			.prepare( 'select count(*) from tcustomers where id > ?;' )
-			.then( function ( stmt ) {
-				return stmt.exec( 0 );
-			} )
-			.then( function ( cursor ) {
-				// Fetch all results and close cursor
-				return cursor.fetchAll( { close : true } );
-			} )
-			.then( function ( results ) {
-				console.log( 'prepared stmt results:', results );
-			} )
-			.catch( function ( err ) {
-				console.log( err );
-			} );
-
+	.then( function ( cursor ) {
+		// Fetch all results and close cursor
+		return cursor.fetchAll( { close : true } );
+	} )
+	.then( function ( results ) {
+		console.log( '[stmt] results:', results );
+	} )
+	.catch( function ( err ) {
+		console.log( err );
 	} );
 

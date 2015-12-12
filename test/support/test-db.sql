@@ -1,6 +1,7 @@
 
 connect to '@ol_informix1210' user 'informix' using 'informix';
 
+drop database if exists test;
 create database test;
 
 

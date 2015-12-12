@@ -6,9 +6,25 @@ var Ifx    = require( '../' ).Ifx;
 
 var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
+var pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Connection', function () {
+
+	context( 'connection index', function () {
+
+		it( 'should return the correct connection index when passed in as options', function () {
+			var conn = new Connection( new Ifx(), { index : 2 } );
+			expect( conn.index() ).to.eql( 2 );
+		} );
+
+		it( 'should return -1 when index is not passed in as options', function () {
+			var conn = new Connection( new Ifx() );
+			expect( conn.index() ).to.eql( -1 );
+		} );
+
+	} );
+
 
 	context( 'when connecting to a database', function () {
 
@@ -69,12 +85,17 @@ describe( 'lib/Connection', function () {
 
 		var conn = {};
 		before( function () {
-			conn = new Connection( new Ifx() );
-			return conn.connect( {
+			pool.$reset( {
 				database : 'test@ol_informix1210',
 				username : 'informix',
 				password : 'informix'
 			} );
+
+			return pool.acquire()
+				.then( function ( c ) {
+					conn = c;
+					pool.release( c );
+				} );
 		} );
 
 		it( 'should be able to prepare a statement', function () {

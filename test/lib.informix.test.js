@@ -2,11 +2,12 @@
 'use strict';
 
 var expect = require( 'chai' ).expect;
+var sinon  = require( 'sinon' );
 
 var Informix   = require( '../lib/informix' );
 var Statement  = require( '../lib/statement' );
-var Connection = require( '../lib/connection' );
 var Cursor     = require( '../lib/cursor' );
+var pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Informix', function () {
@@ -17,100 +18,62 @@ describe( 'lib/Informix', function () {
 		password : 'informix'
 	};
 
-
-	it( 'should be able to connect to a database', function () {
-		var informix = new Informix( opts );
-		return informix.connect()
-			.then( function ( conn ) {
-				expect( conn ).to.be.an.instanceof( Connection );
-			} );
-	} );
-
-	it( 'should use lazy auto connect', function () {
-		var informix = new Informix( opts );
-		expect( informix.$ ).to.not.to.have.property( 'conn' );
-
-		return informix.query( 'select count(*) from tcustomers;' )
-			.then( function ( cursor ) {
-				expect( informix.$.conn ).to.be.an.instanceof( Connection );
-			} );
+	before( function () {
+		pool.$reset();
 	} );
 
 
-	context( 'when a connection fails', function () {
-
+	it( 'should set connection pool options', function () {
 		var opts = {
-			database : 'dummy@ol_informix1210'
+			database : 'dummy@ol_informix1210',
+			pool : {
+				max : 2,
+				min : 1
+			}
 		};
 
-		it( 'should emit an error object', function ( done ) {
-			var informix = new Informix( opts );
+		var informix = new Informix( opts );
+		expect( pool.$.min ).to.eql( opts.pool.min );
+		expect( pool.$.max ).to.eql( opts.pool.max );
+	} );
 
-			informix.on( 'error', function ( err ) {
-				try {
-					expect( err ).to.be.an.instanceof( Error );
-				} catch ( e ) {
-					return done( e );
-				}
-
-				done();
+	it( 'should be able to run a query', function () {
+		var informix = new Informix( opts );
+		return informix.query( 'select first 1 * from tcustomers;' )
+			.then( function ( cursor ) {
+				expect( cursor ).to.be.an.instanceof( Cursor );
+				return cursor.close();
 			} );
+	} );
 
-			informix.connect()
-				.then( function ( conn ) {
-					done( new Error( 'Expected the connection to fail, but it did not!!!' ) );
-				} );
-		} );
-
-		it( 'should emit an error object on auto connect', function ( done ) {
-			var informix = new Informix( opts );
-			informix.connect()
-				.then( function ( conn ) {
-					done( new Error( 'Expected the connection to fail, but it did not!!!' ) );
-				} )
-				.catch( function ( err ) {
-
-					informix.on( 'error', function ( err ) {
-						try {
-							expect( err ).to.be.an.instanceof( Error );
-						} catch ( e ) {
-							return done( e );
-						}
-
-						done();
-					} );
-
-					informix.query( 'select count(*) from tcustomers;' )
-						.then( function ( cursor ) {
-							done( new Error( 'Expected to fail, but it did not!!!' ) );
-						} );
-				} );
-		} );
-
+	it( 'should be able to prepare a statement', function () {
+		var informix = new Informix( opts );
+		return informix.prepare( 'select count(*) from tcustomers where id > ?;' )
+			.then( function ( stmt ) {
+				expect( stmt ).to.be.an.instanceof( Statement );
+				return stmt.free();
+			} );
 	} );
 
 
-	context( 'when a connection is in a failed state', function () {
+	context( 'when acquiring a connection from the pool fails', function () {
 
-		var informix = {};
-
-		beforeEach( function () {
-			informix = new Informix( { database : 'dummy@ol_informix1210' } );
-
-			return informix.connect( { silent : true } )
-				.then( function ( conn ) {
-					throw new Error( 'Expected to fail, but it did not!!!' );
-				} )
-				.catch( function ( err ) {
-					expect( err ).to.be.an.instanceof( Error );
-				} );
+		before( function () {
+			sinon.stub( pool, 'acquire', function () {
+				return Promise.reject( new Error( '[stub] Failed to acquire.' ) );
+			} );
 		} );
 
+		after( function () {
+			pool.acquire.restore();
+		} );
 
-		it( 'should honor silent=false', function ( done ) {
+		it( 'should emit an error object when running a query', function ( done ) {
+			var informix = new Informix( opts );
 			informix.on( 'error', function ( err ) {
 				try {
 					expect( err ).to.be.an.instanceof( Error );
+					expect( err.message ).to.be.string( '[stub] Failed to acquire.' );
 				} catch ( e ) {
 					return done( e );
 				}
@@ -118,16 +81,18 @@ describe( 'lib/Informix', function () {
 				done();
 			} );
 
-			informix.connect( { silent : false } )
-				.then( function ( conn ) {
-					done( new Error( 'Expected to fail, but it did not!!!' ) );
+			informix.query( 'select first 1 * from tcustomers;' )
+				.then( function ( c ) {
+					throw new Error( 'Expected to fail, but it did not!!!' );
 				} );
 		} );
 
 		it( 'should emit an error object when preparing a statement', function ( done ) {
+			var informix = new Informix( opts );
 			informix.on( 'error', function ( err ) {
 				try {
 					expect( err ).to.be.an.instanceof( Error );
+					expect( err.message ).to.be.string( '[stub] Failed to acquire.' );
 				} catch ( e ) {
 					return done( e );
 				}
@@ -135,35 +100,9 @@ describe( 'lib/Informix', function () {
 				done();
 			} );
 
-			informix.prepare( 'select count(*) from tcustomers;' )
-				.then( function ( stmt ) {
-					done( new Error( 'Expected to fail, but it did not!!!' ) );
-				} );
-		} );
-
-	} );
-
-
-	context( 'when connected to a database', function () {
-
-		var informix = new Informix( opts );
-		before( function () {
-			return informix.connect();
-		} );
-
-		it( 'should be able to run a query', function () {
-			return informix.query( 'select first 1 * from tcustomers;' )
-				.then( function ( cursor ) {
-					expect( cursor ).to.be.an.instanceof( Cursor );
-					return cursor.close();
-				} );
-		} );
-
-		it( 'should be able to prepare a query', function () {
-			return informix.prepare( 'select count(*) from tcustomers where id > ?;' )
-				.then( function ( stmt ) {
-					expect( stmt ).to.be.an.instanceof( Statement );
-					return stmt.free();
+			informix.prepare( 'select count(*) from tcustomers where id > ?;' )
+				.then( function ( c ) {
+					throw new Error( 'Expected to fail, but it did not!!!' );
 				} );
 		} );
 

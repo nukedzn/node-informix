@@ -8,6 +8,11 @@ var Ifx    = require( '../' ).Ifx;
 
 describe( 'ifx', function () {
 
+	before( function () {
+		process.env.INFORMIXSERVER = 'ol_informix1210';
+	} );
+
+
 	context( 'when username and password is not specified', function () {
 
 		var ifx = new Ifx();

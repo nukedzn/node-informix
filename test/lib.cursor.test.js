@@ -4,34 +4,40 @@
 
 var expect = require( 'chai' ).expect;
 var sinon  = require( 'sinon' );
-var Ifx    = require( '../' ).Ifx;
 
-var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
+var pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Cursor', function () {
 
-	var ifx  = new Ifx();
-	var conn = new Connection( ifx );
+	var conn = {};
 
 	before( function () {
-		return conn.connect( {
+		pool.$reset( {
+			max : 1,
 			database : 'test@ol_informix1210',
 			username : 'informix',
 			password : 'informix'
 		} );
+
+		return pool.acquire()
+			.then( function ( c ) {
+				conn = c;
+				pool.release( c );
+			} );
 	} );
 
 
 	context( 'when a query with results is executed', function () {
 
-		var stmt   = new Statement( ifx, conn );
 		var cursor = {};
+		var stmt   = {};
 
 		before( function () {
 			var sql  = 'select tabname from systables where tabname like ?;';
+			stmt = new Statement( conn.$.ifx, conn );
 			return stmt.prepare( sql );
 		} );
 
@@ -82,13 +88,13 @@ describe( 'lib/Cursor', function () {
 		context( 'when failing to close cursor', function () {
 
 			beforeEach( function () {
-				sinon.stub( cursor, 'close', function () {
-					return Promise.reject( new Error( '[stub] Failed to close.' ) );
+				sinon.stub( cursor.$.ifx, 'close', function ( curid, cb ) {
+					cb( new Error( '[stub] Failed to close.' ) );
 				} );
 			} );
 
 			afterEach( function () {
-				cursor.close.restore();
+				cursor.$.ifx.close.restore();
 				return cursor.close();
 			} );
 
@@ -110,11 +116,12 @@ describe( 'lib/Cursor', function () {
 
 	context( 'when an insert query is executed', function () {
 
-		var stmt   = new Statement( ifx, conn );
 		var cursor = {};
+		var stmt   = {};
 
 		before( function () {
 			var sql  = 'insert into tcustomers( fname, lname ) values( ?, ? );';
+			stmt = new Statement( conn.$.ifx, conn );
 			return stmt.prepare( sql );
 		} );
 
