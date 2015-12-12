@@ -148,6 +148,19 @@ describe( 'lib/Statement', function () {
 			} );
 
 			it( 'should reject the promise if incorrect number of arguments are passed in' );
+			/*
+			it( 'should reject the promise if incorrect number of arguments are passed in', function () {
+				// FIXME: the following will leave a cursor behind with no access to close it
+				return stmt.exec( [ 1, 2, 3 ] )
+					.then( function ( c ) {
+						throw new Error( 'Expected to fail, but it did not!!!' );
+					} )
+					.catch( function ( err ) {
+						expect( err ).to.be.an.instanceof( Error );
+						expect( err.message ).to.be.string( '[-254] Too many or too few host variables given.' );
+					} );
+			} );
+			*/
 		} );
 
 	} );

@@ -88,13 +88,13 @@ describe( 'lib/Cursor', function () {
 		context( 'when failing to close cursor', function () {
 
 			beforeEach( function () {
-				sinon.stub( cursor, 'close', function () {
-					return Promise.reject( new Error( '[stub] Failed to close.' ) );
+				sinon.stub( cursor.$.ifx, 'close', function ( curid, cb ) {
+					cb( new Error( '[stub] Failed to close.' ) );
 				} );
 			} );
 
 			afterEach( function () {
-				cursor.close.restore();
+				cursor.$.ifx.close.restore();
 				return cursor.close();
 			} );
 
