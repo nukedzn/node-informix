@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Informix</title>
+    <title>JSDoc: Class: Pool</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Informix</h1>
+    <h1 class="page-title">Class: Pool</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>Informix</h2>
+        <h2>Pool</h2>
         
     
 </header>
@@ -40,14 +40,14 @@
 
     
 
-    <h4 class="name" id="Informix"><span class="type-signature"></span>new Informix<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Pool"><span class="type-signature"></span>new Pool<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Class representing the IBM Informix client
+    Class representing a connection pool
 </div>
 
 
@@ -56,55 +56,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>opts</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Constructor options</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -140,7 +91,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line16">line 16</a>
+        <a href="lib_pool.js.html">lib/pool.js</a>, <a href="lib_pool.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -183,6 +134,173 @@
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="acquire"><span class="type-signature"></span>acquire<span class="signature">(conn<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="Connection.html">Connection</a>, Error>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Acquire a connection from the pool
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>conn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Connection.html">Connection</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">A specific connection to aquire from the pool.
+         If this is null, a randon connection will be aquired from the pool.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_pool.js.html">lib/pool.js</a>, <a href="lib_pool.js.html#line192">line 192</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - A promise to a connection object or
+          an Error if rejected.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Connection.html">Connection</a>, Error></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
 
         
             
@@ -289,7 +407,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line37">line 37</a>
+        <a href="lib_pool.js.html">lib/pool.js</a>, <a href="lib_pool.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -320,14 +438,14 @@
 
     
 
-    <h4 class="name" id="prepare"><span class="type-signature"></span>prepare<span class="signature">(sql)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="Statement.html">Statement</a>, Error>}</span></h4>
+    <h4 class="name" id="release"><span class="type-signature"></span>release<span class="signature">(conn)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Prepare a statement
+    Release a connection back to the pool
 </div>
 
 
@@ -363,13 +481,13 @@
 
         <tr>
             
-                <td class="name"><code>sql</code></td>
+                <td class="name"><code>conn</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="Connection.html">Connection</a></span>
 
 
             
@@ -379,7 +497,7 @@
 
             
 
-            <td class="description last">SQL statement to prepare</td>
+            <td class="description last">Connection object</td>
         </tr>
 
     
@@ -420,7 +538,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line63">line 63</a>
+        <a href="lib_pool.js.html">lib/pool.js</a>, <a href="lib_pool.js.html#line224">line 224</a>
     </li></ul></dd>
     
 
@@ -443,183 +561,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    - A promise to a statement object or an
-          Error if rejected
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="Statement.html">Statement</a>, Error></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="query"><span class="type-signature"></span>query<span class="signature">(sql)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="Cursor.html">Cursor</a>, Error>}</span></h4>
-
-    
-
-
-
-<div class="description">
-    Run a SQL query
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>sql</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">SQL query to run</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line87">line 87</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    - A promise to a results cursor or an Error
-          if rejected.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="Cursor.html">Cursor</a>, Error></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 

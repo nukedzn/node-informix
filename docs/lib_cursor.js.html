@@ -30,6 +30,7 @@
 'use strict';
 
 var uuid = require( 'uuid' );
+var pool = require( './pool' );
 
 
 /**
@@ -37,14 +38,16 @@ var uuid = require( 'uuid' );
 *
 *   @constructor
 *   @param {Ifx} ifx - Native object instance
-*   @param {Statement} [stmt] - Statement object
+*   @param {Connection} conn - Connection object
+*   @param {Statement} stmt - Statement object
 */
-var Cursor = function ( ifx, stmt ) {
+var Cursor = function ( ifx, conn, stmt ) {
 
 	// privileged data
-	this._$ = {
-		id  : '_' + uuid.v4().replace( /\-/g, 's' ),
-		ifx : ifx,
+	this.$ = {
+		conn : conn,
+		id   : '_' + uuid.v4().replace( /\-/g, 's' ),
+		ifx  : ifx,
 		stmt : stmt
 	};
 
@@ -57,7 +60,7 @@ var Cursor = function ( ifx, stmt ) {
 *   @return {string} - ID generated for this cursor object.
 */
 Cursor.prototype.id = function () {
-	return this._$.id;
+	return this.$.id;
 };
 
 
@@ -71,23 +74,32 @@ Cursor.prototype.close = function () {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		self._$.ifx.close( self._$.id, function ( err, curid ) {
-			if ( err ) {
-				return reject( err );
-			}
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				self.$.ifx.close( self.$.id, function ( err, curid ) {
+					if ( err ) {
+						return reject( err );
+					}
 
-			if ( self._$.stmt &amp;&amp; self._$.stmt.flags().autoFree ) {
-				self._$.stmt.free()
-					.then( function ( stmtid ) {
+					pool.release( conn );
+
+					if ( self.$.stmt &amp;&amp; ( self.$.stmt.flags().reusable === false ) ) {
+						self.$.stmt.free()
+							.then( function ( stmtid ) {
+								resolve( curid );
+							} )
+							.catch( reject );
+					} else {
 						resolve( curid );
-					} )
-					.catch( reject );
-			} else {
-				resolve( curid );
-			}
+					}
+				} );
+			} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
 		} );
-	} );
 
 };
 
@@ -102,15 +114,23 @@ Cursor.prototype.fetch = function () {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		self._$.ifx.fetch( self._$.id, function ( err, result ) {
-			if ( err ) {
-				return reject( err );
-			}
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				self.$.ifx.fetch( self.$.id, function ( err, result ) {
+					if ( err ) {
+						return reject( err );
+					}
 
-			resolve( result );
+					pool.release( conn );
+					resolve( result );
+				} );
+			} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
 		} );
-	} );
 
 };
 
@@ -118,30 +138,54 @@ Cursor.prototype.fetch = function () {
 /**
 *   Fetch all results
 *
+*   @param {object} [opts] - Options
+*   @param {boolean} [opts.close=false] - Flag indicating to close the cursor after
+*          fetching all results.
+*
 *   @return {Promise.&lt;Array, Error>} A promise to an array of results or an
 *           Error if rejected.
 */
-Cursor.prototype.fetchAll = function () {
+Cursor.prototype.fetchAll = function ( opts ) {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		var results = [];
-		var fetcher = function ( err, result ) {
-			if ( err ) {
-				return reject( err );
+	if (! opts ) { opts = {}; }
+
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				var results = [];
+				var fetcher = function ( err, result ) {
+					if ( err ) {
+						return reject( err );
+					}
+
+					if ( result ) {
+						results.push( result );
+						return self.$.ifx.fetch( self.$.id, fetcher );
+					}
+
+					pool.release( conn );
+					resolve( results );
+				};
+
+				self.$.ifx.fetch( self.$.id, fetcher );
+			} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
+		} )
+		.then( function ( results ) {
+			if ( opts.close === true ) {
+				return self.close()
+					.then( function ( curid ) {
+						return results;
+					} );
 			}
 
-			if ( result ) {
-				results.push( result );
-				return self._$.ifx.fetch( self._$.id, fetcher );
-			}
-
-			resolve( results );
-		};
-
-		self._$.ifx.fetch( self._$.id, fetcher );
-	} );
+			return results;
+		} );
 
 };
 
@@ -152,7 +196,7 @@ Cursor.prototype.fetchAll = function () {
 *   @return {number} - Generated serial value
 */
 Cursor.prototype.serial = function () {
-	return this._$.ifx.serial( this._$.id );
+	return this.$.ifx.serial( this.$.id );
 };
 
 
@@ -169,13 +213,13 @@ module.exports = Cursor;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Dec 05 2015 21:35:57 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 </footer>
 
 <script> prettyPrint(); </script>

@@ -30,8 +30,7 @@
 'use strict';
 
 var crypto = require( 'crypto' );
-
-var Cursor = require( './cursor' );
+var pool   = require( './pool' );
 
 
 /**
@@ -41,13 +40,13 @@ var Cursor = require( './cursor' );
 *   @param {Ifx} ifx - Native object instance
 *   @param {Connection} conn - Connection object
 *   @param {object} [opts] - Constructor options
-*   @param {boolean} [opts.autoFree] - Flag to indicate whether this statement
-*          should be freed automatically.
+*   @param {boolean} [opts.reusable=true] - Flag to indicate whether this statement
+*          should be reusable.
 */
 var Statement = function ( ifx, conn, opts ) {
 
 	// privileged data
-	this._$ = {
+	this.$ = {
 		conn : conn,
 		ifx  : ifx
 	};
@@ -70,27 +69,37 @@ Statement.prototype.exec = function ( args ) {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		var cursor = new Cursor( self._$.ifx, self );
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				var Cursor = require( './cursor' );
+				var cursor = new Cursor( self.$.ifx, self.$.conn, self );
 
-		if ( args ) {
-			self._$.ifx.exec( self._$.conn.id(), self._$.id, cursor.id(), args, function ( err, curid ) {
-				if ( err ) {
-					return reject( err );
+				if ( args !== undefined ) {
+					self.$.ifx.exec( conn.id(), self.$.id, cursor.id(), args, function ( err, curid ) {
+						if ( err ) {
+							return reject( err );
+						}
+
+						pool.release( conn );
+						resolve( cursor );
+					} );
+				} else {
+					self.$.ifx.exec( conn.id(), self.$.id, cursor.id(), function ( err, curid ) {
+						if ( err ) {
+							return reject( err );
+						}
+
+						pool.release( conn );
+						resolve( cursor );
+					} );
 				}
-
-				resolve( cursor );
 			} );
-		} else {
-			self._$.ifx.exec( self._$.conn.id(), self._$.id, cursor.id(), function ( err, curid ) {
-				if ( err ) {
-					return reject( err );
-				}
-
-				resolve( cursor );
-			} );
-		}
-	} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
+		} );
 
 };
 
@@ -99,13 +108,13 @@ Statement.prototype.exec = function ( args ) {
 *   Return statement flags
 *
 *   @return {object} flags - Statement flags
-*   @return {boolean} flags.autoFree - Flag to indicate whether this statement
-*          should be freed automatically.
+*   @return {boolean} flags.reusable - Flag to indicate whether this statement
+*          should be reusable.
 */
 Statement.prototype.flags = function () {
 
 	var flags = {
-		autoFree : ( this._$.opts.autoFree ? true : false )
+		reusable : ( this.$.opts.reusable === false ? false : true )
 	};
 
 	return flags;
@@ -123,15 +132,23 @@ Statement.prototype.free = function () {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		self._$.ifx.free( self._$.conn.id(), self._$.id, function ( err, stmtid ) {
-			if ( err ) {
-				return reject( err );
-			}
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				self.$.ifx.free( conn.id(), self.$.id, function ( err, stmtid ) {
+					if ( err ) {
+						return reject( err );
+					}
 
-			resolve( stmtid );
+					pool.release( conn );
+					resolve( stmtid );
+				} );
+			} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
 		} );
-	} );
 
 };
 
@@ -142,7 +159,7 @@ Statement.prototype.free = function () {
 *   @param {object} opts - Options
 */
 Statement.prototype.options = function ( opts ) {
-	this._$.opts = opts || {};
+	this.$.opts = opts || {};
 };
 
 
@@ -157,16 +174,24 @@ Statement.prototype.prepare = function ( sql ) {
 
 	var self = this;
 
-	return new Promise( function ( resolve, reject ) {
-		self._$.id = '_' + crypto.createHash( 'sha256' ).update( sql ).digest( 'hex' );
-		self._$.ifx.prepare( self._$.conn.id(), self._$.id, sql, function ( err, stmtid ) {
-			if ( err ) {
-				return reject( err );
-			}
+	return pool.acquire( self.$.conn )
+		.then( function ( conn ) {
+			return new Promise( function ( resolve, reject ) {
+				self.$.id = '_' + crypto.createHash( 'sha256' ).update( sql ).digest( 'hex' );
+				self.$.ifx.prepare( conn.id(), self.$.id, sql, function ( err, stmtid ) {
+					if ( err ) {
+						return reject( err );
+					}
 
-			resolve( self );
+					pool.release( conn );
+					resolve( self );
+				} );
+			} );
+		} )
+		.catch( function ( err ) {
+			pool.release( self.$.conn );
+			throw err;
 		} );
-	} );
 
 };
 
@@ -184,13 +209,13 @@ module.exports = Statement;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Dec 05 2015 21:35:57 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a>
 </footer>
 
 <script> prettyPrint(); </script>
