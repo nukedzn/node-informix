@@ -41,12 +41,12 @@ describe( 'lib/Statement', function () {
 
 	context( 'constructor options', function () {
 
-		context( 'when autoFree=true', function () {
+		context( 'when reusable=false', function () {
 
 			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
-				stmt = new Statement( conn.$.ifx, conn, { autoFree : true } );
+				stmt = new Statement( conn.$.ifx, conn, { reusable : false } );
 				return stmt.prepare( sql );
 			} );
 
@@ -71,12 +71,12 @@ describe( 'lib/Statement', function () {
 		} );
 
 
-		context( 'when autoFree=false', function () {
+		context( 'when reusable=true', function () {
 
 			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
-				stmt = new Statement( conn.$.ifx, conn, { autoFree : false } );
+				stmt = new Statement( conn.$.ifx, conn, { reusable : true } );
 				return stmt.prepare( sql );
 			} );
 
