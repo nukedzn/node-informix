@@ -29,7 +29,6 @@ can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/produc
 * A compiler with C++11 standards support (e.g. `g++ v4.8`).
 
 
-
 ### Environment variables
 
 * [INFORMIXDIR](https://www-01.ibm.com/support/knowledgecenter/SSGU8G_12.1.0/com.ibm.sqlr.doc/ids_sqr_264.htm) -
