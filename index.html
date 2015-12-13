@@ -31,7 +31,7 @@
         <h1>
 <a id="node-informix" class="anchor" href="#node-informix" aria-hidden="true"><span class="octicon octicon-link"></span></a>node-informix</h1>
 
-<p><a href="https://gitter.im/nukedzn/node-informix?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/nukedzn/node-informix"></a></p>
+<p><a href="https://gitter.im/nukedzn/node-informix?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://nukedzn.github.io/badges/gitter.svg" alt="Join the chat at https://gitter.im/nukedzn/node-informix"></a></p>
 
 <p><a href="https://www.npmjs.com/package/informix"><img src="https://img.shields.io/npm/v/informix.svg" alt="npm version"></a>
 <a href="https://app.wercker.com/project/bykey/6f7f1a8246881c3d98acec4875280c54"><img src="https://app.wercker.com/status/6f7f1a8246881c3d98acec4875280c54/s/master" alt="wercker status" title="wercker status"></a>
@@ -43,13 +43,22 @@
 <p>A node.js native client for IBM Informix.</p>
 
 <h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Developer friendly ES6 Promise based API</li>
+<li>Transparent connections with lazy connect</li>
+<li>Connection pooling</li>
+<li>Prepared Statements</li>
+</ul>
+
+<h2>
 <a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
 
 <ul>
 <li>
 <a href="http://www-03.ibm.com/software/products/en/esqlc">IBM Informix ESQL/C</a> which
 can be installed using <a href="http://www-03.ibm.com/software/products/en/csdk">IBM Informix CSDK</a>.</li>
-<li>A compiler with C++11 standards support (e.g. <code>g++ v4.8</code>).</li>
 </ul>
 
 <h3>
@@ -66,7 +75,7 @@ can be installed using <a href="http://www-03.ibm.com/software/products/en/csdk"
 <li>
 <code>PATH</code> to include <code>${INFORMIXDIR}/bin</code> - (e.g. <code>export PATH="${INFORMIXDIR}/bin:${PATH}"</code>)</li>
 <li>
-<code>LD_LIBRARY_PATH</code> (or <code>DYLD_LIBRARY_PATH</code> on OSX) pointing to ESQL/C shared libraries -
+<code>LD_LIBRARY_PATH</code> to include ESQL/C shared libraries -
 (e.g. <code>export LD_LIBRARY_PATH="${INFORMIXDIR}/lib:${INFORMIXDIR}/lib/esql:${LD_LIBRARY_PATH}"</code>)</li>
 </ul>
 
@@ -94,16 +103,19 @@ e.g.</p>
 
 <span class="pl-k">var</span> informix <span class="pl-k">=</span> <span class="pl-c1">require</span>( <span class="pl-s"><span class="pl-pds">'</span>informix<span class="pl-pds">'</span></span> )( opts );</pre></div>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Informix <span class="pl-k">=</span> <span class="pl-c1">require</span>( <span class="pl-s"><span class="pl-pds">'</span>informix<span class="pl-pds">'</span></span> ).<span class="pl-c1">I</span>nformix;
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> Informix <span class="pl-k">=</span> <span class="pl-c1">require</span>( <span class="pl-s"><span class="pl-pds">'</span>informix<span class="pl-pds">'</span></span> ).<span class="pl-smi">Informix</span>;
 <span class="pl-k">var</span> informix <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">Informix</span>( { database <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>test@ol_informix1210<span class="pl-pds">'</span></span> } );</pre></div>
 
 <div class="highlight highlight-source-js"><pre>informix
     .<span class="pl-en">query</span>( <span class="pl-s"><span class="pl-pds">"</span>select tabname from systables where tabname like 'sys%auth';<span class="pl-pds">"</span></span> )
     .<span class="pl-en">then</span>( <span class="pl-k">function</span> ( <span class="pl-smi">cursor</span> ) {
-        <span class="pl-k">return</span> <span class="pl-smi">cursor</span>.<span class="pl-en">fetchAll</span>();
+        <span class="pl-k">return</span> <span class="pl-smi">cursor</span>.<span class="pl-en">fetchAll</span>( { close <span class="pl-k">:</span> <span class="pl-c1">true</span> } );
     } )
     .<span class="pl-en">then</span>( <span class="pl-k">function</span> ( <span class="pl-smi">results</span> ) {
         <span class="pl-en">console</span>.<span class="pl-c1">log</span>( <span class="pl-s"><span class="pl-pds">'</span>results:<span class="pl-pds">'</span></span>, results );
+    } )
+    .<span class="pl-en">catch</span>( <span class="pl-k">function</span> ( <span class="pl-smi">err</span> ) {
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>( err );
     } );</pre></div>
 
 <h2>
