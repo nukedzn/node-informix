@@ -18,12 +18,6 @@ informix.on( 'error', function ( err ) {
 } );
 
 
-// Connect event listener
-informix.on( 'connect', function ( conn ) {
-	console.log( '[event:connect] id:', conn.id() );
-} );
-
-
 
 // Execute a query
 informix
