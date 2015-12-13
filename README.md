@@ -26,7 +26,6 @@ A node.js native client for IBM Informix.
 
 * [IBM Informix ESQL/C](http://www-03.ibm.com/software/products/en/esqlc) which
 can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/products/en/csdk).
-* A compiler with C++11 standards support (e.g. `g++ v4.8`).
 
 
 ### Environment variables
