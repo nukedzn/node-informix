@@ -5,7 +5,7 @@ var expect = require( 'chai' ).expect;
 
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
-var pool       = require( '../lib/pool' );
+var Pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Statement', function () {
@@ -13,7 +13,7 @@ describe( 'lib/Statement', function () {
 	var conn = {};
 
 	before( function () {
-		pool.$reset( {
+		var pool = new Pool( {
 			max : 1,
 			database : 'test@ol_informix1210',
 			username : 'informix',
