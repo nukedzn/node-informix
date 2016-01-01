@@ -1,5 +1,6 @@
 
 #include <sqltypes.h>
+#include <decimal.h>
 
 #include "fetch.h"
 #include "../../esqlc.h"
@@ -74,8 +75,21 @@ namespace workers {
 
 				case SQLFLOAT:
 				case SQLSMFLOAT:
-				case SQLDECIMAL:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( *sqlvar->sqldata ) );
+					break;
+
+				case SQLMONEY:
+				case SQLDECIMAL:
+					int32_t n;
+					if ( dectolong( reinterpret_cast< dec_t * >( sqlvar->sqldata ), &n ) == 0 ) {
+						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( n ) );
+						break;
+					}
+
+					char buffer[40];
+					std::memset( buffer, 0, sizeof( buffer ) );
+					dectoasc( reinterpret_cast< dec_t * >( sqlvar->sqldata ), buffer, ( sizeof( buffer ) - 1 ), -1 );
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
 					break;
 
 				default:
