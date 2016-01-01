@@ -2,7 +2,7 @@
 connect to '@ol_informix1210' user 'informix' using 'informix';
 
 drop database if exists test;
-create database test;
+create database test with buffered log;
 
 
 create table tcustomers (
