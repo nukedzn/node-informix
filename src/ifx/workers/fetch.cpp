@@ -65,12 +65,15 @@ namespace workers {
 		v8::Local< v8::Array > result = Nan::New< v8::Array >( _cursor->outsqlda->sqld );
 		ifx_sqlvar_t * sqlvar = _cursor->outsqlda->sqlvar;
 		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
-			// FIXME: data conversions
+			// FIXME: data conversions (check for examples in dyn_sql.ec and unload.ec)
 			switch ( sqlvar->sqltype ) {
 				case SQLSMINT:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( static_cast< int16_t >(* reinterpret_cast<int16_t *>( sqlvar->sqldata ) ) ) );
+					break;
+
 				case SQLINT:
 				case SQLSERIAL:
-					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( static_cast< int32_t >(* reinterpret_cast<int32_t *>( sqlvar->sqldata ) ) ) );
 					break;
 
 				case SQLFLOAT:
