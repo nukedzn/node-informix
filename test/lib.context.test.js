@@ -3,6 +3,7 @@
 
 
 var expect = require( 'chai' ).expect;
+var sinon  = require( 'sinon' );
 
 var Context   = require( '../lib/context' );
 var Pool      = require( '../lib/pool' );
@@ -27,7 +28,7 @@ describe( 'lib/Context', function () {
 			} )
 			.then( function ( results ) {
 				expect( results ).to.have.length( 1 );
-				ctx.end();
+				return ctx.end();
 			} );
 	} );
 
@@ -39,7 +40,7 @@ describe( 'lib/Context', function () {
 				return stmt.free();
 			} )
 			.then( function ( stmtid ) {
-				ctx.end();
+				return ctx.end();
 			} );
 	} );
 
@@ -52,7 +53,7 @@ describe( 'lib/Context', function () {
 		} );
 
 		after( function () {
-			ctx.end();
+			return ctx.end();
 		} );
 
 
@@ -103,6 +104,7 @@ describe( 'lib/Context', function () {
 				} )
 				.then( function ( cursor ) {
 					expect( cursor.serial() ).to.be.gt( count );
+					return cursor.close();
 				} )
 				.then( function () {
 					return ctx.rollback();
@@ -111,12 +113,61 @@ describe( 'lib/Context', function () {
 					return stmt.exec();
 				} )
 				.then( function ( cursor ) {
-					return cursor.fetchAll();
+					return cursor.fetchAll( { close : true } );
 				} )
 				.then( function ( results ) {
 					expect( results[0][0] ).to.eq( count );
 				} );
 		} );
+
+	} );
+
+
+	context( 'when ending the context', function () {
+
+		var ctx = {};
+		beforeEach( function () {
+			ctx = new Context( pool );
+		} );
+
+
+		it ( 'should cleanup any cached statements', function () {
+			return ctx.begin()
+				.then( function () {
+					return ctx.commit();
+				} )
+				.then( function () {
+					return ctx.begin();
+				} )
+				.then( function () {
+					return ctx.rollback();
+				} )
+				.then( function () {
+					expect( ctx.$.stmts.begin ).to.be.an.instanceof( Promise );
+					expect( ctx.$.stmts.commit ).to.be.an.instanceof( Promise );
+					expect( ctx.$.stmts.rollback ).to.be.an.instanceof( Promise );
+				} )
+				.then( function () {
+					return ctx.end();
+				} );
+		} );
+
+
+		it( 'should rollback if there is an open transaction', function () {
+			var spy = sinon.spy( ctx, 'rollback' );
+			return ctx.begin()
+				.then( function () {
+					expect( ctx.$.transaction ).to.eq( true );
+				} )
+				.then( function () {
+					return ctx.end();
+				} )
+				.then( function () {
+					expect( spy.calledOnce ).to.eq( true );
+					spy.reset();
+				} );
+		} );
+
 	} );
 
 } );

@@ -7,6 +7,7 @@ var sinon  = require( 'sinon' );
 var Informix   = require( '../lib/informix' );
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
+var Context    = require( '../lib/context' );
 var Pool       = require( '../lib/pool' );
 
 
@@ -49,6 +50,13 @@ describe( 'lib/Informix', function () {
 				expect( stmt ).to.be.an.instanceof( Statement );
 				return stmt.free();
 			} );
+	} );
+
+	it( 'should be possible to create a new context', function () {
+		var informix = new Informix( opts );
+		var ctx = informix.createContext();
+		expect( ctx ).to.be.an.instanceof( Context );
+		ctx.end();
 	} );
 
 
