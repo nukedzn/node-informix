@@ -30,7 +30,7 @@ describe( 'lib/Statement', function () {
 
 	it( 'should be able to prepare a statement', function () {
 		var sql  = 'select tabname from systables where tabname like ?;';
-		var stmt = new Statement( conn.$.ifx, conn );
+		var stmt = new Statement( conn );
 		return stmt.prepare( sql )
 			.then( function ( stmt ) {
 				expect( stmt ).to.be.an.instanceof( Statement );
@@ -46,7 +46,7 @@ describe( 'lib/Statement', function () {
 			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
-				stmt = new Statement( conn.$.ifx, conn, { reusable : false } );
+				stmt = new Statement( conn, { reusable : false } );
 				return stmt.prepare( sql );
 			} );
 
@@ -76,7 +76,7 @@ describe( 'lib/Statement', function () {
 			var stmt = {};
 			before( function () {
 				var sql = 'select count(*) from tcustomers';
-				stmt = new Statement( conn.$.ifx, conn, { reusable : true } );
+				stmt = new Statement( conn, { reusable : true } );
 				return stmt.prepare( sql );
 			} );
 
@@ -99,7 +99,7 @@ describe( 'lib/Statement', function () {
 	context( 'when preparing a statement', function () {
 
 		it( 'should reject the promise on syntax errors', function () {
-			var stmt = new Statement( conn.$.ifx, conn );
+			var stmt = new Statement( conn );
 			return stmt.prepare( 'select something;' )
 				.then( function ( s ) {
 					throw new Error( 'Expected the statement to fail, but it did not!!!' );
@@ -118,7 +118,7 @@ describe( 'lib/Statement', function () {
 		var stmt = {};
 		before( function () {
 			var sql = 'select * from tcustomers where id < ?;';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 
@@ -171,7 +171,7 @@ describe( 'lib/Statement', function () {
 		var stmt = {};
 		before( function () {
 			var sql = 'select * from tcustomers where id < 3;';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 

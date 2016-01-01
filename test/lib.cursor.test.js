@@ -37,7 +37,7 @@ describe( 'lib/Cursor', function () {
 
 		before( function () {
 			var sql  = 'select tabname from systables where tabname like ?;';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 
@@ -121,7 +121,7 @@ describe( 'lib/Cursor', function () {
 
 		before( function () {
 			var sql  = 'insert into tcustomers( fname, lname ) values( ?, ? );';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 
