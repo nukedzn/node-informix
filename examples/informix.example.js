@@ -9,7 +9,11 @@
 'use strict';
 
 var Informix = require( '../' ).Informix;
-var informix = new Informix( { database : 'test@ol_informix1210' } );
+var informix = new Informix( {
+	database : 'test@ol_informix1210',
+	username : 'informix',
+	password : 'informix'
+} );
 
 
 // Error event listener
