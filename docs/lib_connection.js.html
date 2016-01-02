@@ -37,19 +37,44 @@ var uuid = require( 'uuid' );
 *
 *   @constructor
 *   @param {Ifx} ifx - Native object instance
+*   @param {Pool} [pool] - Connection pool associated with this connection
 *   @param {object} [opts] - Constructor options
 */
-var Connection = function ( ifx, opts ) {
+var Connection = function ( ifx, pool, opts ) {
 
-	// privileged data
+	var Pool = require( './pool' );
+	if (! (pool instanceof Pool) ) {
+		opts = pool;
+		pool = false;
+	}
+
+
+	// Privileged data
 	this.$ = {
 		id    : uuid.v4(),
 		index : -1,
 		ifx   : ifx,
+		pool  : pool
 	};
 
 	this.options( opts );
 
+};
+
+
+/**
+*   Acquire this connection from the pool
+*
+*   @param {string} context - Context ID to be used when acquiring the connection
+*   @return {Promise.&lt;Connection, Error>} - A promise to a connection object or
+*           an Error if rejected.
+*/
+Connection.prototype.acquire = function ( context ) {
+	if (! this.$.pool ) {
+		return Promise.resolve( this );
+	}
+
+	return this.$.pool.acquire( context || this );
 };
 
 
@@ -99,6 +124,16 @@ Connection.prototype.id = function () {
 
 
 /**
+*   Return the instance of the native binding used with this connection
+*
+*   @return {Ifx} - Native object instance.
+*/
+Connection.prototype.ifx = function () {
+	return this.$.ifx;
+};
+
+
+/**
 *   Return the connection pool index
 *
 *   @return {integer} - Connection pool index associated with this connection.
@@ -134,9 +169,21 @@ Connection.prototype.options = function ( opts ) {
 Connection.prototype.prepare = function ( sql, opts ) {
 
 	var Statement = require( './statement' );
-	var stmt = new Statement( this.$.ifx, this, opts );
+	var stmt = new Statement( this, opts );
 	return stmt.prepare( sql );
 
+};
+
+
+/**
+*   Release this connection back to the pool
+*
+*   @param {string} context - Context ID to be used when releasing the connection
+*/
+Connection.prototype.release = function ( context ) {
+	if ( this.$.pool ) {
+		this.$.pool.release( context || this );
+	}
 };
 
 
@@ -153,7 +200,7 @@ module.exports = Connection;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Context.html">Context</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">

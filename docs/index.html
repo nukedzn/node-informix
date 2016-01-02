@@ -56,6 +56,7 @@
 <li>Transparent connections with lazy connect</li>
 <li>Connection pooling</li>
 <li>Prepared Statements</li>
+<li>Transaction contexts</li>
 </ul>
 <h2>Dependencies</h2><ul>
 <li><a href="http://www-03.ibm.com/software/products/en/esqlc">IBM Informix ESQL/C</a> which
@@ -74,23 +75,40 @@ can be installed using <a href="http://www-03.ibm.com/software/products/en/csdk"
 <h3>Debian/Ubuntu</h3><p>You'll need to patch <code>${INFORMIXDIR}/bin/esql</code> on Debian based systems.
 e.g.</p>
 <pre class="prettyprint source lang-bash"><code>$ cat esql-4.10.debian.patch | patch ${INFORMIXDIR}/bin/esql</code></pre><h2>Installation</h2><pre class="prettyprint source lang-bash"><code>$ npm install --save informix</code></pre><h2>Usage</h2><pre class="prettyprint source lang-js"><code>var opts = {
-    database : 'test@ol_informix1210',
-    username : 'rockstar',
-    password : 'secret'
+  database : 'test@ol_informix1210',
+  username : 'rockstar',
+  password : 'secret'
 };
 
 var informix = require( 'informix' )( opts );</code></pre><pre class="prettyprint source lang-js"><code>var Informix = require( 'informix' ).Informix;
 var informix = new Informix( { database : 'test@ol_informix1210' } );</code></pre><pre class="prettyprint source lang-js"><code>informix
-    .query( &quot;select tabname from systables where tabname like 'sys%auth';&quot; )
-    .then( function ( cursor ) {
-        return cursor.fetchAll( { close : true } );
-    } )
-    .then( function ( results ) {
-        console.log( 'results:', results );
-    } )
-    .catch( function ( err ) {
-        console.log( err );
-    } );</code></pre><h2>API Documentation</h2><p>JSDoc generated API documentation can be found at <a href="http://nukedzn.github.io/node-informix/docs/">http://nukedzn.github.io/node-informix/docs/</a>.</p>
+  .query( &quot;select tabname from systables where tabname like 'sys%auth';&quot; )
+  .then( function ( cursor ) {
+    return cursor.fetchAll( { close : true } );
+  } )
+  .then( function ( results ) {
+    console.log( 'results:', results );
+  } )
+  .catch( function ( err ) {
+    console.log( err );
+  } );</code></pre><pre class="prettyprint source lang-js"><code>var ctx = informix.createContext();
+
+ctx.begin()
+  .then( function () {
+    return ctx.query( &quot;insert into tcustomers( fname, lname ) values( 'John', 'Smith' );&quot; );
+  } )
+  .then( function ( cursor ) {
+    console.log( 'id:', cursor.serial() );
+    cursor.close();
+
+    return ctx.commit();
+  } )
+  .then( function () {
+    return ctx.end();
+  } )
+  .catch( function ( err ) {
+    console.log( err );
+  } );</code></pre><h2>API Documentation</h2><p>JSDoc generated API documentation can be found at <a href="http://nukedzn.github.io/node-informix/docs/">http://nukedzn.github.io/node-informix/docs/</a>.</p>
 <h2>Contributing</h2><p>Contributions are welcome through GitHub pull requests (<a href="https://help.github.com/articles/using-pull-requests/#fork--pull">using fork &amp; pull model</a>).</p></article>
     </section>
 
@@ -102,7 +120,7 @@ var informix = new Informix( { database : 'test@ol_informix1210' } );</code></pr
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Context.html">Context</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">

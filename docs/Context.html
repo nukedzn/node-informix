@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Informix</title>
+    <title>JSDoc: Class: Context</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Informix</h1>
+    <h1 class="page-title">Class: Context</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>Informix</h2>
+        <h2>Context</h2>
         
     
 </header>
@@ -40,14 +40,16 @@
 
     
 
-    <h4 class="name" id="Informix"><span class="type-signature"></span>new Informix<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Context"><span class="type-signature"></span>new Context<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Class representing the IBM Informix client
+    Class representing a context which can be used to execute SQL statements in
+  chronological order and use transactions safely within the scope of the
+  context.
 </div>
 
 
@@ -65,8 +67,6 @@
     <thead>
     <tr>
         
-        <th>Name</th>
-        
 
         <th>Type</th>
 
@@ -83,13 +83,11 @@
 
         <tr>
             
-                <td class="name"><code>opts</code></td>
-            
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type"><a href="Pool.html">Pool</a></span>
 
 
             
@@ -99,7 +97,7 @@
 
             
 
-            <td class="description last">Constructor options</td>
+            <td class="description last">Connection pool to be used for this context</td>
         </tr>
 
     
@@ -140,7 +138,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line16">line 16</a>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line17">line 17</a>
     </li></ul></dd>
     
 
@@ -189,14 +187,14 @@
 
     
 
-    <h4 class="name" id="createContext"><span class="type-signature"></span>createContext<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Context.html">Context</a>}</span></h4>
+    <h4 class="name" id="begin"><span class="type-signature"></span>begin<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string, Error>}</span></h4>
 
     
 
 
 
 <div class="description">
-    Create a new context to execute SQL statements and use transactions safely
+    Begin a transaction for this context
 </div>
 
 
@@ -240,7 +238,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line37">line 37</a>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line45">line 45</a>
     </li></ul></dd>
     
 
@@ -267,7 +265,8 @@
 
         
 <div class="param-desc">
-    - A context object.
+    - A promise which resolves after openning a
+          transaction or an Error if rejected.
 </div>
 
 
@@ -278,7 +277,7 @@
     </dt>
     <dd>
         
-<span class="param-type"><a href="Context.html">Context</a></span>
+<span class="param-type">Promise.&lt;string, Error></span>
 
 
     </dd>
@@ -293,14 +292,14 @@
 
     
 
-    <h4 class="name" id="options"><span class="type-signature"></span>options<span class="signature">(opts)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="commit"><span class="type-signature"></span>commit<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string, Error>}</span></h4>
 
     
 
 
 
 <div class="description">
-    Set options
+    Commit a transaction opened for this context
 </div>
 
 
@@ -309,55 +308,6 @@
 
 
 
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>opts</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Options</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -393,7 +343,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line47">line 47</a>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -416,6 +366,239 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - A promise which resolves after committing a
+         transaction or an Error if rejected.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string, Error></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string, Error>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Rollback any open transactions and end the context by releasing the connection
+  used back to the pool.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line106">line 106</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - A promise to a context ID string which
+          resolved after the context is ended or an Error if rejected.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string, Error></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="id"><span class="type-signature"></span>id<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Return the context ID
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line161">line 161</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Context ID.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -431,7 +614,7 @@
 
 
 <div class="description">
-    Prepare a statement
+    Prepare a statement which is only valid to be executed within this context
 </div>
 
 
@@ -524,7 +707,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line73">line 73</a>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -585,7 +768,7 @@
 
 
 <div class="description">
-    Run a SQL query
+    Run a query within this context
 </div>
 
 
@@ -678,7 +861,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_informix.js.html">lib/informix.js</a>, <a href="lib_informix.js.html#line97">line 97</a>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line186">line 186</a>
     </li></ul></dd>
     
 
@@ -718,6 +901,111 @@
     <dd>
         
 <span class="param-type">Promise.&lt;<a href="Cursor.html">Cursor</a>, Error></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="rollback"><span class="type-signature"></span>rollback<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;string, Error>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Rollback a transaction opened for this context
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_context.js.html">lib/context.js</a>, <a href="lib_context.js.html#line202">line 202</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - A promise which resolves after rolling-back a
+         transaction or an Error if rejected.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;string, Error></span>
 
 
     </dd>

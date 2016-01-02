@@ -29,10 +29,10 @@
             <pre class="prettyprint source linenums"><code>
 'use strict';
 
-var Ifx = require( 'bindings' )( 'ifx' ).Ifx;
 var EventEmitter = require( 'events' ).EventEmitter;
 
-var pool = require( './pool' );
+var Context = require( './context' );
+var Pool    = require( './pool' );
 
 
 /**
@@ -45,9 +45,9 @@ var Informix = function ( opts ) {
 
 	EventEmitter.call( this );
 
-	// privileged data
+	// Privileged data
 	this.$ = {
-		ifx : new Ifx()
+		pool : new Pool()
 	};
 
 	this.options( opts );
@@ -55,6 +55,16 @@ var Informix = function ( opts ) {
 };
 
 Informix.prototype = Object.create( EventEmitter.prototype );
+
+
+/**
+*   Create a new context to execute SQL statements and use transactions safely
+*
+*   @return {Context} - A context object.
+*/
+Informix.prototype.createContext = function () {
+	return new Context( this.$.pool );
+};
 
 
 /**
@@ -77,7 +87,7 @@ Informix.prototype.options = function ( opts ) {
 		}
 	}
 
-	pool.options( popts );
+	this.$.pool.options( popts );
 };
 
 
@@ -86,15 +96,15 @@ Informix.prototype.options = function ( opts ) {
 *
 *   @param {string} sql - SQL statement to prepare
 *   @return {Promise.&lt;Statement, Error>} - A promise to a statement object or an
-*           Error if rejected
+*           Error if rejected.
 */
 Informix.prototype.prepare = function ( sql ) {
 
 	var self = this;
 
-	return pool.acquire()
+	return self.$.pool.acquire()
 		.then( function ( conn ) {
-			pool.release( conn );
+			self.$.pool.release( conn );
 			return conn.prepare( sql );
 		} )
 		.catch( function ( err ) {
@@ -116,9 +126,9 @@ Informix.prototype.query = function ( sql ) {
 
 	var self = this;
 
-	return pool.acquire()
+	return self.$.pool.acquire()
 		.then( function ( conn ) {
-			pool.release( conn );
+			self.$.pool.release( conn );
 			return conn.prepare( sql, { reusable : false } );
 		} )
 		.then( function ( stmt ) {
@@ -145,7 +155,7 @@ module.exports = Informix;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Context.html">Context</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">

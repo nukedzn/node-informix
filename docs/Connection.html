@@ -40,7 +40,7 @@
 
     
 
-    <h4 class="name" id="Connection"><span class="type-signature"></span>new Connection<span class="signature">(ifx, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Connection"><span class="type-signature"></span>new Connection<span class="signature">(ifx, pool<span class="signature-attributes">opt</span>, opts<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -116,6 +116,39 @@
 
         <tr>
             
+                <td class="name"><code>pool</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Pool.html">Pool</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Connection pool associated with this connection</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>opts</code></td>
             
 
@@ -183,7 +216,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line14">line 14</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line15">line 15</a>
     </li></ul></dd>
     
 
@@ -226,6 +259,160 @@
 
     
         <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="acquire"><span class="type-signature"></span>acquire<span class="signature">(context)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="Connection.html">Connection</a>, Error>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Acquire this connection from the pool
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Context ID to be used when acquiring the connection</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - A promise to a connection object or
+          an Error if rejected.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="Connection.html">Connection</a>, Error></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
 
         
             
@@ -332,7 +519,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line35">line 35</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -437,7 +624,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line68">line 68</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line93">line 93</a>
     </li></ul></dd>
     
 
@@ -476,6 +663,110 @@
     <dd>
         
 <span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="ifx"><span class="type-signature"></span>ifx<span class="signature">()</span><span class="type-signature"> &rarr; {Ifx}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Return the instance of the native binding used with this connection
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line103">line 103</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Native object instance.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Ifx</span>
 
 
     </dd>
@@ -541,7 +832,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line78">line 78</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -694,7 +985,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line88">line 88</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line123">line 123</a>
     </li></ul></dd>
     
 
@@ -868,7 +1159,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line106">line 106</a>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -918,6 +1209,137 @@
 
 
         
+            
+
+    
+
+    <h4 class="name" id="release"><span class="type-signature"></span>release<span class="signature">(context)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Release this connection back to the pool
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Context ID to be used when releasing the connection</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_connection.js.html">lib/connection.js</a>, <a href="lib_connection.js.html#line155">line 155</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
     
 
     
@@ -933,7 +1355,7 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-informix.html">informix</a></li></ul><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li><li><a href="Context.html">Context</a></li><li><a href="Cursor.html">Cursor</a></li><li><a href="Informix.html">Informix</a></li><li><a href="Pool.html">Pool</a></li><li><a href="Statement.html">Statement</a></li></ul>
 </nav>
 
 <br class="clear">
