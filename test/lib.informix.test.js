@@ -7,7 +7,8 @@ var sinon  = require( 'sinon' );
 var Informix   = require( '../lib/informix' );
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
-var pool       = require( '../lib/pool' );
+var Context    = require( '../lib/context' );
+var Pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Informix', function () {
@@ -17,10 +18,6 @@ describe( 'lib/Informix', function () {
 		username : 'informix',
 		password : 'informix'
 	};
-
-	before( function () {
-		pool.$reset();
-	} );
 
 
 	it( 'should set connection pool options', function () {
@@ -33,8 +30,8 @@ describe( 'lib/Informix', function () {
 		};
 
 		var informix = new Informix( opts );
-		expect( pool.$.min ).to.eql( opts.pool.min );
-		expect( pool.$.max ).to.eql( opts.pool.max );
+		expect( informix.$.pool.$.min ).to.eql( opts.pool.min );
+		expect( informix.$.pool.$.max ).to.eql( opts.pool.max );
 	} );
 
 	it( 'should be able to run a query', function () {
@@ -55,21 +52,22 @@ describe( 'lib/Informix', function () {
 			} );
 	} );
 
+	it( 'should be possible to create a new context', function () {
+		var informix = new Informix( opts );
+		var ctx = informix.createContext();
+		expect( ctx ).to.be.an.instanceof( Context );
+		ctx.end();
+	} );
+
 
 	context( 'when acquiring a connection from the pool fails', function () {
 
-		before( function () {
-			sinon.stub( pool, 'acquire', function () {
-				return Promise.reject( new Error( '[stub] Failed to acquire.' ) );
-			} );
-		} );
-
-		after( function () {
-			pool.acquire.restore();
-		} );
-
 		it( 'should emit an error object when running a query', function ( done ) {
 			var informix = new Informix( opts );
+			sinon.stub( informix.$.pool, 'acquire', function () {
+				return Promise.reject( new Error( '[stub] Failed to acquire.' ) );
+			} );
+
 			informix.on( 'error', function ( err ) {
 				try {
 					expect( err ).to.be.an.instanceof( Error );
@@ -89,6 +87,10 @@ describe( 'lib/Informix', function () {
 
 		it( 'should emit an error object when preparing a statement', function ( done ) {
 			var informix = new Informix( opts );
+			sinon.stub( informix.$.pool, 'acquire', function () {
+				return Promise.reject( new Error( '[stub] Failed to acquire.' ) );
+			} );
+
 			informix.on( 'error', function ( err ) {
 				try {
 					expect( err ).to.be.an.instanceof( Error );

@@ -1,5 +1,6 @@
 
 #include <sqltypes.h>
+#include <decimal.h>
 
 #include "fetch.h"
 #include "../../esqlc.h"
@@ -64,18 +65,34 @@ namespace workers {
 		v8::Local< v8::Array > result = Nan::New< v8::Array >( _cursor->outsqlda->sqld );
 		ifx_sqlvar_t * sqlvar = _cursor->outsqlda->sqlvar;
 		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
-			// FIXME: data conversions
+			// FIXME: data conversions (check for examples in dyn_sql.ec and unload.ec)
 			switch ( sqlvar->sqltype ) {
 				case SQLSMINT:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( static_cast< int16_t >(* reinterpret_cast<int16_t *>( sqlvar->sqldata ) ) ) );
+					break;
+
 				case SQLINT:
 				case SQLSERIAL:
-					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( *sqlvar->sqldata ) );
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( static_cast< int32_t >(* reinterpret_cast<int32_t *>( sqlvar->sqldata ) ) ) );
 					break;
 
 				case SQLFLOAT:
 				case SQLSMFLOAT:
-				case SQLDECIMAL:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( *sqlvar->sqldata ) );
+					break;
+
+				case SQLMONEY:
+				case SQLDECIMAL:
+					int32_t n;
+					if ( dectolong( reinterpret_cast< dec_t * >( sqlvar->sqldata ), &n ) == 0 ) {
+						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( n ) );
+						break;
+					}
+
+					char buffer[40];
+					std::memset( buffer, 0, sizeof( buffer ) );
+					dectoasc( reinterpret_cast< dec_t * >( sqlvar->sqldata ), buffer, ( sizeof( buffer ) - 1 ), -1 );
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
 					break;
 
 				default:

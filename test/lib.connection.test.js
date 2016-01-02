@@ -6,10 +6,20 @@ var Ifx    = require( '../' ).Ifx;
 
 var Connection = require( '../lib/connection' );
 var Statement  = require( '../lib/statement' );
-var pool       = require( '../lib/pool' );
+var Pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Connection', function () {
+
+	it( 'should be possible to acquire and release the connection', function () {
+		var conn = new Connection( new Ifx() );
+		return conn.acquire()
+			.then( function ( conn ) {
+				expect( conn ).to.be.an.instanceof( Connection );
+				return conn.release();
+			} );
+	} );
+
 
 	context( 'connection index', function () {
 
@@ -81,11 +91,11 @@ describe( 'lib/Connection', function () {
 	} );
 
 
-	context( 'when connected to a database', function () {
+	context( 'when initialised as part of a connection pool', function () {
 
 		var conn = {};
 		before( function () {
-			pool.$reset( {
+			var pool = new Pool( {
 				database : 'test@ol_informix1210',
 				username : 'informix',
 				password : 'informix'

@@ -7,7 +7,7 @@ var sinon  = require( 'sinon' );
 
 var Statement  = require( '../lib/statement' );
 var Cursor     = require( '../lib/cursor' );
-var pool       = require( '../lib/pool' );
+var Pool       = require( '../lib/pool' );
 
 
 describe( 'lib/Cursor', function () {
@@ -15,7 +15,7 @@ describe( 'lib/Cursor', function () {
 	var conn = {};
 
 	before( function () {
-		pool.$reset( {
+		var pool = new Pool( {
 			max : 1,
 			database : 'test@ol_informix1210',
 			username : 'informix',
@@ -37,7 +37,7 @@ describe( 'lib/Cursor', function () {
 
 		before( function () {
 			var sql  = 'select tabname from systables where tabname like ?;';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 
@@ -121,7 +121,7 @@ describe( 'lib/Cursor', function () {
 
 		before( function () {
 			var sql  = 'insert into tcustomers( fname, lname ) values( ?, ? );';
-			stmt = new Statement( conn.$.ifx, conn );
+			stmt = new Statement( conn );
 			return stmt.prepare( sql );
 		} );
 

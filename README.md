@@ -19,6 +19,7 @@ A node.js native client for IBM Informix.
 * Transparent connections with lazy connect
 * Connection pooling
 * Prepared Statements
+* Transaction contexts
 
 
 
@@ -62,9 +63,9 @@ $ npm install --save informix
 
 ```js
 var opts = {
-	database : 'test@ol_informix1210',
-	username : 'rockstar',
-	password : 'secret'
+  database : 'test@ol_informix1210',
+  username : 'rockstar',
+  password : 'secret'
 };
 
 var informix = require( 'informix' )( opts );
@@ -77,16 +78,37 @@ var informix = new Informix( { database : 'test@ol_informix1210' } );
 
 ```js
 informix
-	.query( "select tabname from systables where tabname like 'sys%auth';" )
-	.then( function ( cursor ) {
-		return cursor.fetchAll( { close : true } );
-	} )
-	.then( function ( results ) {
-		console.log( 'results:', results );
-	} )
-	.catch( function ( err ) {
-		console.log( err );
-	} );
+  .query( "select tabname from systables where tabname like 'sys%auth';" )
+  .then( function ( cursor ) {
+    return cursor.fetchAll( { close : true } );
+  } )
+  .then( function ( results ) {
+    console.log( 'results:', results );
+  } )
+  .catch( function ( err ) {
+    console.log( err );
+  } );
+```
+
+```js
+var ctx = informix.createContext();
+
+ctx.begin()
+  .then( function () {
+    return ctx.query( "insert into tcustomers( fname, lname ) values( 'John', 'Smith' );" );
+  } )
+  .then( function ( cursor ) {
+    console.log( 'id:', cursor.serial() );
+    cursor.close();
+
+    return ctx.commit();
+  } )
+  .then( function () {
+    return ctx.end();
+  } )
+  .catch( function ( err ) {
+    console.log( err );
+  } );
 ```
 
 
