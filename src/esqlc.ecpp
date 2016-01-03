@@ -11,11 +11,28 @@ int32_t esqlc::connect( const char * connid, const char * database, const char *
 
 	const char * esql_db = database;
 	const char * esql_connid = connid;
+
+#ifndef _WIN32
 	const char * esql_user = username;
 	const char * esql_pass = password;
+#else
+	char * esql_user = 0;
+	char * esql_pass = 0;
+#endif
 
 	EXEC SQL END DECLARE SECTION;
 
+#ifdef _WIN32
+	if ( username ) {
+		esql_user = new char[ sizeof( username ) ];
+		std::strncpy( esql_user, username, sizeof( username ) );
+	}
+
+	if ( password ) {
+		esql_pass = new char[ sizeof( password ) ];
+		std::strncpy( esql_pass, password, sizeof( password ) );
+	}
+#endif
 
 	if ( username && strlen( username ) && password && strlen( password ) ) {
 		EXEC SQL connect to :esql_db as :esql_connid USER :esql_user USING :esql_pass
@@ -27,8 +44,13 @@ int32_t esqlc::connect( const char * connid, const char * database, const char *
 		EXEC SQL connect to :esql_db as :esql_connid WITH CONCURRENT TRANSACTION;
 	}
 
-	return SQLCODE;
 
+#ifdef _WIN32
+	if ( esql_user ) { delete [] esql_user; }
+	if ( esql_pass ) { delete [] esql_pass; }
+#endif
+
+	return SQLCODE;
 };
 
 

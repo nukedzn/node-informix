@@ -18,23 +18,32 @@
 				} ],
 				[ 'OS == "win"', {
 					'actions' : [ {
-						'action_name' : 'esql-preprocess',
+						'action_name' : 'prepare',
 						'inputs' : [
 							'src/esqlc.ecpp'
 						],
 						'outputs' : [
-							'esqlc.C'
+							'<(INTERMEDIATE_DIR)/src/esqlc.ec'
+						],
+						'action' : [ 'copy', 'src/esqlc.ecpp', '<(INTERMEDIATE_DIR)/src/esqlc.ec' ]
+					}, {
+						'action_name' : 'esql-preprocess',
+						'inputs' : [
+							'<(INTERMEDIATE_DIR)/src/esqlc.ec'
+						],
+						'outputs' : [
+							'build/esqlc.c'
 						],
 						'action' : [ 'esql', '-thread', '-e', '<@(_inputs)' ]
 					}, {
 						'action_name' : 'move',
 						'inputs' : [
-							'esqlc.C'
+							'build/esqlc.c'
 						],
 						'outputs' : [
 							'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp'
 						],
-						'action' : [ 'move', 'esqlc.C', '<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp' ]
+						'action' : [ 'move', 'build/esqlc.c', '<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp' ]
 					} ]
 				} ]
 			]
@@ -55,6 +64,14 @@
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [
+				[ '(OS == "linux" or OS == "mac")', {
+					'link_settings' : {
+						'libraries' : [
+							'-L$(INFORMIXDIR)/lib',
+							'-L$(INFORMIXDIR)/lib/esql',
+						]
+					}
+				} ],
 				[ 'OS == "mac"', {
 					'link_settings' : {
 						'libraries' : [
@@ -75,7 +92,15 @@
 				[ 'OS == "win"', {
 					'link_settings' : {
 						'libraries' : [
-							'<!@(esql -static -thread -libs)'
+							'$(INFORMIXDIR)/lib/isqlt09a.lib',
+							'$(INFORMIXDIR)/lib/igl4n304.lib',
+							'$(INFORMIXDIR)/lib/iglxn304.lib',
+							'$(INFORMIXDIR)/lib/igo4n304.lib',
+							'netapi32.lib',
+							'wsock32.lib',
+							'user32.lib',
+							'winmm.lib',
+							'advapi32.lib'
 						]
 					}
 				} ]
@@ -86,15 +111,9 @@
 			],
 			'include_dirs' : [
 				'<!(node -e "require(\'nan\')")',
-				'<!(echo ${INFORMIXDIR}/incl/esql)',
+				'$(INFORMIXDIR)/incl/esql',
 				'src'
-			],
-			'link_settings' : {
-				'libraries' : [
-					'-L<!(echo ${INFORMIXDIR}/lib)',
-					'-L<!(echo ${INFORMIXDIR}/lib/esql)',
-				]
-			}
+			]
 		}
 	]
 }

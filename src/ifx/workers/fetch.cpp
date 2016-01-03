@@ -6,6 +6,13 @@
 #include "fetch.h"
 #include "../../esqlc.h"
 
+#ifdef _WIN32
+extern "C" {
+	mint __cdecl dectoasc(struct decimal *np,char *cp,mint len,mint right);
+	mint __cdecl dectolong(struct decimal *np,int32_t *lngp);
+}
+#endif
+
 
 namespace ifx {
 namespace workers {
