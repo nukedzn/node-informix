@@ -3,16 +3,41 @@
 		{
 			'target_name' : 'esqlc',
 			'type' : 'none',
-			'actions' : [ {
-				'action_name' : 'esql-preprocess',
-				'inputs' : [
-					'src/esqlc.ecpp'
-				],
-				'outputs' : [
-					'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp'
-				],
-				'action' : [ 'bash', './gyp/preprocessor.sh', '<(SHARED_INTERMEDIATE_DIR)/src' ]
-			} ]
+			'conditions' : [
+				[ '(OS == "linux" or OS == "mac")', {
+					'actions' : [ {
+						'action_name' : 'esql-preprocess',
+						'inputs' : [
+							'src/esqlc.ecpp'
+						],
+						'outputs' : [
+							'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp'
+						],
+						'action' : [ 'bash', './gyp/preprocessor.sh', '<(SHARED_INTERMEDIATE_DIR)/src' ]
+					} ]
+				} ],
+				[ 'OS == "win"', {
+					'actions' : [ {
+						'action_name' : 'esql-preprocess',
+						'inputs' : [
+							'src/esqlc.ecpp'
+						],
+						'outputs' : [
+							'esqlc.C'
+						],
+						'action' : [ 'esql', '-thread', '-e', '<@(_inputs)' ]
+					}, {
+						'action_name' : 'move',
+						'inputs' : [
+							'esqlc.C'
+						],
+						'outputs' : [
+							'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp'
+						],
+						'action' : [ 'move', 'esqlc.C', '<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp' ]
+					} ]
+				} ]
+			]
 		},
 		{
 			'target_name' : 'ifx',
@@ -30,12 +55,28 @@
 				'<(SHARED_INTERMEDIATE_DIR)/src/esqlc.cpp',
 			],
 			'conditions' : [
-				[ 'OS=="mac"', {
-					'variables' : {
-						'extraesqlopts%' : '-static'
+				[ 'OS == "mac"', {
+					'link_settings' : {
+						'libraries' : [
+							'<!@(THREADLIB=POSIX esql -static -thread -libs)'
+						]
 					},
 					'xcode_settings' : {
 						'MACOSX_DEPLOYMENT_TARGET' : '10.7'
+					}
+				} ],
+				[ 'OS == "linux"', {
+					'link_settings' : {
+						'libraries' : [
+							'<!@(THREADLIB=POSIX esql -thread -libs)'
+						]
+					}
+				} ],
+				[ 'OS == "win"', {
+					'link_settings' : {
+						'libraries' : [
+							'<!@(esql -static -thread -libs)'
+						]
 					}
 				} ]
 			],
@@ -49,13 +90,9 @@
 				'src'
 			],
 			'link_settings' : {
-				'variables' : {
-					'extraesqlopts%' : ''
-				},
 				'libraries' : [
 					'-L<!(echo ${INFORMIXDIR}/lib)',
 					'-L<!(echo ${INFORMIXDIR}/lib/esql)',
-					'<!@(THREADLIB=POSIX esql <(extraesqlopts) -thread -libs)'
 				]
 			}
 		}
