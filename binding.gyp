@@ -35,10 +35,7 @@
 						'extraesqlopts%' : '-static'
 					},
 					'xcode_settings' : {
-						'MACOSX_DEPLOYMENT_TARGET' : '10.7',
-						'OTHER_LDFLAGS' : [
-							'-headerpad_max_install_names'
-						]
+						'MACOSX_DEPLOYMENT_TARGET' : '10.7'
 					}
 				} ]
 			],
