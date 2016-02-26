@@ -85,7 +85,8 @@ namespace workers {
 				case SQLMONEY:
 				case SQLDECIMAL:
 					{
-						int32_t n = 0;
+						// have to use informix integer types here so it doesn't complain on windows
+						int4 n = 0;
 						if ( dectolong( reinterpret_cast< dec_t * >( sqlvar->sqldata ), &n ) == 0 ) {
 							result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( n ) );
 						} else {
