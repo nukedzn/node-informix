@@ -20,6 +20,7 @@ A node.js native client for IBM Informix.
 * Connection pooling
 * Prepared Statements
 * Transaction contexts
+* Linux, Mac OSX and Windows (experimental) compatibility
 
 
 
