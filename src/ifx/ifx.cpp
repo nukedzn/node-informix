@@ -504,10 +504,10 @@ namespace ifx {
 
 		if ( stmt->cursors.size() ) {
 			// try and cleanup any empty cursor references (issue #27)
-			for ( const auto &it : stmt->cursors ) {
-				if (! stmt->cursors[ it.first ] ) {
-					stmt->cursors.erase( it.first );
-					self->_cursors.erase( it.first );
+			for ( cursors_t::iterator it = stmt->cursors.begin(); it != stmt->cursors.end(); it++ ) {
+				if (! it->second ) {
+					self->_cursors.erase( it->first );
+					stmt->cursors.erase( it );
 				}
 			}
 		}
