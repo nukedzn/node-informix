@@ -61,6 +61,24 @@ namespace workers {
 	}
 
 
+	void StmtExec::HandleErrorCallback() {
+
+		// stack-allocated handle scope
+		Nan::HandleScope scope;
+
+		// free cursor memory allocation
+		delete _cursor;
+
+		// return value
+		v8::Local< v8::Value > argv[] = {
+			Nan::Error( Nan::New<v8::String>( ErrorMessage() ).ToLocalChecked() ),
+		};
+
+		callback->Call( 1, argv );
+
+	}
+
+
 	void StmtExec::HandleOKCallback() {
 
 		// stack-allocated handle scope

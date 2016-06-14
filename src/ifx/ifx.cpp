@@ -503,6 +503,16 @@ namespace ifx {
 		}
 
 		if ( stmt->cursors.size() ) {
+			// try and cleanup any empty cursor references (issue #27)
+			for ( const auto &it : stmt->cursors ) {
+				if (! stmt->cursors[ it.first ] ) {
+					stmt->cursors.erase( it.first );
+					self->_cursors.erase( it.first );
+				}
+			}
+		}
+
+		if ( stmt->cursors.size() ) {
 			return Nan::ThrowError( "Cursors need to be closed." );
 		}
 

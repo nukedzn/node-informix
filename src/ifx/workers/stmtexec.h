@@ -21,6 +21,7 @@ namespace workers {
 
 	protected:
 
+		void HandleErrorCallback();
 		void HandleOKCallback();
 
 
