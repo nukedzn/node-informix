@@ -54,7 +54,7 @@ describe( 'lib/Informix', function () {
 
 	it( 'should be possible to prepare a named statement', function () {
 		var informix = new Informix( opts );
-		var stmtname = 'stmt:01';
+		var stmtname = 'stmt_select';
 		return informix.prepare( 'select count(*) from tcustomers where id > ?;', stmtname )
 			.then( function ( stmt ) {
 				expect( stmt.$.id ).to.eql( stmtname );
