@@ -52,6 +52,16 @@ describe( 'lib/Informix', function () {
 			} );
 	} );
 
+	it( 'should be possible to prepare a named statement', function () {
+		var informix = new Informix( opts );
+		var stmtname = 'stmt:01';
+		return informix.prepare( 'select count(*) from tcustomers where id > ?;', stmtname )
+			.then( function ( stmt ) {
+				expect( stmt.$.id ).to.eql( stmtname );
+				return stmt.free();
+			} );
+	} );
+
 	it( 'should be possible to create a new context', function () {
 		var informix = new Informix( opts );
 		var ctx = informix.createContext();
