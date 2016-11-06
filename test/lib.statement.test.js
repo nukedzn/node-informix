@@ -157,6 +157,15 @@ describe( 'lib/Statement', function () {
 						expect( err.message ).to.be.string( '[-254] Too many or too few host variables given.' );
 					} );
 			} );
+
+			it( 'should be possible to execute the statement with cursor options', function () {
+				var curname = 'cursor_select';
+				return stmt.exec( 0, { id : curname } )
+					.then( function ( cursor ) {
+						expect( cursor.$.id ).to.eql( curname );
+						return cursor.close();
+					} );
+			} );
 		} );
 
 	} );
@@ -193,6 +202,15 @@ describe( 'lib/Statement', function () {
 					.catch( function ( err ) {
 						expect( err ).to.be.an.instanceof( Error );
 						expect( err.message ).to.be.string( 'This statment does not expect any input arguments.' );
+					} );
+			} );
+
+			it( 'should be possible to execute the statement with cursor options', function () {
+				var curname = 'stmt_select';
+				return stmt.exec( { id : curname } )
+					.then( function ( cursor ) {
+						expect( cursor.$.id ).to.eql( curname );
+						return cursor.close();
 					} );
 			} );
 		} );
