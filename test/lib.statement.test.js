@@ -161,8 +161,9 @@ describe( 'lib/Statement', function () {
 			it( 'should be possible to execute the statement with cursor options', function () {
 				var curname = 'cursor_select';
 				return stmt.exec( 0, { id : curname } )
-					.then( function ( c ) {
-						expect( c.$.id ).to.eql( curname );
+					.then( function ( cursor ) {
+						expect( cursor.$.id ).to.eql( curname );
+						return cursor.close();
 					} );
 			} );
 		} );
@@ -207,8 +208,9 @@ describe( 'lib/Statement', function () {
 			it( 'should be possible to execute the statement with cursor options', function () {
 				var curname = 'stmt_select';
 				return stmt.exec( { id : curname } )
-					.then( function ( c ) {
-						expect( c.$.id ).to.eql( curname );
+					.then( function ( cursor ) {
+						expect( cursor.$.id ).to.eql( curname );
+						return cursor.close();
 					} );
 			} );
 		} );
