@@ -64,7 +64,7 @@ namespace ifx {
 			const int argc = 1;
 			v8::Local< v8::Value > argv[ argc ] = { info[0] };
 			v8::Local< v8::Function > c = Nan::New< v8::Function >( constructor );
-			return info.GetReturnValue().Set( c->NewInstance( argc, argv ) );
+			return info.GetReturnValue().Set( Nan::NewInstance( c, argc, argv ).ToLocalChecked() );
 
 		}
 
