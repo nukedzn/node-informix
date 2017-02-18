@@ -44,6 +44,18 @@ describe( 'data-types', () => {
 	} );
 
 
+	it( 'should fetch int8/serial8 values correctly', () => {
+		return informix.query( 'select id from tdatatypes;' )
+			.then( ( cursor ) => {
+				return cursor.fetchAll( { close : true } );
+			} )
+			.then( ( results ) => {
+				expect( results ).to.have.length( 1 )
+					.with.deep.property( '[0][0]' )
+					.that.is.a( 'number' );
+			} );
+	} );
+
 	it( 'should return datetime values in ISO format', () => {
 		return informix.query( 'select dt from tdatatypes;' )
 			.then( ( cursor ) => {

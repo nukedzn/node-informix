@@ -128,10 +128,15 @@ namespace workers {
 				case SQLINT8:
 				case SQLSERIAL8:
 					{
-						char buffer[32];
-						std::memset( buffer, 0, sizeof( buffer ) );
-						ifx_int8toasc( reinterpret_cast< ifx_int8_t * >( sqlvar->sqldata ), buffer, sizeof( buffer ) );
-						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
+						int4 n = 0;
+						if ( ifx_int8tolong( reinterpret_cast<ifx_int8_t *>( sqlvar->sqldata ), &n ) == 0 ) {
+							result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( n ) );
+						} else {
+							char buffer[32];
+							std::memset( buffer, 0, sizeof( buffer ) );
+							ifx_int8toasc( reinterpret_cast< ifx_int8_t * >( sqlvar->sqldata ), buffer, sizeof( buffer ) );
+							result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
+						}
 					}
 					break;
 
