@@ -43,3 +43,10 @@ create procedure ppurgecustomers()
 	delete from tcustomers;
 end procedure;
 
+
+
+create table tdatatypes (
+	id        serial8,
+	decimal   decimal
+);
+
