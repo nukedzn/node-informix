@@ -3,6 +3,7 @@
 
 const expect = require( 'chai' ).expect;
 const sinon  = require( 'sinon' );
+const moment = require( 'moment' );
 
 const Informix   = require( '../lib/informix' );
 
@@ -17,6 +18,7 @@ describe( 'data-types', () => {
 
 	const values = {
 		dt : '2017-02-17 17:20:56.002',
+		date : new Date( '2017-02-18' ),
 		decimal : 7.964439875659,
 	};
 
@@ -24,10 +26,12 @@ describe( 'data-types', () => {
 		return informix.query(
 				'insert into tdatatypes(' +
 					'dt, ' +
+					'date, ' +
 					'decimal ' +
 				') ' +
 				'values(' +
 					'"' + values.dt + '", ' +
+					moment( values.date ).format( '[mdy(]MM,DD,YYYY[), ]' ) +
 					values.decimal +
 				');'
 			)
@@ -53,6 +57,18 @@ describe( 'data-types', () => {
 				expect( results ).to.have.length( 1 )
 					.with.deep.property( '[0][0]' )
 					.that.is.a( 'number' );
+			} );
+	} );
+
+	it( 'should return date values in ISO format', () => {
+		return informix.query( 'select date from tdatatypes;' )
+			.then( ( cursor ) => {
+				return cursor.fetchAll( { close : true } );
+			} )
+			.then( ( results ) => {
+				expect( results ).to.have.length( 1 )
+					.with.deep.property( '[0][0]' )
+					.that.eql( values.date.toISOString() );
 			} );
 	} );
 

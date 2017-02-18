@@ -73,7 +73,6 @@ namespace workers {
 
 				case SQLINT:
 				case SQLSERIAL:
-				case SQLDATE:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >(* reinterpret_cast<int32_t *>( sqlvar->sqldata ) ) );
 					break;
 
@@ -99,6 +98,15 @@ namespace workers {
 
 				case SQLNULL:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::Null() );
+					break;
+
+				case SQLDATE:
+					{
+						char buffer[25];
+						char format[] = "yyyy-mm-ddT00:00:00.000Z";
+						rfmtdate( *reinterpret_cast<int4 *>( sqlvar->sqldata ), format, buffer );
+						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
+					}
 					break;
 
 				case SQLDTIME:
