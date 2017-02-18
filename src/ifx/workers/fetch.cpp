@@ -65,7 +65,7 @@ namespace workers {
 		// we have results, return as a data array
 		v8::Local< v8::Array > result = Nan::New< v8::Array >( _cursor->outsqlda->sqld );
 		ifx_sqlvar_t * sqlvar = _cursor->outsqlda->sqlvar;
-		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++ ) {
+		for ( uint32_t i = 0; i < static_cast< size_t >( _cursor->outsqlda->sqld ); i++, sqlvar++ ) {
 			switch ( sqlvar->sqltype ) {
 				case SQLSMINT:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >(* reinterpret_cast<int16_t *>( sqlvar->sqldata ) ) );
@@ -130,7 +130,7 @@ namespace workers {
 					{
 						int4 n = 0;
 						if ( ifx_int8tolong( reinterpret_cast<ifx_int8_t *>( sqlvar->sqldata ), &n ) == 0 ) {
-							result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( n ) );
+							result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >( n ) );
 						} else {
 							char buffer[32];
 							std::memset( buffer, 0, sizeof( buffer ) );
@@ -144,8 +144,6 @@ namespace workers {
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( sqlvar->sqldata ).ToLocalChecked() );
 					break;
 			}
-
-			sqlvar++;
 		}
 
 		v8::Local< v8::Value > argv[] = {
