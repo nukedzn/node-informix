@@ -16,11 +16,21 @@ describe( 'data-types', () => {
 	} );
 
 	const values = {
+		dt : '2017-02-17 17:20:56.002',
 		decimal : 7.964439875659,
 	};
 
 	before( () => {
-		return informix.query( 'insert into tdatatypes( decimal ) values(' + values.decimal + ');' )
+		return informix.query(
+				'insert into tdatatypes(' +
+					'dt, ' +
+					'decimal ' +
+				') ' +
+				'values(' +
+					'"' + values.dt + '", ' +
+					values.decimal +
+				');'
+			)
 			.then( ( cursor ) => {
 				return cursor.close();
 			} );
@@ -33,6 +43,18 @@ describe( 'data-types', () => {
 			} );
 	} );
 
+
+	it( 'should return datetime values in ISO format', () => {
+		return informix.query( 'select dt from tdatatypes;' )
+			.then( ( cursor ) => {
+				return cursor.fetchAll( { close : true } );
+			} )
+			.then( ( results ) => {
+				expect( results ).to.have.length( 1 )
+					.with.deep.property( '[0][0]' )
+					.that.eql( new Date( values.dt ).toISOString() );
+			} );
+	} );
 
 	it( 'should fetch decimal values correctly', () => {
 		return informix.query( 'select decimal from tdatatypes;' )

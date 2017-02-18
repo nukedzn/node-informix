@@ -47,6 +47,7 @@ end procedure;
 
 create table tdatatypes (
 	id        serial8,
+	dt        datetime year to fraction,
 	decimal   decimal
 );
 
