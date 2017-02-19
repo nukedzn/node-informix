@@ -100,8 +100,9 @@ ctx.begin()
   } )
   .then( function ( cursor ) {
     console.log( 'id:', cursor.serial() );
-    cursor.close();
-
+    return cursor.close();
+  } )
+  .then( function () {
     return ctx.commit();
   } )
   .then( function () {
