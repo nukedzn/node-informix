@@ -7,6 +7,7 @@
 #include <list>
 #include <sqlda.h>
 #include <sqltypes.h>
+#include <sqlhdr.h>
 
 
 namespace ifx {
@@ -76,13 +77,13 @@ namespace ifx {
 				delete it->second;
 			}
 
-			if ( insqlda ) {
-				delete insqlda;
-			}
-
-			if ( outsqlda ) {
-				delete outsqlda;
-			}
+#if _WIN32
+			SqlFreeMem( insqlda, SQLDA_FREE );
+			SqlFreeMem( outsqlda, SQLDA_FREE );
+#else
+			free( insqlda );
+			free( outsqlda );
+#endif
 
 		}
 	};
