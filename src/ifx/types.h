@@ -81,8 +81,13 @@ namespace ifx {
 			SqlFreeMem( insqlda, SQLDA_FREE );
 			SqlFreeMem( outsqlda, SQLDA_FREE );
 #else
-			free( insqlda );
-			free( outsqlda );
+			if ( insqlda ) {
+				delete insqlda;
+			}
+
+			if ( outsqlda ) {
+				delete outsqlda;
+			}
 #endif
 
 		}
