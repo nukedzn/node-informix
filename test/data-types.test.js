@@ -55,7 +55,7 @@ describe( 'data-types', () => {
 			} )
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
-					.with.deep.property( '[0][0]' )
+					.with.nested.property( '[0][0]' )
 					.that.is.a( 'number' );
 			} );
 	} );
@@ -67,7 +67,7 @@ describe( 'data-types', () => {
 			} )
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
-					.with.deep.property( '[0][0]' )
+					.with.nested.property( '[0][0]' )
 					.that.eql( values.date.toISOString() );
 			} );
 	} );
@@ -79,7 +79,7 @@ describe( 'data-types', () => {
 			} )
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
-					.with.deep.property( '[0][0]' )
+					.with.nested.property( '[0][0]' )
 					.that.eql( new Date( values.dt ).toISOString() );
 			} );
 	} );
@@ -91,7 +91,7 @@ describe( 'data-types', () => {
 			} )
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
-					.with.deep.property( '[0][0]' )
+					.with.nested.property( '[0][0]' )
 					.that.eql( values.decimal );
 			} );
 	} );
