@@ -23,6 +23,12 @@ describe( 'issues', () => {
 				)
 				.then( ( cursor ) => {
 					return cursor.close();
+				} )
+				.then( () => {
+					return informix.query( 'insert into tissue45 (c) values ( \'C\' );' );
+				} )
+				.then( ( cursor) => {
+					return cursor.close();
 				} );
 		} );
 
@@ -36,8 +42,35 @@ describe( 'issues', () => {
 				} );
 		} );
 
-		it( 'should return correct length when re-using prepared statements with char columns' );
-	} );
+		it( 'should return correct length when re-using prepared statements with char columns', () => {
+			let stmt;
 
+			return informix
+				.prepare( 'select c from tissue45 limit 1;' )
+				.then( ( s ) => {
+					stmt = s;
+					return stmt.exec();
+				} )
+				.then( ( cursor ) => {
+					return cursor.fetchAll( { close : true } );
+				} )
+				.then( ( results ) => {
+					expect( results ).to.have.length( 1 )
+						.with.nested.property( '[0][0]' )
+						.with.length( 1 );
+				} )
+				.then( () => {
+					return stmt.exec();
+				} )
+				.then( ( cursor ) => {
+					return cursor.fetchAll( { close : true } );
+				} )
+				.then( ( results ) => {
+					expect( results ).to.have.length( 1 )
+						.with.nested.property( '[0][0]' )
+						.with.length( 1 );
+				} );
+		} );
+	} );
 } );
 
