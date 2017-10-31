@@ -385,16 +385,13 @@ namespace ifx {
 			size_t size = 0;
 			ifx_sqlvar_t * sqlvar = cursor->outsqlda->sqlvar;
 			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
-
 				if ( sqlvar->sqltype == SQLCHAR ) {
-					sqlvar->sqllen += 1;
+					sqlvar->sqllen = 2;
 				}
 
 				size = rtypalign( size, sqlvar->sqltype );
 				size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
-
 				sqlvar++;
-
 			}
 
 			// new output data buffer
