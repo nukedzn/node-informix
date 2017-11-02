@@ -52,6 +52,19 @@ namespace workers {
 		// stack-allocated handle scope
 		Nan::HandleScope scope;
 
+		// calculate the size of the output data buffer we need
+		_stmt->size = 0;
+		ifx_sqlvar_t * sqlvar = _stmt->outsqlda->sqlvar;
+		for ( int8_t i = 0; i < _stmt->outsqlda->sqld; i++, sqlvar++ ) {
+			if ( sqlvar->sqltype == SQLCHAR ) {
+				sqlvar->sqllen += 1;
+			}
+
+			_stmt->size = rtypalign( _stmt->size, sqlvar->sqltype );
+			_stmt->size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
+		}
+
+
 		v8::Local< v8::Value > argv[] = {
 			Nan::Null(),
 			Nan::New< v8::String >( _stmt->id ).ToLocalChecked()

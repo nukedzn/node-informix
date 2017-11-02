@@ -381,25 +381,12 @@ namespace ifx {
 			cursor->outsqlda = new ifx_sqlda_t();
 			std::memcpy( cursor->outsqlda, cursor->stmt->outsqlda, sizeof( ifx_sqlda_t ) );
 
-			// calculate the size of the output data buffer we need
-			size_t size = 0;
-			ifx_sqlvar_t * sqlvar = cursor->outsqlda->sqlvar;
-			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
-				if ( sqlvar->sqltype == SQLCHAR ) {
-					sqlvar->sqllen = 2;
-				}
-
-				size = rtypalign( size, sqlvar->sqltype );
-				size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
-				sqlvar++;
-			}
-
 			// new output data buffer
-			cursor->data = new char[ size ];
+			cursor->data = new char[ cursor->stmt->size ];
 
 			// update sqlvar->sqldata refereces
-			size   = 0;
-			sqlvar = cursor->outsqlda->sqlvar;
+			size_t size = 0;
+			ifx_sqlvar_t * sqlvar = cursor->outsqlda->sqlvar;
 			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
 				size = rtypalign( size, sqlvar->sqltype );
 				sqlvar->sqldata = ( cursor->data + size );

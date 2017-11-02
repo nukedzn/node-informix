@@ -63,6 +63,7 @@ namespace ifx {
 		std::string id;
 		std::string stmt;
 		int32_t type;
+		size_t size;
 
 		cursors_t cursors;
 

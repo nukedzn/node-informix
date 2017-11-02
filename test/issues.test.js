@@ -18,14 +18,14 @@ describe( 'issues', () => {
 			return informix
 				.query(
 					'create table tissue45(' +
-						'c char(1) default \'A\' not null' +
+						'c char(2) default \'AA\' not null' +
 					');'
 				)
 				.then( ( cursor ) => {
 					return cursor.close();
 				} )
 				.then( () => {
-					return informix.query( 'insert into tissue45 (c) values ( \'C\' );' );
+					return informix.query( 'insert into tissue45 (c) values ( \'CC\' );' );
 				} )
 				.then( ( cursor) => {
 					return cursor.close();
@@ -57,7 +57,7 @@ describe( 'issues', () => {
 				.then( ( results ) => {
 					expect( results ).to.have.length( 1 )
 						.with.nested.property( '[0][0]' )
-						.with.length( 1 );
+						.with.length( 2 );
 				} )
 				.then( () => {
 					return stmt.exec();
@@ -68,7 +68,7 @@ describe( 'issues', () => {
 				.then( ( results ) => {
 					expect( results ).to.have.length( 1 )
 						.with.nested.property( '[0][0]' )
-						.with.length( 1 );
+						.with.length( 2 );
 				} );
 		} );
 	} );
