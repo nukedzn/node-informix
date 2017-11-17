@@ -68,7 +68,7 @@ describe( 'data-types', () => {
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
 					.with.nested.property( '[0][0]' )
-					.that.eql( values.date.toISOString() );
+					.that.eql( values.date.toISOString().slice(0, -1) );
 			} );
 	} );
 
@@ -80,7 +80,7 @@ describe( 'data-types', () => {
 			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
 					.with.nested.property( '[0][0]' )
-					.that.eql( new Date( values.dt ).toISOString() );
+					.that.eql( new Date( values.dt ).toISOString().slice(0, -1) );
 			} );
 	} );
 
