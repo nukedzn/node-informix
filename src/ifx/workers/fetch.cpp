@@ -102,8 +102,8 @@ namespace workers {
 
 				case SQLDATE:
 					{
-						char buffer[25];
-						char format[] = "yyyy-mm-ddT00:00:00.000Z";
+						char buffer[24];
+						char format[] = "yyyy-mm-ddT00:00:00.000";
 						rfmtdate( *reinterpret_cast<int4 *>( sqlvar->sqldata ), format, buffer );
 						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
 					}
@@ -111,8 +111,8 @@ namespace workers {
 
 				case SQLDTIME:
 					{
-						char buffer[25];
-						char format[] = "%Y-%m-%dT%H:%M:%S.%F3Z";
+						char buffer[24];
+						char format[] = "%Y-%m-%dT%H:%M:%S.%F3";
 						dttofmtasc( reinterpret_cast< dtime * >( sqlvar->sqldata ), buffer, sizeof( buffer ), format );
 						result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
 					}
