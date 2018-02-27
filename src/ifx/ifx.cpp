@@ -488,10 +488,12 @@ namespace ifx {
 
 		if ( stmt->cursors.size() ) {
 			// try and cleanup any empty cursor references (issue #27)
-			for ( cursors_t::iterator it = stmt->cursors.begin(); it != stmt->cursors.end(); it++ ) {
+			for ( cursors_t::iterator it = stmt->cursors.begin(); it != stmt->cursors.end(); ) {
 				if (! it->second ) {
 					self->_cursors.erase( it->first );
-					stmt->cursors.erase( it );
+					stmt->cursors.erase( it++ );
+				} else {
+					it++;
 				}
 			}
 		}
