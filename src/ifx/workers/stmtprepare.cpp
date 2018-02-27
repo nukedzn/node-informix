@@ -70,7 +70,7 @@ namespace workers {
 			Nan::New< v8::String >( _stmt->id ).ToLocalChecked()
 		};
 
-		callback->Call( 2, argv );
+		callback->Call( 2, argv, async_resource );
 
 	}
 

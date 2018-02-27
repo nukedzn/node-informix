@@ -57,7 +57,7 @@ namespace workers {
 				Nan::Null()
 			};
 
-			callback->Call( 2, argv );
+			callback->Call( 2, argv, async_resource );
 			return;
 
 		}
@@ -159,7 +159,7 @@ namespace workers {
 			result
 		};
 
-		callback->Call( 2, argv );
+		callback->Call( 2, argv, async_resource );
 
 	}
 

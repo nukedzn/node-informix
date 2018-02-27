@@ -74,7 +74,7 @@ namespace workers {
 			Nan::Error( Nan::New<v8::String>( ErrorMessage() ).ToLocalChecked() ),
 		};
 
-		callback->Call( 1, argv );
+		callback->Call( 1, argv, async_resource );
 
 	}
 
@@ -93,7 +93,7 @@ namespace workers {
 			Nan::New< v8::String >( _cursor->id ).ToLocalChecked()
 		};
 
-		callback->Call( 2, argv );
+		callback->Call( 2, argv, async_resource );
 
 	}
 
