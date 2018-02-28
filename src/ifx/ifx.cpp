@@ -493,13 +493,10 @@ namespace ifx {
 					self->_cursors.erase( it->first );
 					stmt->cursors.erase( it++ );
 				} else {
-					it++;
+					// there's a cursor attached to this statement so can't be freed
+					return Nan::ThrowError( "Cursors need to be closed." );
 				}
 			}
-		}
-
-		if ( stmt->cursors.size() ) {
-			return Nan::ThrowError( "Cursors need to be closed." );
 		}
 
 
