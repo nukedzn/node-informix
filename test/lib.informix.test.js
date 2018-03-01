@@ -91,7 +91,11 @@ describe( 'lib/Informix', function () {
 
 			informix.query( 'select first 1 * from tcustomers;' )
 				.then( function ( c ) {
-					throw new Error( 'Expected to fail, but it did not!!!' );
+					done( new Error( 'Expected to fail, but it did not!!!' ) );
+				} )
+				.catch( function ( err ) {
+					// suppress node.js unhandled promise rejection warnings (UnhandledPromiseRejectionWarning,
+					// [DEP0018] DeprecationWarning)
 				} );
 		} );
 
@@ -114,7 +118,11 @@ describe( 'lib/Informix', function () {
 
 			informix.prepare( 'select count(*) from tcustomers where id > ?;' )
 				.then( function ( c ) {
-					throw new Error( 'Expected to fail, but it did not!!!' );
+					done( new Error( 'Expected to fail, but it did not!!!' ) );
+				} )
+				.catch( function ( err ) {
+					// suppress node.js unhandled promise rejection warnings (UnhandledPromiseRejectionWarning,
+					// [DEP0018] DeprecationWarning)
 				} );
 		} );
 
