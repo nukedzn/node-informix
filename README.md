@@ -27,7 +27,7 @@ A node.js native client for IBM Informix.
 ## Dependencies
 
 * [IBM Informix ESQL/C](http://www-03.ibm.com/software/products/en/esqlc) which
-can be installed using [IBM Informix CSDK](http://www-03.ibm.com/software/products/en/csdk).
+can be installed using [IBM Informix CSDK](http://www-01.ibm.com/support/docview.wss?uid=swg27016673).
 
 
 ### Environment variables
