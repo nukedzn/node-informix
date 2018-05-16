@@ -76,6 +76,11 @@ namespace workers {
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Int32 >(* reinterpret_cast<int32_t *>( sqlvar->sqldata ) ) );
 					break;
 
+				case SQLINFXBIGINT:
+				case SQLBIGSERIAL:
+					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >(* reinterpret_cast<int64_t *>( sqlvar->sqldata ) ) );
+					break;
+
 				case SQLFLOAT:
 				case SQLSMFLOAT:
 					result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::Number >( *sqlvar->sqldata ) );
