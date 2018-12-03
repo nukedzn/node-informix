@@ -4,6 +4,8 @@
 
 #include "esqlc.h"
 
+EXEC SQL include locator;
+EXEC SQL include sqltypes;
 
 int32_t esqlc::connect( const char * connid, const char * database, const char * username, const char * password ) {
 
