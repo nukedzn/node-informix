@@ -20,24 +20,30 @@ describe( 'data-types', () => {
 		dt : '2017-02-17 17:20:56.002',
 		date : new Date( '2017-02-18' ),
 		decimal : 7.964439875659,
-		bigint: 2^62
+		bigint: 2^62,
+		atext: 'A TEXT'
 	};
 
 	before( () => {
-		return informix.query(
+		return informix.prepare(
 				'insert into tdatatypes(' +
 					'dt, ' +
 					'date, ' +
 					'decimal, ' +
-					'bigint' +
+					'bigint,' +
+					'atext' +
 				') ' +
 				'values(' +
 					'"' + values.dt + '", ' +
 					moment( values.date ).format( '[mdy(]MM,DD,YYYY[), ]' ) +
 					values.decimal + ',' +
-					values.bigint +
+					values.bigint + ',' +
+					'?' +
 				');'
 			)
+			.then( ( stmt ) => {
+				return stmt.exec([ values.atext ]);
+			} )
 			.then( ( cursor ) => {
 				return cursor.close();
 			} );
@@ -109,6 +115,18 @@ describe( 'data-types', () => {
 					.with.nested.property( '[0][0]' )
 					.that.eql( values.bigint );
 			} );
+	} );
+
+	it( 'should fetch text values correctly', () => {
+		return informix.query( 'select atext from tdatatypes;' )
+		  .then( ( cursor ) => {
+				return cursor.fetchAll( { close : true } );
+		  } )
+		  .then( ( results ) => {
+				expect( results ).to.have.length( 1 )
+					.with.nested.property( '[0][0]' )
+					.that.eql( values.atext );
+      } );
 	} );
 
 } );
