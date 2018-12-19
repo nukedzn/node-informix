@@ -285,15 +285,18 @@ namespace ifx {
 				char * arg;
 				v8::Local< v8::Array > args = info[3].As< v8::Array >();
 
+				if ((int) stmt->insqlda->sqld != (int) args->Length()) {
+				  return Nan::ThrowError( "Too many or too few host variables given." );
+				}
+
 				insqlda->sqld     = args->Length();
 				insqlda->sqlvar   = new ifx_sqlvar_t[ args->Length() ];
 				insqlda->desc_occ = 0;
 
 				std::memset( insqlda->sqlvar, 0, ( sizeof( ifx_sqlvar_t ) * args->Length() ) );
 
-
-				for ( uint32_t i = 0; i < args->Length(); i++ ) {
-
+				ifx_sqlvar_t * sqlvar = stmt->insqlda->sqlvar;
+				for ( uint32_t i = 0; i < args->Length(); i++, sqlvar++ ) {
 					Nan::Utf8String utf8arg( args->Get( Nan::New< v8::Integer >( i ) ) );
 					size_t size = ( utf8arg.length() + 1 );
 					arg = new char[ size ];
@@ -301,9 +304,24 @@ namespace ifx {
 					std::strncpy( arg, *utf8arg, size );
 					cursor->args.push_back( arg );
 
-					insqlda->sqlvar[i].sqltype = CSTRINGTYPE;
-					insqlda->sqlvar[i].sqllen  = size;
-					insqlda->sqlvar[i].sqldata = arg;
+					if (sqlvar->sqltype == SQLTEXT) {
+					  ifx_loc_t  *temp_loc = new ifx_loc_t();
+					  std::memset( temp_loc, 0, sizeof( ifx_loc_t ) );
+
+					  temp_loc->loc_loctype = LOCMEMORY;
+					  temp_loc->loc_type = SQLTEXT;
+					  temp_loc->loc_bufsize = (1024 * 1024);
+					  temp_loc->loc_size = size;
+					  temp_loc->loc_buffer = arg;
+
+					  insqlda->sqlvar[i].sqltype = CLOCATORTYPE;
+					  insqlda->sqlvar[i].sqllen = sizeof(ifx_loc_t);
+					  insqlda->sqlvar[i].sqldata = (char *) temp_loc;
+					} else {
+					  insqlda->sqlvar[i].sqltype = CSTRINGTYPE;
+					  insqlda->sqlvar[i].sqllen  = size;
+					  insqlda->sqlvar[i].sqldata = arg;
+					}
 
 				}
 
@@ -389,7 +407,20 @@ namespace ifx {
 			ifx_sqlvar_t * sqlvar = cursor->outsqlda->sqlvar;
 			for ( size_t i = 0; i < static_cast< size_t >( cursor->outsqlda->sqld ); i++ ) {
 				size = rtypalign( size, sqlvar->sqltype );
-				sqlvar->sqldata = ( cursor->data + size );
+
+				if ( sqlvar->sqltype == SQLTEXT ) {
+				  ifx_loc_t *temp_loc = new ifx_loc_t();
+				  temp_loc->loc_type = SQLTEXT;
+				  temp_loc->loc_loctype = LOCMEMORY;
+				  temp_loc->loc_indicator = 0;
+				  temp_loc->loc_bufsize = -1;
+				  temp_loc->loc_oflags  = 0;
+				  temp_loc->loc_mflags  = 0;
+				  sqlvar->sqllen = sizeof( ifx_loc_t );
+				  sqlvar->sqldata = (char *) temp_loc;
+				} else {
+				  sqlvar->sqldata = ( cursor->data + size );
+				}
 
 				size += rtypmsize( sqlvar->sqltype, sqlvar->sqllen );
 				sqlvar++;

@@ -154,7 +154,7 @@ describe( 'lib/Statement', function () {
 					} )
 					.catch( function ( err ) {
 						expect( err ).to.be.an.instanceof( Error );
-						expect( err.message ).to.be.string( '[-254] Too many or too few host variables given.' );
+						expect( err.message ).to.be.string( 'Too many or too few host variables given.' );
 					} );
 			} );
 

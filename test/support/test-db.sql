@@ -50,6 +50,7 @@ create table tdatatypes (
 	dt        datetime year to fraction,
 	date      date,
 	decimal   decimal,
-	bigint    bigint
+	bigint    bigint,
+	atext     text
 );
 
