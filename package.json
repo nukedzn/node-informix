@@ -1,6 +1,6 @@
 {
   "name": "informix",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "description": "A node.js native client for IBM Informix",
   "main": "index.js",
   "gypfile": true,
