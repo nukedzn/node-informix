@@ -139,7 +139,7 @@ namespace workers {
 					    char *buffer = new char[size];
 					    memcpy( buffer, loc->loc_buffer, loc->loc_size );
 					    result->Set( Nan::New< v8::Integer >( i ), Nan::New< v8::String >( buffer ).ToLocalChecked() );
-					    delete buffer;
+					    delete []buffer;
 					  } else {
 					    result->Set( Nan::New< v8::Integer >( i ), Nan::Undefined() );
 					  }
