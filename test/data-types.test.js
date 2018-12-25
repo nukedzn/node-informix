@@ -119,14 +119,14 @@ describe( 'data-types', () => {
 
 	it( 'should fetch text values correctly', () => {
 		return informix.query( 'select atext from tdatatypes;' )
-		  .then( ( cursor ) => {
+			.then( ( cursor ) => {
 				return cursor.fetchAll( { close : true } );
-		  } )
-		  .then( ( results ) => {
+			} )
+			.then( ( results ) => {
 				expect( results ).to.have.length( 1 )
 					.with.nested.property( '[0][0]' )
 					.that.eql( values.atext );
-      } );
+			} );
 	} );
 
 } );
